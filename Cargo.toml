@@ -1,0 +1,9 @@
+# Licensed under the Apache License, Version 2.0.
+
+[workspace]
+
+members = [
+    "rust/interop_android",
+    "rust/tesseract_ipc_android_client",
+    "examples/app_native",
+]
