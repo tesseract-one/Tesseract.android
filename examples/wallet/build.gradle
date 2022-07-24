@@ -5,6 +5,7 @@ plugins {
 
 android {
     compileSdk 32
+    ndkVersion "24.0.8215888"
 
     defaultConfig {
         applicationId "com.example.wallet"
@@ -32,6 +33,21 @@ android {
     buildFeatures {
         viewBinding true
     }
+}
+
+apply plugin: 'org.mozilla.rust-android-gradle.rust-android'
+
+tasks.whenTaskAdded { task ->
+    if ((task.name == 'javaPreCompileDebug' || task.name == 'javaPreCompileRelease')) {
+        task.dependsOn 'cargoBuild'
+    }
+}
+
+cargo {
+    module  = "../wallet_native"       // Or whatever directory contains your Cargo.toml
+    libname = "wallet"          // Or whatever matches Cargo.toml's [package] name.
+    targets = ["arm", "x86"]  // See bellow for a longer list of options
+    targetDirectory = '../../target'
 }
 
 dependencies {

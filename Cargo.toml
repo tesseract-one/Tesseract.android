@@ -6,4 +6,5 @@ members = [
     "rust/interop",
     "rust/ipc",
     "examples/app_native",
+    "examples/wallet_native",
 ]
