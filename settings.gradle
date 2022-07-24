@@ -15,6 +15,7 @@ dependencyResolutionManagement {
 rootProject.name = "TesseractAndroid"
 include ':examples:app'
 include ':examples:wallet'
+include ':java:tesseract-ipc'
 include ':java:tesseract-ipc-client'
 include ':java:tesseract-ipc-service'
 include ':java:interop-rust'

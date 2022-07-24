@@ -24,6 +24,8 @@ import android.util.Log
 import androidx.annotation.RequiresApi
 import java.util.*
 
+import one.tesseract.ipc.*
+
 
 class TesseractActivity: Activity() {
     private companion object Randomizer {

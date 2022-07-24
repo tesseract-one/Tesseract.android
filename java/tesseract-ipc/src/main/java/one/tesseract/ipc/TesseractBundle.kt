@@ -14,7 +14,7 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-package one.tesseract.ipc.client
+package one.tesseract.ipc
 
 import android.os.Bundle
 
@@ -25,23 +25,23 @@ private object BC {
     val RX = "rx"
 }
 
-var Bundle.id: String?
+public var Bundle.id: String?
     get() = this.getString(BC.ID)
     set(value) = this.putString(BC.ID, value)
 
-var Bundle.rx: ByteArray?
+public var Bundle.rx: ByteArray?
     get() = this.getByteArray(BC.RX)
     set(value) = this.putByteArray(BC.RX, value)
 
-var Bundle.tx: ByteArray?
+public var Bundle.tx: ByteArray?
     get() = this.getByteArray(BC.TX)
     set(value) = this.putByteArray(BC.TX, value)
 
-fun Bundle.toEmptyResponse(): Bundle {
+public fun Bundle.toEmptyResponse(): Bundle {
     var response = Bundle()
     response.id = this.id
     return response
 }
 
-fun RequestBundle(id: String, tx: ByteArray) = Bundle().apply { this.id = id; this.tx = tx }
-fun ResponseBundle(id: String, rx: ByteArray?) = Bundle().apply { this.id = id; this.rx = rx }
+public fun RequestBundle(id: String, tx: ByteArray) = Bundle().apply { this.id = id; this.tx = tx }
+public fun ResponseBundle(id: String, rx: ByteArray?) = Bundle().apply { this.id = id; this.rx = rx }

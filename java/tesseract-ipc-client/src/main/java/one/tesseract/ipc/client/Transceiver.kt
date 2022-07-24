@@ -26,6 +26,8 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
+import one.tesseract.ipc.*
+
 sealed class TransceiverResponse
 object TransceiverResponseCanceled: TransceiverResponse()
 class TransceiverResponseOk(val data: ByteArray): TransceiverResponse()
