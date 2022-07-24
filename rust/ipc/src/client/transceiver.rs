@@ -47,7 +47,7 @@ impl<'a: 'b, 'b> From<Transceiver<'a, 'b>> for JObject<'a> {
 
 impl<'a: 'b, 'b> Transceiver<'a, 'b> {
     pub fn new(env: &'b JNIEnv<'a>, application: JObject<'a>) -> Result<Self> {
-        let clazz = env.find_class_android("one/tesseract/ipc/Transceiver")?;
+        let clazz = env.find_class_android("one/tesseract/ipc/client/Transceiver")?;
         let transceiver = env.new_object(
             clazz,
             "(Landroid/app/Application;)V",

@@ -19,8 +19,7 @@ package com.example.clientapp
 import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
-import one.tesseract.ipc.*
-import java.util.*
+import one.tesseract.ipc.client.*
 
 class RustCore(public val application: Application) {
     companion object {

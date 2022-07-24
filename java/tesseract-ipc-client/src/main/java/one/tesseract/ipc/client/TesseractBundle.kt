@@ -14,7 +14,7 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-package one.tesseract.ipc
+package one.tesseract.ipc.client
 
 import android.os.Bundle
 
