@@ -22,7 +22,7 @@ use async_trait::async_trait;
 use futures::lock::Mutex;
 
 use tesseract::{Error, ErrorKind, Result};
-use tesseract_client::Connection;
+use tesseract::client::Connection;
 
 use interop_android::ContextedGlobal;
 

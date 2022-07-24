@@ -21,9 +21,5 @@
 extern crate log;
 extern crate android_log;
 
-mod connection;
-mod response;
-mod transceiver;
-mod transport;
-
-pub use transport::TransportIPCAndroid;
+#[cfg(feature = "client")]
+pub mod client;

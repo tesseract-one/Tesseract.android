@@ -3,7 +3,7 @@
 [workspace]
 
 members = [
-    "rust/interop_android",
-    "rust/tesseract_ipc_android_client",
+    "rust/interop",
+    "rust/ipc",
     "examples/app_native",
 ]

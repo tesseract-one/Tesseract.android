@@ -15,12 +15,11 @@ log = "0.4.17"
 android_log = "0.1.3"
 futures = "0.3.21"
 # lazy_static = "1.4.0"
-interop_android = { path = "../../rust/interop_android" }
-tesseract_ipc_android_client = { path = "../../rust/tesseract_ipc_android_client" }
-tesseract-client = {git = "https://github.com/tesseract-one/Tesseract.rs"}
 
-#tmp
-tesseract = {git = "https://github.com/tesseract-one/Tesseract.rs"}
+interop_android = { path = "../../rust/interop" }
+tesseract_ipc_android = { path = "../../rust/ipc", features=["client"]}
+tesseract = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="restructure", features=["client"]}
+
 serde = { version = "1.0", features = ["derive"] }
 async-trait = "0.1"
 

@@ -22,8 +22,8 @@ use serde::{Deserialize, Serialize};
 
 use tesseract::Protocol;
 use tesseract::Result;
-use tesseract_client::ErasedService;
-use tesseract_client::Service;
+use tesseract::client::ErasedService;
+use tesseract::client::Service;
 
 pub enum Polkadot {
     Network,

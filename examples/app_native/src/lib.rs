@@ -27,7 +27,7 @@ use jni::objects::{GlobalRef, JClass, JObject, JString, JValue};
 use jni::sys::{jbyteArray, jint, jlong, jstring};
 use jni::JNIEnv;
 use std::sync::Arc;
-use tesseract_client::Service;
+use tesseract::client::Service;
 //use std::lazy::Lazy;
 use std::sync::Mutex;
 use std::{sync::mpsc, thread, time::Duration};
@@ -56,9 +56,9 @@ use interop_android::thread_pool::AndroidThreadPoolBuilder;
 
 //fn tp() -> &ThreadPool {}
 
-use tesseract_client::delegate::SingleTransportDelegate;
-use tesseract_client::Tesseract;
-use tesseract_ipc_android_client::TransportIPCAndroid;
+use tesseract::client::delegate::SingleTransportDelegate;
+use tesseract::client::Tesseract;
+use tesseract_ipc_android::client::TransportIPCAndroid;
 
 mod service;
 

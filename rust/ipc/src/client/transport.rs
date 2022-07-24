@@ -22,8 +22,8 @@ use jni::errors::Result;
 use jni::objects::JObject;
 use jni::JNIEnv;
 
-use tesseract_client::transport::Status;
-use tesseract_client::{Connection, Transport};
+use tesseract::client::transport::Status;
+use tesseract::client::{Connection, Transport};
 
 use interop_android::ContextedGlobal;
 
