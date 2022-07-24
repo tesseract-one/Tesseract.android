@@ -16,5 +16,5 @@ rootProject.name = "TesseractAndroid"
 include ':examples:app'
 include ':examples:wallet'
 include ':java:tesseract-ipc-client'
-//project(":logger").projectDir = file("../logger")
+include ':java:tesseract-ipc-service'
 include ':java:interop-rust'
