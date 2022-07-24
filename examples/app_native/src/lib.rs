@@ -21,7 +21,6 @@
 extern crate log;
 extern crate android_log;
 
-use crate::service::Polkadot;
 use jni::errors::Result;
 use jni::objects::{GlobalRef, JClass, JObject, JString, JValue};
 use jni::sys::{jbyteArray, jint, jlong, jstring};
@@ -60,9 +59,8 @@ use tesseract::client::delegate::SingleTransportDelegate;
 use tesseract::client::Tesseract;
 use tesseract_ipc_android::client::TransportIPCAndroid;
 
-mod service;
-
-use service::PolkadotService;
+use tesseract_protocol_test::Polkadot;
+use tesseract_protocol_test::client::PolkadotService;
 
 /// Lifetime'd representation of a `RustCore`. Just a `JObject` wrapped in a
 /// new class.
@@ -162,7 +160,7 @@ pub fn rustInit(env: JNIEnv, core: JObject, loader: JObject) {
             .transport(TransportIPCAndroid::new(&env, application));
 
         let service: Arc<dyn Service<Protocol = Polkadot>> =
-            tesseract.service(service::Polkadot::Network);
+            tesseract.service(Polkadot::Network);
 
         core.set_service(service)?;
 
@@ -202,7 +200,7 @@ pub fn makeTransaction(env: JNIEnv, rcore: JObject) {
         tp.spawn_ok(transaction.map(|x| match x {
             Ok(result) => {
                 debug!(
-                    "!!!!@@@######1The freaking transaction is finally signed: {}",
+                    "!!!!@@@######1The freaking transaction is finally signed1: {}",
                     result
                 );
             }
