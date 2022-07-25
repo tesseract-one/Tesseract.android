@@ -27,7 +27,7 @@ import java.util.*
 import one.tesseract.ipc.*
 
 
-class TesseractActivity: Activity() {
+class TesseractActivity : Activity() {
     private companion object Randomizer {
         val _random: Random = Random(System.currentTimeMillis())
 
@@ -42,12 +42,16 @@ class TesseractActivity: Activity() {
         }
     }
 
-    val reqCode:Int = random()
+    private val reqCode: Int = random()
+    private var response: Pair<Int, Bundle>? = null
+
+    private fun emptyResponse(): Bundle = intent.extras?.toEmptyResponse()
+        ?: throw RuntimeException("Invalid API usage of Tesseract Activity")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val data = getIntent().getExtras()
+        val data = intent.extras
             ?: throw RuntimeException("Invalid API usage of Tesseract Activity")
 
         val intent = Intent()
@@ -57,45 +61,37 @@ class TesseractActivity: Activity() {
         //intent.ca
         //intent.type = "text/plain"
 
-//        object : CountDownTimer(1000, 1) {
-//            override fun onFinish() {
-                startActivityForResult(intent, reqCode)
-//            }
-//            override fun onTick(millisUntilFinished: Long) {}
-//        }.start()
-
-
-
-        //finish()
+        startActivityForResult(intent, reqCode)
     }
+
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(requestCode != reqCode) {
+        if (requestCode != reqCode) {
             Log.d("ERROR", "Malfunctioning wallet: wrong requestCode")
         } else {
-            val response = data?.extras
-            if(response == null) {
-                val response = getIntent().getExtras()?.toEmptyResponse()
-                    ?: throw RuntimeException("Invalid API usage of Tesseract Activity")
+            val extras = data?.extras
+            this.response = if (extras == null) {
                 //Log.d("ERROR", "The wallet returned no data")
-                TransceiverRegistry.resolve(Pair(resultCode, response))
+                Pair(resultCode, emptyResponse())
             } else {
-                TransceiverRegistry.resolve(Pair(resultCode, response))
+                Pair(resultCode, extras)
             }
         }
 
         super.onActivityResult(requestCode, resultCode, data)
 
-        //setResult(Activity.RESULT_OK)
         finish()
-
-
-
     }
 
-//    override fun onStop() {
-//        super.onStop()
-//        finish()
-//    }
+    @RequiresApi(Build.VERSION_CODES.N)
+    override fun onDestroy() {
+        val response = this.response ?: Pair(
+            500,
+            emptyResponse()
+        )//TODO: take in account code 500 when parsing. Good for now though
+        TransceiverRegistry.resolve(response)
+
+        super.onDestroy()
+    }
 }
