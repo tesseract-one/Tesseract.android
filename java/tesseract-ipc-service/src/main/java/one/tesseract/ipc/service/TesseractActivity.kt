@@ -39,31 +39,42 @@ class TesseractActivity : Activity() {
 
         val channelId = this.channelId()
 
-//        val channel =
-//            Channel.send(channelId, data)
-//                ?: throw RuntimeException("No channel '$channelId' found")
+        val response =
+            Channel.send(channelId, data)
+                ?: throw RuntimeException("No channel '$channelId' found")
 
-//        channel.whenComplete { data, error ->
-//            run {
-        val intent = Intent()
-        intent.action = "one.tesseract.REPLY"
-
-        Log.v("TEST", "before $data")
-
-        val bundle = {
-            val data =
-                "json{\"id\":1,\"response\":{\"status\":\"ok\",\"signed\":\"testTransaction_signed!\"}}".toByteArray();
+        response.whenComplete { r, e ->
             val bundle = Bundle(2)
-            bundle.rx = data
+            bundle.rx = r
             bundle.id = id
-            bundle
-        }()
+
+            val intent = Intent()
+            intent.action = "one.tesseract.REPLY"
 
             intent.putExtras(bundle)
 
             setResult(RESULT_OK, intent)
 
             finish()
+        }
+
+//        channel.whenComplete { data, error ->
+//            run {
+//        val intent = Intent()
+//        intent.action = "one.tesseract.REPLY"
+//
+//        Log.v("TEST", "before $data")
+//
+//        val bundle = {
+//            val data =
+//                "json{\"id\":1,\"response\":{\"status\":\"ok\",\"signed\":\"testTransaction_signed!\"}}".toByteArray();
+//            val bundle = Bundle(2)
+//            bundle.rx = data
+//            bundle.id = id
+//            bundle
+//        }()
+
+
 //            }
 //        }
         }
