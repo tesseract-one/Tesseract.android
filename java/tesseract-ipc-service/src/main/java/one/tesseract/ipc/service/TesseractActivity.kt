@@ -61,7 +61,7 @@ class TesseractActivity : Activity() {
 
             intent.putExtras(bundle)
 
-            setResult(Activity.RESULT_OK, intent)
+            setResult(RESULT_OK, intent)
 
             finish()
 //            }
