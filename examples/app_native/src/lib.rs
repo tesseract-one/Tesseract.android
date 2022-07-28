@@ -34,7 +34,7 @@ use std::{sync::mpsc, thread, time::Duration};
 use jni_fn::jni_fn;
 
 use interop_android::bi_consumer::RBiConsumer;
-use interop_android::completable_future::JCompletionStage;
+use interop_android::future::completion_stage::JCompletionStage;
 use interop_android::JFuture;
 
 use futures::executor::ThreadPool;
@@ -61,6 +61,8 @@ use tesseract_ipc_android::client::TransportIPCAndroid;
 
 use tesseract_protocol_test::Polkadot;
 use tesseract_protocol_test::client::PolkadotService;
+
+use interop_android::pointer::ArcPointer;
 
 /// Lifetime'd representation of a `RustCore`. Just a `JObject` wrapped in a
 /// new class.
@@ -109,21 +111,16 @@ impl<'a: 'b, 'b> RustCore<'a, 'b> {
             .call_method(self.internal, "getService", "()J", &[])?
             .j()?;
 
-        let service_p = service_l as *mut Arc<dyn Service<Protocol = Polkadot>>;
-        let service = Box::leak(unsafe { Box::from_raw(service_p) });
-        Ok(Arc::clone(service))
+        Ok(ArcPointer::of(service_l).arc())
     }
 
     fn set_service(&self, service: Arc<dyn Service<Protocol = Polkadot>>) -> Result<()> {
-        let service_p = Box::into_raw(Box::new(service));
-        let service_l = service_p as *const () as i64;
-
         self.env
             .call_method(
                 self.internal,
                 "setService",
                 "(J)V",
-                &[JValue::Long(service_l)],
+                &[JValue::Long(ArcPointer::new(service).into())],
             )?
             .v()
     }

@@ -19,13 +19,14 @@ extern crate log;
 extern crate android_log;
 
 pub mod bi_consumer;
-pub mod completable_future;
 mod contexted_global;
 pub mod env;
 pub mod errors;
 mod exception;
 mod jfuture;
 pub mod thread_pool;
+pub mod pointer;
+pub mod future;
 
 pub use contexted_global::ContextedGlobal;
 pub use exception::Exception;

@@ -14,8 +14,8 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-use super::bi_consumer::RBiConsumer;
-use super::contexted_global::ContextedGlobal;
+use crate::bi_consumer::RBiConsumer;
+use crate::contexted_global::ContextedGlobal;
 use jni::errors::Result;
 use jni::objects::JObject;
 use jni::JNIEnv;

@@ -11,9 +11,11 @@ typealias FnListen = (ByteArray) -> CompletionStage<ByteArray>
 //TODO: make private later
 public class Channel private constructor(val id: String) {
     companion object {
+        public const val DEFAULT = "default"
+
         var channels = WeakHashMap<Channel, FnListen>()
 
-        fun byId(id: String): FnListen? = synchronized(channels) { channels[Channel(id)] }
+        private fun byId(id: String): FnListen? = synchronized(channels) { channels[Channel(id)] }
 
         //create one here and keep until needed. It's going to be freed once gced
         public fun create(id: String, listen: FnListen): Channel {

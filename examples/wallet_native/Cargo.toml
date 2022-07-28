@@ -17,9 +17,9 @@ futures = "0.3.21"
 # lazy_static = "1.4.0"
 
 interop_android = { path = "../../rust/interop" }
-tesseract_ipc_android = { path = "../../rust/ipc", features=["client"]}
-tesseract = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="restructure", features=["client"]}
-tesseract-protocol-test = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="restructure", features=["client"]}
+tesseract_ipc_android = { path = "../../rust/ipc", features=["service"]}
+tesseract = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="restructure", features=["service"]}
+tesseract-protocol-test = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="restructure", features=["service"]}
 
 serde = { version = "1.0", features = ["derive"] }
 async-trait = "0.1"

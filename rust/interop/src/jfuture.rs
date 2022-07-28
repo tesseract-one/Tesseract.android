@@ -21,7 +21,7 @@ use std::sync::Arc;
 use std::sync::Mutex;
 use std::task::{Context, Poll};
 
-use super::completable_future::JCompletionStage;
+use super::future::completion_stage::JCompletionStage;
 use super::contexted_global::ContextedGlobal;
 
 pub struct JFuture {

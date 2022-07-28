@@ -19,7 +19,7 @@ use jni::objects::JObject;
 use jni::objects::JValue;
 use jni::JNIEnv;
 
-use interop_android::completable_future::JCompletionStage;
+use interop_android::future::completion_stage::JCompletionStage;
 use interop_android::env::AndroidEnv;
 use interop_android::JFuture;
 
