@@ -1,28 +1,31 @@
 package com.example.wallet
 
+import android.util.Log
 import one.tesseract.ipc.service.Channel
 import one.tesseract.ipc.service.Processor
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
 class RustCore(public val application: Application) {
-    val processor: Processor = object : Processor {
-        override fun process(data: ByteArray): CompletionStage<ByteArray> {
-            return CompletableFuture.completedFuture(
-                "json{\"id\":1,\"response\":{\"status\":\"ok\",\"signed\":\"testTransaction_signed!\"}}".toByteArray()
-            )
-        }
-    }
+//    val processor: Processor = object : Processor {
+//        override fun process(data: ByteArray): CompletionStage<ByteArray> {
+//            return CompletableFuture.completedFuture(
+//                "json{\"id\":1,\"response\":{\"status\":\"ok\",\"signed\":\"testTransaction_signed!\"}}".toByteArray()
+//            )
+//        }
+//    }
 
     init {
-
+        rustInit(this.javaClass.classLoader)
     }
 
-    val channel: Channel = Channel.create("default") { data ->
-        CompletableFuture.completedFuture(
-            "json{\"id\":1,\"response\":{\"status\":\"ok\",\"signed\":\"testTransaction_signed!\"}}".toByteArray()
-        )
-    }
+    private external fun rustInit(loader: ClassLoader)
+
+//    val channel: Channel = Channel.create("default") { data ->
+//        CompletableFuture.completedFuture(
+//            "json{\"id\":1,\"response\":{\"status\":\"ok\",\"signed\":\"testTransaction_signed!\"}}".toByteArray()
+//        )
+//    }
 
     companion object {
         init {

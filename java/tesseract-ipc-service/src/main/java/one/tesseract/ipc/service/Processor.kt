@@ -19,4 +19,6 @@ public fun Channel.Companion.create(id: String, processor: Processor): Channel {
 //TODO: do finalize
 public class TransportProcessor(val native: Long) : Processor {
     external override fun process(data: ByteArray): CompletionStage<ByteArray>
+
+    public fun createChannel(id: String): Channel = Channel.Companion.create(id, this)
 }

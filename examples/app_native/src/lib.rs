@@ -59,8 +59,8 @@ use tesseract::client::delegate::SingleTransportDelegate;
 use tesseract::client::Tesseract;
 use tesseract_ipc_android::client::TransportIPCAndroid;
 
-use tesseract_protocol_test::Polkadot;
-use tesseract_protocol_test::client::PolkadotService;
+use tesseract_protocol_test::Test;
+use tesseract_protocol_test::TestService;
 
 use interop_android::pointer::ArcPointer;
 
@@ -105,7 +105,7 @@ impl<'a: 'b, 'b> RustCore<'a, 'b> {
             .l()
     }
 
-    fn get_service(&self) -> Result<Arc<dyn Service<Protocol = Polkadot>>> {
+    fn get_service(&self) -> Result<Arc<dyn Service<Protocol = Test>>> {
         let service_l = self
             .env
             .call_method(self.internal, "getService", "()J", &[])?
@@ -114,7 +114,7 @@ impl<'a: 'b, 'b> RustCore<'a, 'b> {
         Ok(ArcPointer::of(service_l).arc())
     }
 
-    fn set_service(&self, service: Arc<dyn Service<Protocol = Polkadot>>) -> Result<()> {
+    fn set_service(&self, service: Arc<dyn Service<Protocol = Test>>) -> Result<()> {
         self.env
             .call_method(
                 self.internal,
@@ -156,8 +156,8 @@ pub fn rustInit(env: JNIEnv, core: JObject, loader: JObject) {
         let tesseract = Tesseract::new(SingleTransportDelegate::arc())
             .transport(TransportIPCAndroid::new(&env, application));
 
-        let service: Arc<dyn Service<Protocol = Polkadot>> =
-            tesseract.service(Polkadot::Network);
+        let service: Arc<dyn Service<Protocol = Test>> =
+            tesseract.service(Test::Protocol);
 
         core.set_service(service)?;
 

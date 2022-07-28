@@ -14,7 +14,7 @@ use interop_android::future::into_java::FutureJava;
 use tesseract::service::TransportProcessor;
 
 #[derive(Clone, Copy)]
-struct JProcessor<'a: 'b, 'b> {
+pub struct JProcessor<'a: 'b, 'b> {
     internal: JObject<'a>,
     env: &'b JNIEnv<'a>,
 }
@@ -41,11 +41,11 @@ impl<'a: 'b, 'b> JProcessor<'a, 'b> {
         }
     }
 
-    fn new(env: &'b JNIEnv<'a>, processor: Arc<dyn TransportProcessor + Send + Sync>) -> Result<Self> {
+    pub fn new(env: &'b JNIEnv<'a>, processor: Arc<dyn TransportProcessor + Send + Sync>) -> Result<Self> {
         let clazz = env.find_class_android("one/tesseract/ipc/service/TransportProcessor")?;
         let p: i64 = ArcPointer::new(processor).into();
 
-        let obj = env.new_object(clazz, "(J)", &[p.into()])?;
+        let obj = env.new_object(clazz, "(J)V", &[p.into()])?;
 
         Ok(Self::from_env(env, obj))
     }
@@ -61,7 +61,7 @@ impl<'a: 'b, 'b> JProcessor<'a, 'b> {
     }
 }
 
-#[jni_fn("one.tesseract.interop.rust.RBiConsumer")]
+#[jni_fn("one.tesseract.ipc.service.TransportProcessor")]
 pub fn process<'a>(env: JNIEnv<'a>, jprocessor: JObject<'a>, data: jni::sys::jbyteArray) -> JObject<'a> { //returns CompletionStage<ByteArray>
     
     let jprocessor = JProcessor::from_env(&env, jprocessor);
