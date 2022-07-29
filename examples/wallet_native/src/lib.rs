@@ -105,7 +105,7 @@ pub fn rustInit(env: JNIEnv, core: JObject, loader: JObject) {
     debug!("!!!Before Tesseract");
     let tesseract = Tesseract::new().transport(Transport::default(&env).unwrap()).service(TestService{});
     debug!("!!!Tesseract initialized succesfully");
-    let _ = Box::new(tesseract);//let's keep it alive. make a field later
+    let _ = Box::leak(Box::new(tesseract));//let's keep it alive. make a field later
 
     /*match init_res(env, core, loader) {
         Ok(_) => {
