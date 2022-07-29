@@ -188,13 +188,20 @@ pub fn rustInit(env: JNIEnv, core: JObject, loader: JObject) {
 #[jni_fn("com.example.clientapp.RustCore")]
 pub fn makeTransaction(env: JNIEnv, rcore: JObject) {
     fn makeTransaction_res(env: JNIEnv, rcore: JObject) -> Result<()> {
+        let vm = env.get_java_vm()?;
+        let grcore = env.new_global_ref(rcore).unwrap();
+
         let core = RustCore::from_env(&env, rcore);
 
         let service = core.get_service()?;
         let tp = core.get_executor()?;
 
         let transaction = service.sign_transaction("TestTran");
-        tp.spawn_ok(transaction.map(|x| match x {
+        tp.spawn_ok(transaction.map(move |x| {
+            let env = vm.get_env().unwrap();
+            makeTransaction_res(env, grcore.as_obj());
+            drop(grcore);
+            match x {
             Ok(result) => {
                 debug!(
                     "!!!!@@@######1The freaking transaction is finally signed1: {}",
@@ -204,7 +211,7 @@ pub fn makeTransaction(env: JNIEnv, rcore: JObject) {
             Err(error) => {
                 debug!("!!!!@@@@#### for now I'm happy with the error: {}", error);
             }
-        }));
+        }}));
 
         Ok(())
     }
