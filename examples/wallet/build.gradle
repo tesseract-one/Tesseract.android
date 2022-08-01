@@ -46,7 +46,7 @@ tasks.whenTaskAdded { task ->
 cargo {
     module  = "../wallet_native"       // Or whatever directory contains your Cargo.toml
     libname = "wallet"          // Or whatever matches Cargo.toml's [package] name.
-    targets = ["arm", "x86"]  // See bellow for a longer list of options
+    targets = ["arm", "x86", "arm64", "x86_64"]  // See bellow for a longer list of options
     targetDirectory = '../../target'
 }
 
