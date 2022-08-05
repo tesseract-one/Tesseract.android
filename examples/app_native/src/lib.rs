@@ -167,6 +167,7 @@ pub fn rustInit(env: JNIEnv, core: JObject, loader: JObject) {
 
         let tp = ThreadPoolBuilder::new()
             .jvm(vm, Some(loader))
+            //.pool_size(1)
             .create()
             .expect("Can't create ThreadPool");
 

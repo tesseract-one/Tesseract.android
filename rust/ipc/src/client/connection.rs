@@ -21,6 +21,7 @@ use async_trait::async_trait;
 
 use futures::lock::Mutex;
 
+use interop_android::env::AndroidEnv;
 use tesseract::{Error, ErrorKind, Result};
 use tesseract::client::Connection;
 
@@ -44,18 +45,20 @@ impl TransportIPCAndroidConnection {
 
     async fn send_receive(self: Arc<Self>, request: Vec<u8>) -> jni::errors::Result<Response> {
         let data = {
-            let (env, tran) = self.transceiver.local_env()?;
-            let transceiver = Transceiver::from_env(&env, tran);
-
-            let result = transceiver.transceive(&request);
+            let result = self.transceiver.do_in_context_rret(64, |env, tran| {
+                let transceiver = Transceiver::from_env(&env, tran);
+                let result = transceiver.transceive(&request);
+                Ok(result)
+            })?;
             //yes, it doesn't work shorthand - fucking rust
             result
         }
         .await?; //TODO: convert error
 
         let response = {
-            let (env, response) = data.local_env()?;
-            Response::from_java(&env, response)
+            data.do_in_context_rret(64, |env, response| {
+                Ok(Response::from_java(&env, response))
+            })?
         };
 
         Ok(response)

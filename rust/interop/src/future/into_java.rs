@@ -29,22 +29,25 @@ impl<E: Send + Display, F: Future<Output = std::result::Result<GlobalRef, E>> + 
 
 impl<E: Send + Display, F: Future<Output = std::result::Result<GlobalRef, E>> + Send> Wake for Waker<E, F> {
     fn wake(self: Arc<Self>) {
-        let (env, object) = self.j.local_env().unwrap();
-        let jfut = JCompletableFuture::from_env(&env, object);
+        self.j.do_in_context_rret(64, |env, object| {
+            let jfut = JCompletableFuture::from_env(&env, object);
 
-        let mut fguard = self.guard();
-        let waker = Arc::clone(&self).into();
-        let mut context = Context::from_waker(&waker);
-        let poll = fguard.as_mut().poll(&mut context);
+            let mut fguard = self.guard();
+            let waker = Arc::clone(&self).into();
+            let mut context = Context::from_waker(&waker);
+            let poll = fguard.as_mut().poll(&mut context);
 
-        let resolved = match poll {
-            Poll::Pending => {false}
-            Poll::Ready(r) => {jfut.resolve3(r).unwrap()}
-        };
+            let resolved = match poll {
+                Poll::Pending => {false}
+                Poll::Ready(r) => {jfut.resolve3(r).unwrap()}
+            };
 
-        if !resolved {
-            panic!("Wrong future state after the waker is awoken. A bug?")
-        }
+            if !resolved {
+                panic!("Wrong future state after the waker is awoken. A bug?")
+            };
+
+            Ok(())
+        }).unwrap();
     }
 }
 

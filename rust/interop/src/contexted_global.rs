@@ -22,6 +22,8 @@ use jni::objects::JObject;
 use jni::JNIEnv;
 use jni::JavaVM;
 
+use crate::env::AndroidEnv;
+
 /// GlobalRef along with it's VM. Mainly to be used for thread traveling of objects.
 #[derive(Clone)]
 pub struct ContextedGlobal {
@@ -35,7 +37,25 @@ impl ContextedGlobal {
         })
     }
 
-    pub fn local_env(&self) -> Result<(JNIEnv, JObject)> {
+    fn local_env<'a>(&'a self) -> Result<(JNIEnv, JObject<'a>)> {
         Ok((self.guard.0.get_env()?, self.guard.1.as_obj()))
+    }
+
+    pub fn do_in_context_jret<'a, F>(&'a self, capacity: i32, f: F) -> Result<JObject<'a>>
+        where F: FnOnce(JNIEnv, JObject) -> Result<JObject<'a>>,
+    {
+        let (env, object) = self.local_env()?;
+        env.with_local_frame(capacity, || {
+            f(env, object)
+        })
+    }
+
+    pub fn do_in_context_rret<F, R>(&self, capacity: i32, f: F) -> Result<R>
+        where F: FnOnce(JNIEnv, JObject) -> Result<R>
+    {
+        let (env, object) = self.local_env()?;
+        env.with_local_frame_arbitrary(capacity, || {
+            f(env, object)
+        })
     }
 }
