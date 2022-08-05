@@ -31,6 +31,11 @@ pub trait AndroidEnv<'a> {
 
     /// provide a class loader to be used in threads created by rust. Should be called after attach_thread on VM
     fn set_thread_class_loader(loader: GlobalRef) -> Result<()>;
+
+    /// same as 'with_local_frame', but return an arbitrary value
+    fn with_local_frame_arbitrary<F, R>(&self, capacity: i32, f: F) -> Result<R>
+    where
+        F: FnOnce() -> Result<R>;
 }
 
 use std::cell::RefCell;
@@ -73,5 +78,18 @@ impl<'a> AndroidEnv<'a> for JNIEnv<'a> {
             }
             None => self.find_class(name),
         }
+    }
+
+    fn with_local_frame_arbitrary<F, R>(&self, capacity: i32, f: F) -> Result<R>
+        where F: FnOnce() -> Result<R> {
+        let mut result: Option<Result<R>> = None;
+        
+        let _ = self.with_local_frame(capacity, || {
+            result = Some(f());
+
+            Ok(JObject::null())
+        })?;
+
+        result.unwrap()
     }
 }

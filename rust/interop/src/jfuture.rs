@@ -21,6 +21,8 @@ use std::sync::Arc;
 use std::sync::Mutex;
 use std::task::{Context, Poll};
 
+use crate::env::AndroidEnv;
+
 use super::future::completion_stage::JCompletionStage;
 use super::contexted_global::ContextedGlobal;
 
@@ -73,30 +75,27 @@ impl Future for JFuture {
 
                 match &self.stage {
                     Some(stage) => {
-                        match stage.local_env() {
-                            Ok((env, local)) => {
-                                let jstage = JCompletionStage::from_env(&env, local);
-                                debug!("!@#$%STAGE");
-                                jstage
-                                    .when_complete(|env, result| {
-                                        let mut guard = mutex.lock().unwrap();
-
-                                        let result = result
-                                            .and_then(|r| ContextedGlobal::from_local(&env, r));
-                                        *guard = Some(result);
-                                        debug!("!@#$%WAKERWAKE");
-                                        waker.clone().wake();
-                                        debug!("!@#$%WAKERWOKEN");
-                                    })
-                                    .unwrap(); //TODO: return error
-                                debug!("!@#$%PENDING");
-                                Poll::Pending
-                            }
-                            Err(err) => {
-                                debug!("!@#$%ERRRRRRR");
-                                Poll::Ready(Err(err))
-                            }
-                        }
+                        let res = stage.do_in_context_rret(64, |env, stage| {
+                            let jstage = JCompletionStage::from_env(&env, stage);
+                            debug!("!@#$%STAGE");
+                            jstage.when_complete(|env, result| {
+                                let mut guard = mutex.lock().unwrap();
+    
+                                let result = result
+                                    .and_then(|r| ContextedGlobal::from_local(&env, r));
+                                *guard = Some(result);
+                                debug!("!@#$%WAKERWAKE");
+                                waker.clone().wake();
+                                debug!("!@#$%WAKERWOKEN");
+                            })?;
+                            debug!("!@#$%PENDING");
+                            Ok(Poll::Pending)
+                        });
+                        
+                        res.unwrap_or_else(|err| {
+                            debug!("!@#$%ERRRRRRR");
+                            Poll::Ready(Err(err))
+                        })
                     }
                     None => Poll::Ready(Err(Error::NullDeref(
                         "JFuture was created with no stage and no error. Please, report a bug.",

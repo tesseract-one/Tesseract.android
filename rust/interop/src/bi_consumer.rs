@@ -96,4 +96,6 @@ pub fn finalize(env: JNIEnv, consumer: JObject) {
     let consumer = RBiConsumer::from_env(&env, consumer);
 
     drop(unsafe { consumer.closure() });
+
+    debug!("%%%%%%%drop biconsumer");
 }
