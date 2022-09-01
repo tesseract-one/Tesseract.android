@@ -1,4 +1,4 @@
-package com.example.clientapp
+package one.tesseract.example.app
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

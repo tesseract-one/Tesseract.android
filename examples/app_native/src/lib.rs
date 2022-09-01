@@ -99,7 +99,7 @@ impl<'a: 'b, 'b> RustCore<'a, 'b> {
             .call_method(
                 self.internal,
                 "getApplication",
-                "()Lcom/example/clientapp/Application;",
+                "()Lone/tesseract/example/app/Application;",
                 &[],
             )?
             .l()
@@ -146,7 +146,7 @@ impl<'a: 'b, 'b> RustCore<'a, 'b> {
     }
 }
 
-#[jni_fn("com.example.clientapp.RustCore")]
+#[jni_fn("one.tesseract.example.app.RustCore")]
 pub fn rustInit(env: JNIEnv, core: JObject, loader: JObject) {
     fn init_res(env: JNIEnv, core: JObject, loader: JObject) -> Result<()> {
         let core = RustCore::from_env(&env, core);
@@ -186,7 +186,7 @@ pub fn rustInit(env: JNIEnv, core: JObject, loader: JObject) {
     }
 }
 
-#[jni_fn("com.example.clientapp.RustCore")]
+#[jni_fn("one.tesseract.example.app.RustCore")]
 pub fn makeTransaction(env: JNIEnv, rcore: JObject) {
     fn makeTransaction_res(env: JNIEnv, rcore: JObject) -> Result<()> {
         let core = RustCore::from_env(&env, rcore);
@@ -223,7 +223,7 @@ pub fn makeTransaction(env: JNIEnv, rcore: JObject) {
     }
 }
 
-#[jni_fn("com.example.clientapp.MainActivity")]
+#[jni_fn("one.tesseract.example.app.MainActivity")]
 pub fn helloRust(
     env: JNIEnv,
     // this is the class that owns our

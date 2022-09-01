@@ -14,18 +14,14 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-package com.example.clientapp
-
-import android.util.Log
+package one.tesseract.example.app
 
 class Application: android.app.Application() {
-    companion object {
-        lateinit var rustCore: RustCore
-    }
+    lateinit var rustCore: RustCore
 
     override fun onCreate() {
-        super.onCreate()
+        rustCore = RustCore(this)
 
-        Application.rustCore = RustCore(this)
+        super.onCreate()
     }
 }

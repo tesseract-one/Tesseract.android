@@ -14,7 +14,7 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-package com.example.clientapp
+package one.tesseract.example.app
 
 import android.os.Build
 import android.util.Log

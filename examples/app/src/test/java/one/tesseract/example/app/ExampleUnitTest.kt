@@ -1,4 +1,4 @@
-package com.example.clientapp
+package one.tesseract.example.app
 
 import org.junit.Test
 
