@@ -43,7 +43,7 @@ impl<'a: 'b, 'b> From<RBiConsumer<'a, 'b>> for JObject<'a> {
 
 impl<'a: 'b, 'b> RBiConsumer<'a, 'b> {
     //TODO: mark F with Send or something
-    pub fn new<'o, F: FnMut(JNIEnv, JObject<'o>, JObject) + 'static>(env: &'b JNIEnv<'a>, f: F) -> Self {
+    pub fn new<'o, F: FnMut(JNIEnv, JObject<'o>, JObject) + Send + 'static>(env: &'b JNIEnv<'a>, f: F) -> Self {
         let boxed: Box<dyn FnMut(JNIEnv, JObject<'o>, JObject)> = Box::new(f);
         let raw = Box::into_raw(Box::new(boxed));
 
