@@ -14,46 +14,36 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-//#![feature(proc_macro_is_available)]
-//#![feature(once_cell)]
-
 #[macro_use]
 extern crate log;
 extern crate android_log;
 
-use futures::Future;
-use jni::errors::Result;
-use jni::objects::{GlobalRef, JClass, JObject, JString, JValue};
-use jni::sys::{jbyteArray, jint, jlong, jstring};
-use jni::{JNIEnv, JavaVM};
 use std::sync::Arc;
-use tesseract::client::Service;
-//use std::lazy::Lazy;
-use std::sync::Mutex;
-use std::{sync::mpsc, thread, time::Duration};
+
+use futures::Future;
+use futures::future::FutureExt;
+use futures::executor::{ThreadPool, ThreadPoolBuilder};
+
+use jni::{JNIEnv, JavaVM};
+use jni::objects::{GlobalRef, JObject, JString, JValue};
+use jni::errors::Result;
 
 use jni_fn::jni_fn;
 
-use interop_android::bi_consumer::RBiConsumer;
-use interop_android::future::completion_stage::JCompletionStage;
 use interop_android::JFuture;
+use interop_android::future::completion_stage::JCompletionStage;
 use interop_android::future::into_java::FutureJava;
-
-use futures::executor::ThreadPool;
-use futures::executor::ThreadPoolBuilder;
-use futures::future::FutureExt;
-
-use interop_android::env::AndroidEnv;
 use interop_android::thread_pool::AndroidThreadPoolBuilder;
+use interop_android::pointer::ArcPointer;
 
-use tesseract::client::delegate::SingleTransportDelegate;
+use tesseract::client::Service;
 use tesseract::client::Tesseract;
+use tesseract::client::delegate::SingleTransportDelegate;
+
 use tesseract_ipc_android::client::TransportIPCAndroid;
 
 use tesseract_protocol_test::Test;
 use tesseract_protocol_test::TestService;
-
-use interop_android::pointer::ArcPointer;
 
 /// Lifetime'd representation of a `RustCore`. Just a `JObject` wrapped in a
 /// new class.
@@ -138,8 +128,10 @@ impl<'a: 'b, 'b> RustCore<'a, 'b> {
 }
 
 #[jni_fn("one.tesseract.example.app.RustCore")]
-pub fn rustInit(env: JNIEnv, core: JObject, loader: JObject) {
-    fn init_res(env: JNIEnv, core: JObject, loader: JObject) -> Result<()> {
+pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) {
+    android_log::init("MyApp").unwrap();
+
+    fn init_res<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) -> Result<()> {
         let core = RustCore::from_env(&env, core);
 
         let application = core.get_application()?;
@@ -165,8 +157,6 @@ pub fn rustInit(env: JNIEnv, core: JObject, loader: JObject) {
         core.set_executor(tp)
     }
 
-    android_log::init("MyApp").unwrap();
-
     match init_res(env, core, loader) {
         Ok(_) => {
             debug!("!!!!!@@@@@####init_res was called without an accident");
@@ -180,14 +170,13 @@ pub fn rustInit(env: JNIEnv, core: JObject, loader: JObject) {
 #[jni_fn("one.tesseract.example.app.RustCore")]
 pub fn sign<'a>(env: JNIEnv<'a>, rcore: JObject<'a>, transaction: JString<'a>) -> JObject<'a> {
     fn makeTransaction_res<'a: 'b, 'b>(env: &'b JNIEnv<'a>, rcore: JObject<'a>, transaction: JString<'a>) -> Result<impl Future<Output = tesseract::Result<GlobalRef>>> {
-        let core = RustCore::from_env(&env, rcore);
+        let core = RustCore::from_env(env, rcore);
 
         let transaction: String = env
             .get_string(transaction)?
             .into();
 
         let service = core.get_service()?;
-        //let tp = core.get_executor()?;
 
         let vm = env.get_java_vm()?;
         let transaction = async move {
@@ -207,44 +196,12 @@ pub fn sign<'a>(env: JNIEnv<'a>, rcore: JObject<'a>, transaction: JString<'a>) -
         });
 
         return Ok(transaction);
-        
-        
-        // tp.spawn_ok(transaction.map(|x| match x {
-        //     Ok(result) => {
-        //         debug!(
-        //             "!!!!@@@######1The freaking transaction is finally signed1: {}",
-        //             result
-        //         );
-        //     }
-        //     Err(error) => {
-        //         debug!("!!!!@@@@#### for now I'm happy with the error: {}", error);
-        //     }
-        // }));
-
-        // Ok(())
     }
 
     let transaction = match makeTransaction_res(&env, rcore, transaction) {
         Ok(transaction) => {
             debug!("!!!!!@@@@@####makeTransaction was called without an accident");
             transaction.into_java(&env)
-
-
-            // let core = RustCore::from_env(&env, rcore);
-            // let tp = core.get_executor().unwrap();
-
-            // tp.spawn_ok(transaction.map(|x| match x {
-            // Ok(result) => {
-            //     debug!(
-            //         "!!!!@@@######1The freaking transaction is finally signed1: ",
-            //         //result.as_obj().into_inner()
-            //     );
-            // }
-            // Err(error) => {
-            //     debug!("!!!!@@@@#### for now I'm happy with the error: {}", error);
-            // }
-        //}));
-            
         }
         Err(e) => {
             debug!(
@@ -261,7 +218,6 @@ pub fn sign<'a>(env: JNIEnv<'a>, rcore: JObject<'a>, transaction: JString<'a>) -
     debug!("!!!!!!!!!!DONE!!!!!!!!!");
 
     transaction.into()
-    //JObject::null()
 }
 
 #[jni_fn("one.tesseract.example.app.RustCore")]
@@ -292,39 +248,4 @@ pub fn execute<'a>(env: JNIEnv<'a>, core: JObject<'a>, future: JObject<'a>) {
             }
         }.unwrap()
     }));
-}
-
-#[jni_fn("one.tesseract.example.app.MainActivity")]
-pub fn helloRust(
-    env: JNIEnv,
-    // this is the class that owns our
-    // static method. Not going to be
-    // used, but still needs to have
-    // an argument slot
-    _class: JClass,
-    input: JString,
-) -> jstring {
-    // First, we have to get the string out of java. Check out the `strings`
-    // module for more info on how this works.
-    let input: String = env
-        .get_string(input)
-        .expect("Couldn't get java string!")
-        .into();
-
-    // Then we have to create a new java string to return. Again, more info
-    // in the `strings` module.
-    let output = env
-        .new_string(format!("Hello, {}!", input))
-        .expect("Couldn't create java string!");
-    // Finally, extract the raw pointer to return.
-    output.into_inner()
-}
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
-    }
 }
