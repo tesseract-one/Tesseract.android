@@ -71,7 +71,7 @@ impl<'a: 'b, 'b> JCompletionStage<'a, 'b> {
         Ok(JCompletionStage::from_env(self.env, r.l()?))
     }
 
-    pub fn when_complete<'o, F: FnMut(JNIEnv, Result<JObject<'o>>)>(
+    pub fn when_complete<'o, F: FnMut(JNIEnv, Result<JObject<'o>>) + 'static>(
         self,
         mut f: F,
     ) -> Result<JCompletionStage<'a, 'b>> {
