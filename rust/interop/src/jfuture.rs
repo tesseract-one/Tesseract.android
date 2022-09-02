@@ -59,14 +59,15 @@ impl Future for JFuture {
 
     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<<Self as Future>::Output> {
         debug!("!@#$%POLLPOLLPOLL");
-        let mutex = Arc::clone(&self.result);
-        let mut guard = mutex.lock().unwrap();
+        
+        //the guard needs to be scoped and droped right after the value is taken
+        let result = {
+            let mutex = Arc::clone(&self.result);
+            let mut guard = mutex.lock().unwrap();
+            guard.take()
+        };
 
         debug!("!@#$%GUARD");
-
-        let result = guard.take();
-
-        debug!("!@#$%GUARD2");
 
         match result {
             None => {
@@ -75,15 +76,23 @@ impl Future for JFuture {
 
                 match &self.stage {
                     Some(stage) => {
-                        let res = stage.do_in_context_rret(64, |env, stage| {
+                        let mutex = Arc::clone(&self.result);
+
+                        let res = stage.do_in_context_rret(64, move |env, stage| {
                             let jstage = JCompletionStage::from_env(&env, stage);
                             debug!("!@#$%STAGE");
-                            jstage.when_complete(|env, result| {
-                                let mut guard = mutex.lock().unwrap();
+                            jstage.when_complete(move |env, result| {
+                                debug!("!@#$%GUARD1");
+                                //the guard needs to be scoped and dropped before waker.wake() call
+                                {
+                                    let mut guard = mutex.lock().unwrap();
+                                    debug!("!@#$%GUARD2");
     
-                                let result = result
-                                    .and_then(|r| ContextedGlobal::from_local(&env, r));
-                                *guard = Some(result);
+                                    let result = result
+                                        .and_then(|r| ContextedGlobal::from_local(&env, r));
+                                    *guard = Some(result);
+                                    drop(guard);
+                                }
                                 debug!("!@#$%WAKERWAKE");
                                 waker.clone().wake();
                                 debug!("!@#$%WAKERWOKEN");
