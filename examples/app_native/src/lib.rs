@@ -21,10 +21,11 @@
 extern crate log;
 extern crate android_log;
 
+use futures::Future;
 use jni::errors::Result;
 use jni::objects::{GlobalRef, JClass, JObject, JString, JValue};
 use jni::sys::{jbyteArray, jint, jlong, jstring};
-use jni::JNIEnv;
+use jni::{JNIEnv, JavaVM};
 use std::sync::Arc;
 use tesseract::client::Service;
 //use std::lazy::Lazy;
@@ -36,6 +37,7 @@ use jni_fn::jni_fn;
 use interop_android::bi_consumer::RBiConsumer;
 use interop_android::future::completion_stage::JCompletionStage;
 use interop_android::JFuture;
+use interop_android::future::into_java::FutureJava;
 
 use futures::executor::ThreadPool;
 use futures::executor::ThreadPoolBuilder;
@@ -187,40 +189,90 @@ pub fn rustInit(env: JNIEnv, core: JObject, loader: JObject) {
 }
 
 #[jni_fn("one.tesseract.example.app.RustCore")]
-pub fn makeTransaction(env: JNIEnv, rcore: JObject) {
-    fn makeTransaction_res(env: JNIEnv, rcore: JObject) -> Result<()> {
+pub fn sign<'a>(env: JNIEnv<'a>, rcore: JObject<'a>, transaction: JString<'a>) -> JObject<'a> {
+    fn makeTransaction_res<'a: 'b, 'b>(env: &'b JNIEnv<'a>, rcore: JObject<'a>, transaction: JString<'a>) -> Result<impl Future<Output = tesseract::Result<GlobalRef>>> {
         let core = RustCore::from_env(&env, rcore);
 
+        let transaction: String = env
+            .get_string(transaction)?
+            .into();
+
         let service = core.get_service()?;
-        let tp = core.get_executor()?;
+        //let tp = core.get_executor()?;
 
-        let transaction = service.sign_transaction("TestTran");
-        tp.spawn_ok(transaction.map(|x| match x {
-            Ok(result) => {
-                debug!(
-                    "!!!!@@@######1The freaking transaction is finally signed1: {}",
-                    result
-                );
-            }
-            Err(error) => {
-                debug!("!!!!@@@@#### for now I'm happy with the error: {}", error);
-            }
-        }));
+        let vm = env.get_java_vm()?;
+        let transaction = async move {
+            service.sign_transaction(&transaction).await
+        }.map(|x| {
+            x.and_then(|signed| {
+                fn convert(vm: JavaVM, str: String) -> jni::errors::Result<GlobalRef> {
+                    let env = vm.get_env()?;
+                    let jstr = env.new_string(str)?;
+                    env.new_global_ref(jstr)
+                }
 
-        Ok(())
+                convert(vm, signed).map_err(|e| {
+                    tesseract::Error::nested(Box::new(e))
+                })
+            })
+        });
+
+        return Ok(transaction);
+        
+        
+        // tp.spawn_ok(transaction.map(|x| match x {
+        //     Ok(result) => {
+        //         debug!(
+        //             "!!!!@@@######1The freaking transaction is finally signed1: {}",
+        //             result
+        //         );
+        //     }
+        //     Err(error) => {
+        //         debug!("!!!!@@@@#### for now I'm happy with the error: {}", error);
+        //     }
+        // }));
+
+        // Ok(())
     }
 
-    match makeTransaction_res(env, rcore) {
-        Ok(_) => {
+    let transaction = match makeTransaction_res(&env, rcore, transaction) {
+        Ok(transaction) => {
             debug!("!!!!!@@@@@####makeTransaction was called without an accident");
+            transaction.into_java(&env)
+
+
+            // let core = RustCore::from_env(&env, rcore);
+            // let tp = core.get_executor().unwrap();
+
+            // tp.spawn_ok(transaction.map(|x| match x {
+            // Ok(result) => {
+            //     debug!(
+            //         "!!!!@@@######1The freaking transaction is finally signed1: ",
+            //         //result.as_obj().into_inner()
+            //     );
+            // }
+            // Err(error) => {
+            //     debug!("!!!!@@@@#### for now I'm happy with the error: {}", error);
+            // }
+        //}));
+            
         }
         Err(e) => {
             debug!(
                 "!!!!!@@@@@####makeTransaction created the following error: {}",
                 e
             );
+            async {
+                Err(tesseract::Error::nested(Box::new(e)))
+            }.into_java(&env)
+            
         }
-    }
+    };
+
+    debug!("!!!!!!!!!!DONE!!!!!!!!!");
+
+    transaction.into()
+    //JObject::null()
 }
 
 #[jni_fn("one.tesseract.example.app.MainActivity")]

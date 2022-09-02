@@ -20,6 +20,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import one.tesseract.ipc.client.*
+import java.util.concurrent.CompletionStage
 
 class RustCore(public val application: Application) {
     companion object {
@@ -49,24 +50,25 @@ class RustCore(public val application: Application) {
     //To be rewritten in Rust
     @RequiresApi(Build.VERSION_CODES.S)
     fun makeTransactionJava() {
-        transceiver2.transceive("TransactionToSign".toByteArray()).whenComplete { response, exception ->
-            if (exception == null) {
-                when (response) {
-                    is TransceiverResponseOk -> {
-                        Log.v("SUCCESS", "We got some: ${response.data}")
+        transceiver2.transceive("TransactionToSign".toByteArray())
+            .whenComplete { response, exception ->
+                if (exception == null) {
+                    when (response) {
+                        is TransceiverResponseOk -> {
+                            Log.v("SUCCESS", "We got some: ${response.data}")
+                        }
+                        is TransceiverResponseCanceled -> {
+                            Log.v("SUCCESS", "User canceled the request")
+                        }
+                        is TransceiverResponseError -> {
+                            Log.v("SUCCESS", "Something is wrong: ${response.exception}")
+                        }
                     }
-                    is TransceiverResponseCanceled -> {
-                        Log.v("SUCCESS", "User canceled the request")
-                    }
-                    is TransceiverResponseError -> {
-                        Log.v("SUCCESS", "Something is wrong: ${response.exception}")
-                    }
+                } else {
+                    Log.v("ERROR", "Something is badly wrong: $exception")
                 }
-            } else {
-                Log.v("ERROR", "Something is badly wrong: $exception")
             }
-        }
     }
 
-    external fun makeTransaction()
+    external fun sign(transaction: String): CompletionStage<String>
 }
