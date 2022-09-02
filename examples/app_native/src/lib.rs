@@ -46,17 +46,6 @@ use futures::future::FutureExt;
 use interop_android::env::AndroidEnv;
 use interop_android::thread_pool::AndroidThreadPoolBuilder;
 
-// #[macro_use]
-// extern crate lazy_static;
-
-// lazy_static! {
-//     static ref tp: ThreadPool = ThreadPool::new().unwrap();
-// }
-
-//static _tp: Lazy<Mutex<ThreadPool>> = Lazy::new(|| Mutex::new(ThreadPool::new().unwrap()));
-
-//fn tp() -> &ThreadPool {}
-
 use tesseract::client::delegate::SingleTransportDelegate;
 use tesseract::client::Tesseract;
 use tesseract_ipc_android::client::TransportIPCAndroid;
@@ -273,6 +262,36 @@ pub fn sign<'a>(env: JNIEnv<'a>, rcore: JObject<'a>, transaction: JString<'a>) -
 
     transaction.into()
     //JObject::null()
+}
+
+#[jni_fn("one.tesseract.example.app.RustCore")]
+pub fn execute<'a>(env: JNIEnv<'a>, core: JObject<'a>, future: JObject<'a>) {
+    let core = RustCore::from_env(&env, core);
+
+    let stage = JCompletionStage::from_env(&env, future);
+    let future = JFuture::from_stage(stage);
+
+    let executor = core.get_executor().unwrap();
+
+    executor.spawn_ok(future.map(|sig_java| {
+        match sig_java {
+            Ok(sig_global) => {
+                sig_global.do_in_context_rret(64, |env, sig_local| {
+                    let sig: String = env
+                        .get_string(sig_local.into())
+                        .expect("Couldn't get java string!")
+                        .into();
+                    Ok(debug!(
+                        "!!!@@@###The executing futute returned a result: {}",
+                        sig
+                    ))
+                })
+            }
+            Err(error) => {
+                Ok(debug!("!!!@@@###The executing futute returned an error: {}", error))
+            }
+        }.unwrap()
+    }));
 }
 
 #[jni_fn("one.tesseract.example.app.MainActivity")]
