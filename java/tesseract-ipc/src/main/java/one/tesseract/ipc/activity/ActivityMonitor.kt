@@ -31,6 +31,9 @@ class ActivityMonitor(private val application: Application) {
             object :
                 Application.ActivityLifecycleCallbacks {
                 override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
+                    synchronized(this@ActivityMonitor) {
+                        this@ActivityMonitor._activity = activity
+                    }
                 }
 
                 override fun onActivityStarted(activity: Activity) {
@@ -40,6 +43,9 @@ class ActivityMonitor(private val application: Application) {
                 }
 
                 override fun onActivityResumed(activity: Activity) {
+                    synchronized(this@ActivityMonitor) {
+                        this@ActivityMonitor._activity = activity
+                    }
                 }
 
                 override fun onActivityPaused(activity: Activity) {
