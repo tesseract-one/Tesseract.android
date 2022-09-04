@@ -12,7 +12,8 @@
         android:theme="@style/Theme.ClientApp">
         <activity
             android:name=".SignActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:label="Wallet"/>
         <activity
             android:name="one.tesseract.ipc.service.TesseractActivity"
             android:exported="true"
