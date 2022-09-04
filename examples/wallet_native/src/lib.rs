@@ -71,7 +71,7 @@ impl tesseract_protocol_test::TestService for TestService {
 }
 //WALLET PART END//
 
-#[jni_fn("com.example.wallet.RustCore")]
+#[jni_fn("one.tesseract.example.wallet.RustCore")]
 pub fn rustInit(env: JNIEnv, core: JObject, loader: JObject) {
     /*fn init_res(env: JNIEnv, core: JObject, loader: JObject) -> Result<()> {
         // let core = RustCore::from_env(&env, core);

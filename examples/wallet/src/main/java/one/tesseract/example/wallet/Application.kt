@@ -1,4 +1,4 @@
-package com.example.wallet
+package one.tesseract.example.wallet
 
 class Application: android.app.Application() {
     companion object {

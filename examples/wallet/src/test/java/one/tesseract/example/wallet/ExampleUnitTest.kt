@@ -1,4 +1,4 @@
-package com.example.wallet
+package one.tesseract.example.wallet
 
 import org.junit.Test
 

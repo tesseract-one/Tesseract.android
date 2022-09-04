@@ -14,19 +14,18 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-package com.example.wallet
+package one.tesseract.example.wallet
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import com.google.android.material.snackbar.Snackbar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
-import com.example.wallet.databinding.ActivitySignBinding
+import one.tesseract.example.wallet.databinding.ActivitySignBinding
 
 class SignActivity : AppCompatActivity() {
 

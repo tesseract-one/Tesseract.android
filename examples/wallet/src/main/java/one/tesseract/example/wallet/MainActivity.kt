@@ -14,7 +14,7 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-package com.example.wallet
+package one.tesseract.example.wallet
 
 import android.os.Bundle
 import com.google.android.material.snackbar.Snackbar
@@ -25,7 +25,7 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import android.view.Menu
 import android.view.MenuItem
-import com.example.wallet.databinding.ActivityMainBinding
+import one.tesseract.example.wallet.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
 

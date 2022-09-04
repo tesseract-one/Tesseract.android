@@ -1,10 +1,4 @@
-package com.example.wallet
-
-import android.util.Log
-import one.tesseract.ipc.service.Channel
-import one.tesseract.ipc.service.Processor
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CompletionStage
+package one.tesseract.example.wallet
 
 class RustCore(public val application: Application) {
 //    val processor: Processor = object : Processor {
