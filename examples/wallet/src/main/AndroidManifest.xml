@@ -11,15 +11,22 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ClientApp">
         <activity
+            android:name=".SignActivity"
+            android:exported="false" />
+        <activity
             android:name="one.tesseract.ipc.service.TesseractActivity"
             android:exported="true"
             android:theme="@style/Theme.ClientApp.NoActionBar">
             <intent-filter>
                 <action android:name="one.tesseract.CALL" />
-                <category android:name="android.intent.category.DEFAULT"/>
+
+                <category android:name="android.intent.category.DEFAULT" />
                 <!-- data android:mimeType="text/plain"/ -->
             </intent-filter>
-            <meta-data android:value="default" android:name="channel" />
+
+            <meta-data
+                android:name="channel"
+                android:value="default" />
         </activity>
         <activity
             android:name=".MainActivity"
