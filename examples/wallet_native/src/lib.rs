@@ -24,6 +24,8 @@ extern crate android_log;
 use std::sync::Arc;
 use async_trait::async_trait;
 
+use interop_android::{ContextedGlobal, JFuture};
+use interop_android::future::completion_stage::JCompletionStage;
 use jni::errors::Result;
 use jni::objects::{GlobalRef, JClass, JObject, JString, JValue};
 use jni::sys::{jbyteArray, jint, jlong, jstring};
@@ -38,38 +40,14 @@ use tesseract::service::Tesseract;
 use tesseract_ipc_android::service::Transport;
 use tesseract_protocol_test::Test;
 
+use crate::service::TestService;
+use crate::ui::UI;
 
-//WALLET PART BEGIN//
-struct TestService {}
+mod ui;
+mod core;
+mod service;
 
-impl tesseract::service::Service for TestService {
-    type Protocol = Test;
 
-    fn protocol(&self) -> &Test {
-        &Test::Protocol
-    }
-
-    fn to_executor(self) -> Box<dyn tesseract::service::Executor + Send + Sync> {
-        Box::new(tesseract_protocol_test::service::TestExecutor::from_service(
-            self,
-        ))
-    }
-}
-
-#[async_trait]
-impl tesseract_protocol_test::TestService for TestService {
-    async fn sign_transaction(self: Arc<Self>, req: &str) -> tesseract::Result<String> {
-        if req == "make_error" {
-            Err(Error::described(
-                ErrorKind::Weird,
-                "intentional error for test",
-            ))
-        } else {
-            Ok(format!("{}_signed!", req))
-        }
-    }
-}
-//WALLET PART END//
 
 #[jni_fn("one.tesseract.example.wallet.RustCore")]
 pub fn rustInit(env: JNIEnv, core: JObject, loader: JObject) {
@@ -102,8 +80,12 @@ pub fn rustInit(env: JNIEnv, core: JObject, loader: JObject) {
 
     android_log::init("MyApp").unwrap();
 
+    let ui = UI::with_core(&env, core).unwrap();
+
     debug!("!!!Before Tesseract");
-    let tesseract = Tesseract::new().transport(Transport::default(&env).unwrap()).service(TestService{});
+    let tesseract = Tesseract::new()
+        .transport(Transport::default(&env).unwrap())
+        .service(TestService::new(ui));
     debug!("!!!Tesseract initialized succesfully");
     let _ = Box::leak(Box::new(tesseract));//let's keep it alive. make a field later
 
@@ -115,14 +97,4 @@ pub fn rustInit(env: JNIEnv, core: JObject, loader: JObject) {
             debug!("!!!!!@@@@@####init_res created the following error: {}", e);
         }
     }*/
-}
-
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
-    }
 }

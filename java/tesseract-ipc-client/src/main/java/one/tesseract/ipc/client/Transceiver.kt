@@ -27,6 +27,7 @@ import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
 import one.tesseract.ipc.*
+import one.tesseract.ipc.activity.ActivityMonitor
 
 sealed class TransceiverResponse
 object TransceiverResponseCanceled: TransceiverResponse()
