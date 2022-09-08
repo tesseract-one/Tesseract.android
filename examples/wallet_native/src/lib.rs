@@ -100,3 +100,17 @@ pub fn saveSignature(env: JNIEnv, core: JObject, signature: JString) {
         }
     }
 }
+
+#[jni_fn("one.tesseract.example.wallet.RustCore")]
+pub fn readSignature<'a>(env: JNIEnv<'a>, core: JObject<'a>) -> JString<'a> {
+    fn read_sig_res<'a>(env: JNIEnv<'a>, core: JObject<'a>) -> Result<JString<'a>> {
+        let core = RustCore::from_env(&env, core);
+        let provider = core.get_signature_provider()?;
+        let signature = provider.get_signature();
+        env.new_string(&signature)
+    }
+
+    read_sig_res(env, core).unwrap_or_else(|_| {
+        env.new_string("can't read signature").unwrap()
+    })
+}

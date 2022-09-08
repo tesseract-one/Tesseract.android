@@ -7,15 +7,14 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 class MainActivity : AppCompatActivity() {
-//    private val application: Application
-//        get() = this.application as Application
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         val textEditSignature = findViewById<TextView>(R.id.editTextSignature)
         val app = this.application as Application
+
+        textEditSignature.text = app.readSignature()
 
         textEditSignature.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {

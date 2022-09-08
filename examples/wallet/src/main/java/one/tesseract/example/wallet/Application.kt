@@ -9,6 +9,10 @@ class Application: android.app.Application() {
         rustCore = RustCore(this)
     }
 
+    fun readSignature(): String {
+        return rustCore.readSignature()
+    }
+
     fun saveSignature(signature: String) {
         rustCore.saveSignature(signature)
     }

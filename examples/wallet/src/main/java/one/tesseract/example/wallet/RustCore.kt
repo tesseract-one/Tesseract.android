@@ -24,6 +24,7 @@ class RustCore(public val application: Application) {
 
     private external fun rustInit(dataDir: String)
     external fun saveSignature(signature: String)
+    external fun readSignature(): String
 
 //    val channel: Channel = Channel.create("default") { data ->
 //        CompletableFuture.completedFuture(
