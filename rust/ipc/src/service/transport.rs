@@ -16,7 +16,6 @@
 
 use std::sync::Arc;
 
-use interop_android::env::AndroidEnv;
 use jni::JNIEnv;
 use jni::JavaVM;
 use jni::objects::GlobalRef;
@@ -61,8 +60,8 @@ impl Transport for IPCTransport {
 
         let channel = env.new_string(&self.channel).unwrap();
         debug!("!!!CHANNEL STRING");
-        let clazz = env.find_class_android("one/tesseract/ipc/service/Channel").unwrap();
-        debug!("!!!HAVE CHHANNEL CLASS");
+        // let clazz = env.find_class_android("one/tesseract/ipc/service/Channel").unwrap();
+        // debug!("!!!HAVE CHHANNEL CLASS");
 
         // let e = env.call_static_method(clazz, "create",
         //      "(Ljava/lang/String;Lone/tesseract/ipc/service/Processor;)Lone/tesseract/ipc/service/Channel;", 

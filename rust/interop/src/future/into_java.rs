@@ -1,4 +1,3 @@
-use std::borrow::BorrowMut;
 use std::fmt::Display;
 use std::future::Future;
 use std::task::{Wake, Context, Poll};
@@ -6,7 +5,7 @@ use std::pin::Pin;
 use std::sync::{Arc, Mutex, MutexGuard};
 
 use jni::JNIEnv;
-use jni::objects::{JObject, JThrowable, GlobalRef};
+use jni::objects::GlobalRef;
 
 use crate::contexted_global::ContextedGlobal;
 

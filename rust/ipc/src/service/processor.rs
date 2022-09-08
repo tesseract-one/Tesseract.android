@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use futures::FutureExt;
-use jni::objects::{JObject, JValue};
+use jni::objects::JObject;
 use jni::JNIEnv;
 use jni::errors::Result;
 
