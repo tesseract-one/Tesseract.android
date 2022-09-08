@@ -40,17 +40,20 @@ use tesseract::service::Tesseract;
 use tesseract_ipc_android::service::Transport;
 use tesseract_protocol_test::Test;
 
+use crate::core::RustCore;
 use crate::service::TestService;
 use crate::ui::UI;
+use crate::signature_provider::SignatureProvider;
 
 mod ui;
 mod core;
 mod service;
+mod signature_provider;
 
 
 
 #[jni_fn("one.tesseract.example.wallet.RustCore")]
-pub fn rustInit(env: JNIEnv, core: JObject, loader: JObject) {
+pub fn rustInit(env: JNIEnv, core: JObject, data_dir: JString) {
     /*fn init_res(env: JNIEnv, core: JObject, loader: JObject) -> Result<()> {
         // let core = RustCore::from_env(&env, core);
 
@@ -80,14 +83,22 @@ pub fn rustInit(env: JNIEnv, core: JObject, loader: JObject) {
 
     android_log::init("MyApp").unwrap();
 
+    let data_dir: String = env
+            .get_string(data_dir).unwrap()
+            .into();
+
     let ui = UI::with_core(&env, core).unwrap();
+    let signature_provider = Arc::new(SignatureProvider::new(&data_dir));
 
     debug!("!!!Before Tesseract");
     let tesseract = Tesseract::new()
         .transport(Transport::default(&env).unwrap())
-        .service(TestService::new(ui));
+        .service(TestService::new(ui, Arc::clone(&signature_provider)));
     debug!("!!!Tesseract initialized succesfully");
     let _ = Box::leak(Box::new(tesseract));//let's keep it alive. make a field later
+
+    let core = RustCore::from_env(&env, core);
+    core.set_signature_provider(signature_provider).unwrap();
 
     /*match init_res(env, core, loader) {
         Ok(_) => {
@@ -97,4 +108,15 @@ pub fn rustInit(env: JNIEnv, core: JObject, loader: JObject) {
             debug!("!!!!!@@@@@####init_res created the following error: {}", e);
         }
     }*/
+}
+
+#[jni_fn("one.tesseract.example.wallet.RustCore")]
+pub fn saveSignature(env: JNIEnv, core: JObject, signature: JString) {
+    let signature: String = env
+        .get_string(signature).unwrap()
+        .into();
+
+    let core = RustCore::from_env(&env, core);
+    let provider = core.get_signature_provider().unwrap();
+    provider.set_signature(&signature);
 }

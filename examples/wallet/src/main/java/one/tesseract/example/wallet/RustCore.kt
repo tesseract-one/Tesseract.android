@@ -14,14 +14,16 @@ class RustCore(public val application: Application) {
 //        }
 //    }
 
-    lateinit var launcher: Launcher
+    private val launcher: Launcher = Launcher(ActivityMonitor(application))
+
+    var signatureProvider: Long = 0
 
     init {
-        launcher = Launcher(ActivityMonitor(application))
-        rustInit(this.javaClass.classLoader)
+        rustInit(application.applicationInfo.dataDir)
     }
 
-    private external fun rustInit(loader: ClassLoader)
+    private external fun rustInit(dataDir: String)
+    external fun saveSignature(signature: String)
 
 //    val channel: Channel = Channel.create("default") { data ->
 //        CompletableFuture.completedFuture(

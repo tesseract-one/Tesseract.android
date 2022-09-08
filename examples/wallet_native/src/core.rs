@@ -14,10 +14,14 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
+use std::sync::Arc;
+
 use jni::{objects::{JObject, JValue}, JNIEnv};
 use jni::errors::Result;
 
-use interop_android::future::completion_stage::JCompletionStage;
+use interop_android::{future::completion_stage::JCompletionStage, pointer::ArcPointer};
+
+use crate::signature_provider::SignatureProvider;
 
 /// Lifetime'd representation of a `RustCore`. Just a `JObject` wrapped in a
 /// new class.
@@ -62,5 +66,25 @@ impl<'a: 'b, 'b> RustCore<'a, 'b> {
             .l()?;
 
         Ok(JCompletionStage::from_env(&self.env, stage))
+    }
+
+    pub (crate) fn get_signature_provider(&self) -> Result<Arc<SignatureProvider>> {
+        let provider_l = self
+            .env
+            .call_method(self.internal, "getSignatureProvider", "()J", &[])?
+            .j()?;
+
+        Ok(ArcPointer::of(provider_l).arc())
+    }
+
+    pub (crate) fn set_signature_provider(&self, provider: Arc<SignatureProvider>) -> Result<()> {
+        self.env
+            .call_method(
+                self.internal,
+                "setSignatureProvider",
+                "(J)V",
+                &[JValue::Long(ArcPointer::new(provider).into())],
+            )?
+            .v()
     }
 }

@@ -1,13 +1,15 @@
 package one.tesseract.example.wallet
 
 class Application: android.app.Application() {
-    companion object {
-        lateinit var rustCore: RustCore
-    }
+    lateinit var rustCore: RustCore
 
     override fun onCreate() {
         super.onCreate()
 
-        Application.rustCore = RustCore(this)
+        rustCore = RustCore(this)
+    }
+
+    fun saveSignature(signature: String) {
+        rustCore.saveSignature(signature)
     }
 }

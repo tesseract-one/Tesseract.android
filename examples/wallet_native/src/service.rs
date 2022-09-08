@@ -18,18 +18,21 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 
+use jni::signature;
 use tesseract::{Error, ErrorKind};
 use tesseract_protocol_test::Test;
 
 use super::ui::UI;
+use super::signature_provider::SignatureProvider;
 
 pub(crate) struct TestService {
-    ui: UI
+    ui: UI,
+    signature_provider: Arc<SignatureProvider>
 }
 
 impl TestService {
-    pub fn new(ui: UI) -> Self {
-        Self { ui: ui }
+    pub fn new(ui: UI, signature_provider: Arc<SignatureProvider>) -> Self {
+        Self { ui: ui, signature_provider: signature_provider }
     }
 }
 
@@ -59,7 +62,8 @@ impl tesseract_protocol_test::TestService for TestService {
                     "intentional error for test",
                 ))
             } else {
-                Ok(format!("{}_signed!", req))
+                let signature = self.signature_provider.get_signature();
+                Ok(format!("{}{}", req, signature))
             }
         } else {
             Err(tesseract::Error::kinded(tesseract::ErrorKind::Cancelled))
