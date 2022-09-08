@@ -13,7 +13,7 @@
         <activity
             android:name=".SignActivity"
             android:exported="false"
-            android:label="Wallet"/>
+            android:label="Wallet" />
         <activity
             android:name="one.tesseract.ipc.service.TesseractActivity"
             android:exported="true"
