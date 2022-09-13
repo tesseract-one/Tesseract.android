@@ -21,7 +21,6 @@ use async_trait::async_trait;
 
 use futures::lock::Mutex;
 
-use interop_android::env::AndroidEnv;
 use tesseract::{Error, ErrorKind, Result};
 use tesseract::client::Connection;
 

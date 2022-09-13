@@ -18,7 +18,6 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 
-use jni::signature;
 use tesseract::{Error, ErrorKind};
 use tesseract_protocol_test::Test;
 
@@ -68,25 +67,5 @@ impl tesseract_protocol_test::TestService for TestService {
         } else {
             Err(tesseract::Error::kinded(tesseract::ErrorKind::Cancelled))
         }
-
-        // let allow = self.core.do_in_context_rret(64, |env, core| {
-        //     let core = RustCore::from_env(&env, core);
-
-        //     let stage = core.request_user_confirmation(req);
-        //     Ok(JFuture::from_stage_result(stage))
-        //     // if req == "make_error" {
-        //     //     Err(Error::described(
-        //     //         ErrorKind::Weird,
-        //     //         "intentional error for test",
-        //     //     ))
-        //     // } else {
-        //     //     Ok(format!("{}_signed!", req))
-        //     // }
-            
-        // }).unwrap().await;
-
-        //let allow.await
-
-        //Ok(format!("{}_signed!", req))
     }
 }

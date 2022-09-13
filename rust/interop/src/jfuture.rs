@@ -21,8 +21,6 @@ use std::sync::Arc;
 use std::sync::Mutex;
 use std::task::{Context, Poll};
 
-use crate::env::AndroidEnv;
-
 use super::future::completion_stage::JCompletionStage;
 use super::contexted_global::ContextedGlobal;
 

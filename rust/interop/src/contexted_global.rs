@@ -41,13 +41,15 @@ impl ContextedGlobal {
         Ok((self.guard.0.get_env()?, self.guard.1.as_obj()))
     }
 
-    pub fn do_in_context_jret<'a, F>(&'a self, capacity: i32, f: F) -> Result<JObject<'a>>
-        where F: FnOnce(JNIEnv, JObject) -> Result<JObject<'a>>,
+    pub fn do_in_context_jret<'a: 'b, 'b, F>(&'a self, capacity: i32, f: F) -> Result<ContextedGlobal>
+        where F: 'b + FnOnce(JNIEnv<'b>, JObject<'b>) -> Result<JObject<'b>>,
     {
         let (env, object) = self.local_env()?;
-        env.with_local_frame(capacity, || {
+        let local = env.with_local_frame(capacity, || {
             f(env, object)
-        })
+        })?;
+
+        Self::from_local(&env, local)
     }
 
     pub fn do_in_context_rret<F, R>(&self, capacity: i32, f: F) -> Result<R>
