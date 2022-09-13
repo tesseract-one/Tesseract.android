@@ -42,7 +42,7 @@ impl ContextedGlobal {
     }
 
     pub fn do_in_context_jret<'a, F>(&'a self, capacity: i32, f: F) -> Result<JObject<'a>>
-        where F: FnOnce(JNIEnv, JObject) -> Result<JObject<'a>>,
+        where F: FnOnce(JNIEnv<'a>, JObject<'a>) -> Result<JObject<'a>>,
     {
         let (env, object) = self.local_env()?;
         env.with_local_frame(capacity, || {
