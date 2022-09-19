@@ -10,3 +10,7 @@ plugins {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+allprojects {
+    group 'one.tesseract.android'
+}
