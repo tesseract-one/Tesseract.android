@@ -3,14 +3,24 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+def DEFAULT_COMPILE_SDK_VERSION = 32
+def DEFAULT_MIN_SDK_VERSION = 21
+def DEFAULT_TARGET_SDK_VERSION = 32
+def DEFAULT_NDK_VERSION = '24.0.8215888'
+def DEFAULT_RUST_NDK_TARGETS = ["arm", "x86", "arm64", "x86_64"]
+
+def getBuildProperty(prop, fallback) {
+    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+}
+
 android {
-    compileSdk 32
-    ndkVersion "24.0.8215888"
+    compileSdk getBuildProperty('compileSdkVersion', DEFAULT_COMPILE_SDK_VERSION)
+    ndkVersion getBuildProperty('ndkVersion', DEFAULT_NDK_VERSION)
 
     defaultConfig {
         applicationId "one.tesseract.example.app"
-        minSdk 21
-        targetSdk 32
+        minSdk getBuildProperty('minSdkVersion', DEFAULT_MIN_SDK_VERSION)
+        targetSdk getBuildProperty('targetSdkVersion', DEFAULT_TARGET_SDK_VERSION)
         versionCode 1
         versionName "1.0"
 
@@ -46,7 +56,7 @@ tasks.whenTaskAdded { task ->
 cargo {
     module  = "../app_native"       // Or whatever directory contains your Cargo.toml
     libname = "app"          // Or whatever matches Cargo.toml's [package] name.
-    targets = ["arm", "x86", "arm64", "x86_64"]  // See bellow for a longer list of options
+    targets = getBuildProperty('rustNdkTargets', DEFAULT_RUST_NDK_TARGETS)  // See bellow for a longer list of options
     targetDirectory = '../../target'
 }
 
