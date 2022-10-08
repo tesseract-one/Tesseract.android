@@ -22,6 +22,7 @@ use jni::errors::Result;
 use jni::objects::JObject;
 use jni::JNIEnv;
 
+use tesseract::Protocol;
 use tesseract::client::transport::Status;
 use tesseract::client::{Connection, Transport};
 
@@ -53,9 +54,9 @@ impl Transport for TransportIPCAndroid {
         Self::ID.to_owned()
     }
 
-    async fn status(self: Arc<Self>) -> Status {
+    async fn status(self: Arc<Self>, protocol: Box<dyn Protocol>) -> Status {
         match &self.transceiver {
-            Ok(_) => Status::Ready,
+            Ok(_) => Status::Ready, //TODO: check for wallets with compatible protocol
             Err(error) => {
                 let reason = format!(
                     "IPC transport is unavailable due to some JNI error: {}",
@@ -66,9 +67,9 @@ impl Transport for TransportIPCAndroid {
         }
     }
 
-    fn connect(&self) -> Box<dyn Connection + Sync + Send> {
+    fn connect(&self, protocol: Box<dyn Protocol>) -> Box<dyn Connection + Sync + Send> {
         match &self.transceiver {
-            Ok(transceiver) => Box::new(TransportIPCAndroidConnection::new(transceiver.clone())),
+            Ok(transceiver) => Box::new(TransportIPCAndroidConnection::new(transceiver.clone(), protocol)),
             Err(error) => {
                 debug!("Android IPC transport returned that it's not ready. Please, don't ignore.\nDescription: {}", error);
                 //panic is not ideal, but effective ;) in the future we might change the APIs so that the connect method generates an error

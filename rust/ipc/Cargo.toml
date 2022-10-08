@@ -21,4 +21,4 @@ futures = "0.3.21"
 
 async-trait = {version="0.1", optional=true}
 interop_android = { path = "../interop" }
-tesseract = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="restructure"}
+tesseract = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="master"}

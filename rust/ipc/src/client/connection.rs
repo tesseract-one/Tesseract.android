@@ -21,7 +21,7 @@ use async_trait::async_trait;
 
 use futures::lock::Mutex;
 
-use tesseract::{Error, ErrorKind, Result};
+use tesseract::{Error, ErrorKind, Result, Protocol};
 use tesseract::client::Connection;
 
 use interop_android::ContextedGlobal;
@@ -32,13 +32,15 @@ use super::transceiver::Transceiver;
 pub struct TransportIPCAndroidConnection {
     transceiver: ContextedGlobal,
     responses: Mutex<LinkedList<Response>>,
+    protocol: Box<dyn Protocol>
 }
 
 impl TransportIPCAndroidConnection {
-    pub fn new(transceiver: ContextedGlobal) -> Self {
+    pub fn new(transceiver: ContextedGlobal, protocol: Box<dyn Protocol>) -> Self {
         Self {
             transceiver: transceiver,
             responses: Mutex::new(LinkedList::new()),
+            protocol: protocol
         }
     }
 
