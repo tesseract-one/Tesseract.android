@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
-import one.tesseract.ipc.activity.ActivityMonitor
 import one.tesseract.ipc.activity.free.Launcher
 
 import one.tesseract.ipc.activity.free.finishFreeActivity
@@ -15,7 +14,6 @@ class SignActivity : AppCompatActivity() {
         const val TRANSACTION = "transaction"
 
         fun requestUserConfirmation(launcher: Launcher, transaction: String): CompletionStage<Boolean> {
-            //val launcher = Launcher(ActivityMonitor(application))
             val bundle = Bundle()
             bundle.putString(TRANSACTION, transaction)
             return launcher.startFreeActivityForResult<Boolean>(SignActivity::class.java, bundle).thenApply {

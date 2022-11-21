@@ -1,21 +1,15 @@
 package one.tesseract.example.wallet
 
-import android.os.Bundle
 import one.tesseract.ipc.activity.ActivityMonitor
 import one.tesseract.ipc.activity.free.Launcher
 import java.util.concurrent.CompletionStage
 
-class RustCore(public val application: Application) {
-//    val processor: Processor = object : Processor {
-//        override fun process(data: ByteArray): CompletionStage<ByteArray> {
-//            return CompletableFuture.completedFuture(
-//                "json{\"id\":1,\"response\":{\"status\":\"ok\",\"signed\":\"testTransaction_signed!\"}}".toByteArray()
-//            )
-//        }
-//    }
-
+//suppressing because of rust interop
+@Suppress("unused", "CanBeParameter")
+class RustCore(/*Keep as it's called in RustCore*/ private val application: Application) {
     private val launcher: Launcher = Launcher(ActivityMonitor(application))
 
+    //Keep as it's called in RustCore
     var signatureProvider: Long = 0
 
     init {
@@ -26,13 +20,8 @@ class RustCore(public val application: Application) {
     external fun saveSignature(signature: String)
     external fun readSignature(): String
 
-//    val channel: Channel = Channel.create("default") { data ->
-//        CompletableFuture.completedFuture(
-//            "json{\"id\":1,\"response\":{\"status\":\"ok\",\"signed\":\"testTransaction_signed!\"}}".toByteArray()
-//        )
-//    }
-
-    fun requestUserConfirmation(transaction: String): CompletionStage<Boolean> {
+    //Keep as it's called in RustCore
+    private fun requestUserConfirmation(transaction: String): CompletionStage<Boolean> {
         return SignActivity.requestUserConfirmation(launcher, transaction)
     }
 

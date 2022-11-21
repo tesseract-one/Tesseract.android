@@ -18,14 +18,16 @@
 extern crate log;
 extern crate android_log;
 
+mod core;
+
 use std::sync::Arc;
 
 use futures::Future;
 use futures::future::FutureExt;
-use futures::executor::{ThreadPool, ThreadPoolBuilder};
+use futures::executor::ThreadPoolBuilder;
 
 use jni::{JNIEnv, JavaVM};
-use jni::objects::{GlobalRef, JObject, JString, JValue};
+use jni::objects::{GlobalRef, JObject, JString};
 use jni::errors::Result;
 
 use jni_fn::jni_fn;
@@ -34,7 +36,6 @@ use interop_android::JFuture;
 use interop_android::future::completion_stage::JCompletionStage;
 use interop_android::future::into_java::FutureJava;
 use interop_android::thread_pool::AndroidThreadPoolBuilder;
-use interop_android::pointer::ArcPointer;
 
 use tesseract::client::Service;
 use tesseract::client::Tesseract;
@@ -45,87 +46,7 @@ use tesseract_ipc_android::client::TransportIPCAndroid;
 use tesseract_protocol_test::Test;
 use tesseract_protocol_test::TestService;
 
-/// Lifetime'd representation of a `RustCore`. Just a `JObject` wrapped in a
-/// new class.
-#[derive(Clone, Copy)]
-pub struct RustCore<'a: 'b, 'b> {
-    internal: JObject<'a>,
-    env: &'b JNIEnv<'a>,
-}
-
-impl<'a: 'b, 'b> ::std::ops::Deref for RustCore<'a, 'b> {
-    type Target = JObject<'a>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.internal
-    }
-}
-
-impl<'a: 'b, 'b> From<RustCore<'a, 'b>> for JObject<'a> {
-    fn from(other: RustCore<'a, 'b>) -> JObject<'a> {
-        other.internal
-    }
-}
-
-impl<'a: 'b, 'b> RustCore<'a, 'b> {
-    fn from_env(env: &'b JNIEnv<'a>, obj: JObject<'a>) -> RustCore<'a, 'b> {
-        RustCore {
-            internal: obj,
-            env: env,
-        }
-    }
-
-    fn get_application(&self) -> Result<JObject> {
-        self.env
-            .call_method(
-                self.internal,
-                "getApplication",
-                "()Lone/tesseract/example/app/Application;",
-                &[],
-            )?
-            .l()
-    }
-
-    fn get_service(&self) -> Result<Arc<dyn Service<Protocol = Test>>> {
-        let service_l = self
-            .env
-            .call_method(self.internal, "getService", "()J", &[])?
-            .j()?;
-
-        Ok(ArcPointer::of(service_l).arc())
-    }
-
-    fn set_service(&self, service: Arc<dyn Service<Protocol = Test>>) -> Result<()> {
-        self.env
-            .call_method(
-                self.internal,
-                "setService",
-                "(J)V",
-                &[JValue::Long(ArcPointer::new(service).into())],
-            )?
-            .v()
-    }
-
-    fn get_executor(&self) -> Result<&mut ThreadPool> {
-        let tpl = self
-            .env
-            .call_method(self.internal, "getExecutor", "()J", &[])?
-            .j()?;
-
-        let tpr = tpl as *mut ThreadPool;
-        let tp = Box::leak(unsafe { Box::from_raw(tpr) });
-
-        Ok(tp)
-    }
-
-    fn set_executor(&self, tp: ThreadPool) -> Result<()> {
-        let tpl = Box::into_raw(Box::new(tp)) as *const () as i64;
-
-        self.env
-            .call_method(self.internal, "setExecutor", "(J)V", &[JValue::Long(tpl)])?
-            .v()
-    }
-}
+use crate::core::RustCore;
 
 #[jni_fn("one.tesseract.example.app.RustCore")]
 pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) {

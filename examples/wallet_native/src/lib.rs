@@ -14,9 +14,6 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-//#![feature(proc_macro_is_available)]
-//#![feature(once_cell)]
-
 #[macro_use]
 extern crate log;
 extern crate android_log;
