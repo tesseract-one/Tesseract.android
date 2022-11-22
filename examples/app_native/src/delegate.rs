@@ -4,11 +4,15 @@ use async_trait::async_trait;
 
 use tesseract::client::{Delegate, transport::Status};
 
-pub struct TransportDelegate {}
+use crate::application::Application;
+
+pub (crate) struct TransportDelegate {
+    application: Application
+}
 
 impl TransportDelegate {
-    pub fn arc() -> Arc<Self> {
-        Arc::new(Self {})
+    pub (crate) fn arc(application: Application) -> Arc<Self> {
+        Arc::new(Self {application: application})
     }
 }
 
@@ -26,11 +30,11 @@ impl Delegate for TransportDelegate {
         match status {
             Status::Ready => Some(tid),
             Status::Unavailable(reason) => {
-                debug!("Transport '{}' is not available, because of: {}", tid, reason);
+                self.application.show_alert(&format!("Transport '{}' is not available because of the following reason: {}", tid, reason)).unwrap();
                 None
             },
             Status::Error(e) => {
-                debug!("Transport '{}' is not available, because the transport produced an error: {}", tid, e.to_string());
+                self.application.show_alert(&format!("Transport '{}' is not available because the transport produced an error: {}", tid, e.to_string())).unwrap();
                 None
             },
         }

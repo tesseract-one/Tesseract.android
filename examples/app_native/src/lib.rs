@@ -20,6 +20,7 @@ extern crate android_log;
 
 mod core;
 mod delegate;
+mod application;
 
 use std::sync::Arc;
 
@@ -44,6 +45,7 @@ use tesseract_ipc_android::client::TransportIPCAndroid;
 
 use tesseract_protocol_test::{Test, TestService};
 
+use crate::application::Application;
 use crate::core::RustCore;
 use crate::delegate::TransportDelegate;
 
@@ -56,7 +58,9 @@ pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) {
 
         let application = core.get_application()?;
 
-        let tesseract = Tesseract::new(TransportDelegate::arc())
+        let tesseract = Tesseract::new(
+                TransportDelegate::arc(
+                    Application::from_env(&env, application)?))
             .transport(TransportIPCAndroid::new(&env, application));
 
         let service: Arc<dyn Service<Protocol = Test>> =

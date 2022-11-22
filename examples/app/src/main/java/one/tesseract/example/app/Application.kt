@@ -16,10 +16,23 @@
 
 package one.tesseract.example.app
 
+import android.app.AlertDialog
+import one.tesseract.ipc.activity.ActivityMonitor
+
 class Application: android.app.Application() {
     lateinit var rustCore: RustCore
+    private lateinit var monitor: ActivityMonitor
+
+    @Suppress("unused") //because it's used from rust
+    fun showAlert(message: String) {
+        AlertDialog.Builder(monitor.activity).setMessage(message).setPositiveButton(android.R.string.ok
+        ) { dialog, _ ->
+            dialog.dismiss()
+        }.create().show()
+    }
 
     override fun onCreate() {
+        monitor = ActivityMonitor(this)
         rustCore = RustCore(this)
 
         super.onCreate()
