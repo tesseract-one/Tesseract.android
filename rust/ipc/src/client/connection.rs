@@ -48,7 +48,7 @@ impl TransportIPCAndroidConnection {
         let data = {
             let result = self.transceiver.do_in_context_rret(64, |env, tran| {
                 let transceiver = Transceiver::from_env(&env, tran);
-                let result = transceiver.transceive(&request);
+                let result = transceiver.transceive(&request, &self.protocol.id());
                 Ok(result)
             })?;
             //yes, it doesn't work shorthand - fucking rust

@@ -64,24 +64,55 @@ impl<'a: 'b, 'b> Transceiver<'a, 'b> {
         }
     }
 
-    pub fn transceive(&self, data: &[u8]) -> JFuture {
+    pub fn ping(&self, protocol: &str) -> bool {
+        fn _ping<'a: 'b, 'b>(
+            env: &'b JNIEnv<'a>,
+            transceiver: JObject<'a>,
+            protocol: &str,
+        ) -> Result<bool> {
+            let jproto = env.new_string(protocol)?;
+
+            let pinging = env
+                .call_method(
+                    transceiver,
+                    "ping",
+                    "(Ljava/lang/String;)Z",
+                    &[jproto.into()],
+                )?
+                .z()?;
+
+            Ok(pinging)
+        }
+
+        let result = _ping(self.env, self.internal, protocol);
+
+        result.unwrap_or_else(|e| {
+            debug!("Pinging wallet returned an error.\nDescription: {}", e);
+            false
+        })
+    }
+
+    pub fn transceive(&self, data: &[u8], protocol: &str) -> JFuture {
         fn _transceive<'a: 'b, 'b>(
             env: &'b JNIEnv<'a>,
             transceiver: JObject<'a>,
-            data: &[u8],
+            data: &[u8], protocol: &str,
         ) -> Result<JCompletionStage<'a, 'b>> {
             let data = env.byte_array_from_slice(data)?;
+
+            let jproto = env.new_string(protocol)?;
+
             let raw = env
                 .call_method(
                     transceiver,
                     "transceive",
-                    "([B)Ljava/util/concurrent/CompletionStage;",
-                    &[data.into()],
+                    "([BLjava/lang/String;)Ljava/util/concurrent/CompletionStage;",
+                    &[data.into(), jproto.into()],
                 )?
                 .l()?;
             Ok(JCompletionStage::from_env(env, raw))
         }
 
-        JFuture::from_stage_result(_transceive(self.env, self.internal, data))
+        JFuture::from_stage_result(_transceive(self.env, self.internal, data, protocol))
     }
 }

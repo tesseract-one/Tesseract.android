@@ -51,15 +51,7 @@ class TesseractActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val data = intent.extras
-            ?: throw RuntimeException("Invalid API usage of Tesseract Activity")
-
-        val intent = Intent()
-        intent.action = "one.tesseract.CALL"
-        intent.putExtras(data)
-        //intent.addCategory("")
-        //intent.ca
-        //intent.type = "text/plain"
+        val intent = intent.convertToCall()
 
         startActivityForResult(intent, reqCode)
     }

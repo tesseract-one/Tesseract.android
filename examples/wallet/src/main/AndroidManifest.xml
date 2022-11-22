@@ -22,7 +22,7 @@
                 <action android:name="one.tesseract.CALL" />
 
                 <category android:name="android.intent.category.DEFAULT" />
-                <!-- data android:mimeType="text/plain"/ -->
+                <data android:mimeType="tesseract/test"/>
             </intent-filter>
 
             <meta-data

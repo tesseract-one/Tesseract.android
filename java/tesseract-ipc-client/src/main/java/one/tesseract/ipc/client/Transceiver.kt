@@ -21,6 +21,7 @@ import android.app.Application
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.RequiresApi
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -65,20 +66,31 @@ object TransceiverRegistry {
 class TransceiverException(message:String): Exception(message)
 
 class Transceiver(val activityMonitor: ActivityMonitor) {
+    @RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     public constructor(application: Application): this(ActivityMonitor(application)) {
     }
 
-    private fun sendThroughActivity(bundle: Bundle) {
+    @RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
+    private fun sendThroughActivity(bundle: Bundle, protocol: String) {
         val activity = activityMonitor.activity
 
-        var intent = Intent(activity.applicationContext, TesseractActivity::class.java)
-        intent.putExtras(bundle)
+        var intent = IntentFactory.internal(activity.applicationContext, bundle, protocol)
 
         activity.startActivity(intent)
     }
 
+    //returns true if a wallet with such a protocol exists
+    @RequiresApi(Build.VERSION_CODES.N)
+    fun ping(protocol: String): Boolean {
+        val activity = activityMonitor.activity
+
+        val intent = IntentFactory.callWithProtocol(null, protocol)
+
+        return intent.resolveActivity(activity.packageManager) != null
+    }
+
     @RequiresApi(Build.VERSION_CODES.S)
-    fun transceive(data: ByteArray): CompletionStage<TransceiverResponse> {
+    fun transceive(data: ByteArray, protocol: String): CompletionStage<TransceiverResponse> {
         val id = UUID.randomUUID().toString()
 
         val bundle = RequestBundle(id, data)
@@ -87,7 +99,8 @@ class Transceiver(val activityMonitor: ActivityMonitor) {
 
         TransceiverRegistry.register(id, resultWithCode)
 
-        sendThroughActivity(bundle)
+        //TODO: check again before sending?
+        sendThroughActivity(bundle, protocol)
 
         return resultWithCode.thenCompose { it ->
             val (code, bundle) = it

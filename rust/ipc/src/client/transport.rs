@@ -56,8 +56,27 @@ impl Transport for TransportIPCAndroid {
 
     async fn status(self: Arc<Self>, protocol: Box<dyn Protocol>) -> Status {
         match &self.transceiver {
-            Ok(_) => Status::Ready, //TODO: check for wallets with compatible protocol
-            Err(error) => {
+            Ok(transceiver) => {
+                let result = transceiver.do_in_context_rret(10, |env, transceiver| {
+                    let transceiver = Transceiver::from_env(&env, transceiver);
+                    let available = transceiver.ping(&protocol.id());
+                    Ok(available)
+                });
+
+                match result {
+                    Ok(available) => {
+                        if available {
+                            Status::Ready
+                        } else {
+                            Status::Unavailable(format!("No wallet implementing '{}' protocol found installed on your device", protocol.id()))
+                        }
+                    },
+                    Err(error) => {
+                        Status::Error(Box::new(error))
+                    }
+                }
+            },
+            Err(error) => { //TODO: change to Status::Error some day
                 let reason = format!(
                     "IPC transport is unavailable due to some JNI error: {}",
                     error
