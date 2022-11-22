@@ -29,13 +29,13 @@ import one.tesseract.ipc.*
 
 class TesseractActivity : Activity() {
     private companion object Randomizer {
-        val _random: Random = Random(System.currentTimeMillis())
+        val random: Random = Random(System.currentTimeMillis())
 
         fun random(): Int {
-            synchronized(_random) {
+            synchronized(random) {
                 var res = -1
                 while (res < 1) {
-                    res = _random.nextInt()
+                    res = random.nextInt()
                 }
                 return res
             }
