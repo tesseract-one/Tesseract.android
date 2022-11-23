@@ -1,24 +1,22 @@
 package one.tesseract.ipc.service
 
-import android.os.Bundle
 import java.util.*
 import java.util.concurrent.CompletionStage
-
-//import one.tesseract.ipc.*
 
 typealias FnListen = (ByteArray) -> CompletionStage<ByteArray>
 
 //TODO: make private later
-public class Channel private constructor(val id: String) {
+class Channel private constructor(private val id: String) {
     companion object {
-        public const val DEFAULT = "default"
+        @Suppress("unused")
+        private const val DEFAULT = "default"
 
-        var channels = WeakHashMap<Channel, FnListen>()
+        private var channels = WeakHashMap<Channel, FnListen>()
 
         private fun byId(id: String): FnListen? = synchronized(channels) { channels[Channel(id)] }
 
-        //create one here and keep until needed. It's going to be freed once gced
-        public fun create(id: String, listen: FnListen): Channel {
+        //create one here and keep until needed. It's going to be freed once garbage collected
+        fun create(id: String, listen: FnListen): Channel {
             val channel = Channel(id)
             synchronized(channels) {
                 if (channels.containsKey(channel)) {
@@ -31,7 +29,7 @@ public class Channel private constructor(val id: String) {
         }
 
         //send data to the channel
-        public fun send(id: String, data: ByteArray): CompletionStage<ByteArray>? {
+        fun send(id: String, data: ByteArray): CompletionStage<ByteArray>? {
             val listen = byId(id)
             return listen?.invoke(data)
         }

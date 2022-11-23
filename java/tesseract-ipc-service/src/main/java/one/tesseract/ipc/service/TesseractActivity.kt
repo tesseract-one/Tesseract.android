@@ -5,7 +5,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.annotation.RequiresApi
 
 import one.tesseract.ipc.*;
@@ -17,7 +16,7 @@ class TesseractActivity : Activity() {
 
     private fun channelId(): String {
         val ai = this.packageManager.getActivityInfo(
-            this.getComponentName(),
+            this.componentName,
             PackageManager.GET_ACTIVITIES.or(PackageManager.GET_META_DATA)
         )
 
@@ -43,7 +42,7 @@ class TesseractActivity : Activity() {
             Channel.send(channelId, data)
                 ?: throw RuntimeException("No channel '$channelId' found")
 
-        response.whenComplete { r, e ->
+        response.whenComplete { r, _ ->
             val bundle = Bundle(2)
             bundle.rx = r
             bundle.id = id
@@ -57,26 +56,5 @@ class TesseractActivity : Activity() {
 
             finish()
         }
-
-//        channel.whenComplete { data, error ->
-//            run {
-//        val intent = Intent()
-//        intent.action = "one.tesseract.REPLY"
-//
-//        Log.v("TEST", "before $data")
-//
-//        val bundle = {
-//            val data =
-//                "json{\"id\":1,\"response\":{\"status\":\"ok\",\"signed\":\"testTransaction_signed!\"}}".toByteArray();
-//            val bundle = Bundle(2)
-//            bundle.rx = data
-//            bundle.id = id
-//            bundle
-//        }()
-
-
-//            }
-//        }
-        }
     }
-//}
+}
