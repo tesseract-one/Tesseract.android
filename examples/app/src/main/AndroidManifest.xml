@@ -29,14 +29,13 @@
             android:name="one.tesseract.ipc.client.TesseractActivity"
             android:exported="false"
             android:label="Tesseract">
-
-            <!--
-            intent-filter>
-                <action android:name="tesseract.one.CLIENT" />
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter
-            -->
         </activity>
     </application>
-
+    <queries>
+        <intent>
+            <action android:name="one.tesseract.CALL" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <data android:mimeType="tesseract/*" />
+        </intent>
+    </queries>
 </manifest>
