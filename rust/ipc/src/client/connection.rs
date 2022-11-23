@@ -54,7 +54,7 @@ impl TransportIPCAndroidConnection {
             //yes, it doesn't work shorthand - fucking rust
             result
         }
-        .await?; //TODO: convert error
+        .await?;
 
         let response = {
             data.do_in_context_rret(64, |env, response| {

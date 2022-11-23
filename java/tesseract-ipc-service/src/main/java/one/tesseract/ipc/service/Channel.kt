@@ -5,7 +5,6 @@ import java.util.concurrent.CompletionStage
 
 typealias FnListen = (ByteArray) -> CompletionStage<ByteArray>
 
-//TODO: make private later
 class Channel private constructor(private val id: String) {
     companion object {
         @Suppress("unused")
