@@ -26,6 +26,7 @@ object Registry {
 
     @RequiresApi(Build.VERSION_CODES.N)
     fun <T> resolve(id: String, reply: Pair<Int, T>) {
+        @Suppress("UNCHECKED_CAST") //yes, it's how it should be
         val resolver = synchronized(resolvers) {
             resolvers.remove(id)
                 ?: throw RuntimeException("No resolver for ID. Please, report the bug")

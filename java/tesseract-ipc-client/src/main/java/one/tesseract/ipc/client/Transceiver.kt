@@ -18,10 +18,8 @@ package one.tesseract.ipc.client
 
 import android.app.Activity
 import android.app.Application
-import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.annotation.RequiresApi
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -32,8 +30,8 @@ import one.tesseract.ipc.activity.ActivityMonitor
 
 sealed class TransceiverResponse
 object TransceiverResponseCanceled: TransceiverResponse()
-class TransceiverResponseOk(val data: ByteArray): TransceiverResponse()
-class TransceiverResponseError(val exception: TransceiverException): TransceiverResponse()
+class TransceiverResponseOk(@Suppress("unused") val data: ByteArray): TransceiverResponse()
+//class TransceiverResponseError(val exception: TransceiverException): TransceiverResponse()
 
 object TransceiverRegistry {
     //<ID, <ACTIVITY_RESULT, DATA>>
@@ -65,16 +63,16 @@ object TransceiverRegistry {
 
 class TransceiverException(message:String): Exception(message)
 
-class Transceiver(val activityMonitor: ActivityMonitor) {
+@Suppress("unused") //used in rust
+class Transceiver(private val activityMonitor: ActivityMonitor) {
     @RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-    public constructor(application: Application): this(ActivityMonitor(application)) {
-    }
+    constructor(application: Application): this(ActivityMonitor(application))
 
     @RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
     private fun sendThroughActivity(bundle: Bundle, protocol: String) {
         val activity = activityMonitor.activity
 
-        var intent = IntentFactory.internal(activity.applicationContext, bundle, protocol)
+        val intent = IntentFactory.internal(activity.applicationContext, bundle, protocol)
 
         activity.startActivity(intent)
     }
@@ -89,6 +87,7 @@ class Transceiver(val activityMonitor: ActivityMonitor) {
         return intent.resolveActivity(activity.packageManager) != null
     }
 
+    @Suppress("unused", "SpellCheckingInspection", "NAME_SHADOWING") //used from rust
     @RequiresApi(Build.VERSION_CODES.S)
     fun transceive(data: ByteArray, protocol: String): CompletionStage<TransceiverResponse> {
         val id = UUID.randomUUID().toString()
@@ -99,16 +98,15 @@ class Transceiver(val activityMonitor: ActivityMonitor) {
 
         TransceiverRegistry.register(id, resultWithCode)
 
-        //TODO: check again before sending?
         sendThroughActivity(bundle, protocol)
 
-        return resultWithCode.thenCompose { it ->
-            val (code, bundle) = it
+        return resultWithCode.thenCompose { response ->
+            val (code, bundle) = response
             when (code) {
                 Activity.RESULT_OK -> {
                     val rx = bundle.rx
                     if (rx == null) {
-                        CompletableFuture.failedStage<TransceiverResponse>(TransceiverException("No data"))
+                        CompletableFuture.failedStage(TransceiverException("No data"))
                     } else {
                         CompletableFuture.completedFuture(TransceiverResponseOk(rx))
                     }
@@ -117,7 +115,7 @@ class Transceiver(val activityMonitor: ActivityMonitor) {
                     CompletableFuture.completedFuture(TransceiverResponseCanceled)
                 }
                 else -> {
-                    CompletableFuture.failedStage<TransceiverResponse>(TransceiverException("Unknown code"))
+                    CompletableFuture.failedStage(TransceiverException("Unknown code"))
                 }
             }
         }

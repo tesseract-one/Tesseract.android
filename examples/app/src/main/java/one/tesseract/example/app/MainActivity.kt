@@ -32,7 +32,11 @@ class MainActivity : AppCompatActivity() {
 
         buttonSign.setOnClickListener {
             signTransaction().whenComplete { result, error ->
-                signatureText.text = result
+                if (error != null) {
+                    signatureText.text = error.toString()
+                } else {
+                    signatureText.text = result
+                }
             }
         }
 

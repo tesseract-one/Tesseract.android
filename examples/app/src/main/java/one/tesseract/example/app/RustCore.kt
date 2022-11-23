@@ -29,7 +29,7 @@ class RustCore(public val application: Application) {
     var executor: Long = 0
 
     init {
-        rustInit(this.javaClass.classLoader)
+        this.javaClass.classLoader?.let { rustInit(it) }
     }
 
     private external fun rustInit(loader: ClassLoader)

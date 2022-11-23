@@ -20,7 +20,7 @@ class TesseractActivity : Activity() {
             PackageManager.GET_ACTIVITIES.or(PackageManager.GET_META_DATA)
         )
 
-        val metaData: Bundle = ai.metaData
+        val metaData: Bundle? = ai.metaData
         return if (metaData == null) {
             DEFAULT_CHANNEL
         } else {
