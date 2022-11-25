@@ -25,8 +25,9 @@ impl<T: ?Sized> ArcPointer<T> {
         Arc::clone(arc)
     }
 
-    pub fn destroy(self) {
+    pub fn destroy(mut self) {
         let p = self.long as *mut Arc<T>;
+        self.long = 0;
          let b = unsafe{Box::from_raw(p)};
          drop(b);
     }

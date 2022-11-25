@@ -50,14 +50,24 @@ impl<'a: 'b, 'b> JProcessor<'a, 'b> {
         Ok(Self::from_env(env, obj))
     }
 
-    fn processor(&self) -> Result<Arc<dyn TransportProcessor + Send + Sync>> {
-        let processor_l = self
-            .env
+    fn processor_l(&self) -> Result<i64> {
+        self.env
             .call_method(self.internal, "getNative", "()J", &[])?
-            .j()?;
+            .j()
+    }
 
-        
+    fn processor(&self) -> Result<Arc<dyn TransportProcessor + Send + Sync>> {
+        let processor_l = self.processor_l()?;
+
         Ok(ArcPointer::of(processor_l).arc())
+    }
+
+    fn destroy_rust(&self) -> Result<()> {
+        let processor_l = self.processor_l()?;
+
+        let arcp:ArcPointer<dyn TransportProcessor + Send + Sync> = ArcPointer::of(processor_l);
+
+        Ok(arcp.destroy())
     }
 }
 
@@ -82,4 +92,13 @@ pub fn process<'a>(env: JNIEnv<'a>, jprocessor: JObject<'a>, data: jni::sys::jby
     });
 
     *f.into_java(&env)
+}
+
+#[jni_fn("one.tesseract.ipc.service.TransportProcessor")]
+pub fn finalize(env: JNIEnv, jprocessor: JObject) {
+    let jprocessor = JProcessor::from_env(&env, jprocessor);
+
+    jprocessor.destroy_rust().unwrap();
+
+    debug!("!!!!drop jprocessor");
 }

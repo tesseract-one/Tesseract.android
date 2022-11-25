@@ -16,10 +16,11 @@ fun Channel.Companion.create(id: String, processor: Processor): Channel {
     return create(id, processor.listener())
 }
 
-//TODO: do finalize
 class TransportProcessor(val native: Long) : Processor {
     external override fun process(data: ByteArray): CompletionStage<ByteArray>
 
     @Suppress("unused") //used from Rust
     fun createChannel(id: String): Channel = Channel.Companion.create(id, this)
+
+    protected external fun finalize()
 }
