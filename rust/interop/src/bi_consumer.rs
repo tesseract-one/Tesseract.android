@@ -16,6 +16,7 @@
 
 use jni::objects::{JObject, JValue};
 use jni::JNIEnv;
+use jni::errors::Result;
 
 use jni_fn::jni_fn;
 
@@ -43,21 +44,19 @@ impl<'a: 'b, 'b> From<RBiConsumer<'a, 'b>> for JObject<'a> {
 
 impl<'a: 'b, 'b> RBiConsumer<'a, 'b> {
     //TODO: mark F with Send or something
-    pub fn new<'o, F: FnMut(JNIEnv, JObject<'o>, JObject) + Send + 'static>(env: &'b JNIEnv<'a>, f: F) -> Self {
+    pub fn new<'o, F: FnMut(JNIEnv, JObject<'o>, JObject) + Send + 'static>(env: &'b JNIEnv<'a>, f: F) -> Result<Self> {
         let boxed: Box<dyn FnMut(JNIEnv, JObject<'o>, JObject)> = Box::new(f);
         let raw = Box::into_raw(Box::new(boxed));
 
         let long = raw as *const () as i64;
 
         let clazz = env
-            .find_class_android("one/tesseract/interop/rust/RBiConsumer")
-            .unwrap();
+            .find_class_android("one/tesseract/interop/rust/RBiConsumer")?;
 
         let consumer = env
-            .new_object(clazz, "(J)V", &[JValue::from(long)])
-            .unwrap();
+            .new_object(clazz, "(J)V", &[JValue::from(long)])?;
 
-        RBiConsumer::from_env(&env, consumer)
+        Ok(RBiConsumer::from_env(&env, consumer))
     }
 
     fn from_env(env: &'b JNIEnv<'a>, obj: JObject<'a>) -> RBiConsumer<'a, 'b> {
@@ -67,16 +66,14 @@ impl<'a: 'b, 'b> RBiConsumer<'a, 'b> {
         }
     }
 
-    unsafe fn closure(&self) -> Box<Box<dyn FnMut(JNIEnv, JObject, JObject)>> {
+    unsafe fn closure(&self) -> Result<Box<Box<dyn FnMut(JNIEnv, JObject, JObject)>>> {
         let long = self
             .env
-            .get_field(self.internal, "closure", "J")
-            .unwrap()
-            .j()
-            .unwrap();
+            .get_field(self.internal, "closure", "J")?
+            .j()?;
 
         let raw = long as *mut Box<dyn FnMut(JNIEnv, JObject, JObject)>;
-        Box::from_raw(raw)
+        Ok(Box::from_raw(raw))
     }
 }
 
@@ -84,7 +81,7 @@ impl<'a: 'b, 'b> RBiConsumer<'a, 'b> {
 pub fn accept(env: JNIEnv, consumer: JObject, a: JObject, b: JObject) {
     debug!("!@#$BEFORE JUST START");
     let consumer = RBiConsumer::from_env(&env, consumer);
-    let closure = unsafe { Box::leak(consumer.closure()) };
+    let closure = unsafe { Box::leak(consumer.closure().unwrap()) };
 
     debug!("!@#$BEFORE JUST CLOSURE");
 
@@ -95,7 +92,10 @@ pub fn accept(env: JNIEnv, consumer: JObject, a: JObject, b: JObject) {
 pub fn finalize(env: JNIEnv, consumer: JObject) {
     let consumer = RBiConsumer::from_env(&env, consumer);
 
-    drop(unsafe { consumer.closure() });
+    debug!("%%%%%%%drop biconsumer before");
 
-    debug!("%%%%%%%drop biconsumer");
+    match unsafe { consumer.closure() } {
+        Ok(consumer) => drop(consumer),
+        Err(error) => debug!("Weird stuff just happened while trying to drop the consumer: {}", error),
+    }
 }

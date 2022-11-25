@@ -90,7 +90,7 @@ impl<'a: 'b, 'b> JCompletionStage<'a, 'b> {
             }
 
             f(env, pick(&env, success, failure))
-        }))
+        })?)
     }
 }
 
