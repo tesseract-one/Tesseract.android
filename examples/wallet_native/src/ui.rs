@@ -39,7 +39,7 @@ impl UI {
             let allow = core.request_user_confirmation(transaction);
 
             Ok(JFuture::from_stage_result(allow))
-        }).unwrap().await;
+        }).map_err(|e| {tesseract::Error::nested(Box::new(e))})?.await;
         debug!("!!!UI returned");
 
         allow.and_then(|allow| {
