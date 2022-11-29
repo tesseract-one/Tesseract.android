@@ -49,7 +49,7 @@ On the Rust side:
 use jni_fn::jni_fn;
 
 #[jni_fn("one.tesseract.example.app.RustCore")] //has to point to your actuall class in Kotlin
-pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) {
+pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, application: JObject<'a>) {
 	//your initialization here
 }
 ```
