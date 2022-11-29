@@ -79,6 +79,10 @@ implementation project(':java::interop-rust')
 
 You can find the examples (**Demo Wallet** and a **Demo dApp**) in this repo [HERE](./examples).
 
+## For Wallet developers
+
+For that we've created a separate [README](./WALLET.MD).
+
 ## Prerequisites
 * Install your Rust environment: https://www.rust-lang.org/tools/install
 * Download Android Studio: https://developer.android.com/studio
