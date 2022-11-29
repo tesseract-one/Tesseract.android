@@ -4,11 +4,11 @@
 	</a>
 </p>
 
-### **Tesseract Android** is an implementation of [Tesseract](https://tesseract.one/) protocol for Android OS. [Tesseract](https://tesseract.one/) seamlessly integrates dApps and wallets, regardless of the blockchain protocol.
+### **Tesseract Android** is an implementation of [Tesseract](https://github.com/tesseract-one/) protocol for Android OS. [Tesseract](https://github.com/tesseract-one/) seamlessly integrates dApps and wallets, regardless of the blockchain protocol.
 
 #### **Tesseract** aims to improve the usability of the dApps without compromising security or decentralization.
 
-If you need general info or Tesseract for another platform, please consider one of the following:
+This page is about specifics of running Tesseract on Android. If you need general info or Tesseract for another platform, please consider one of the following:
 * [General info](https://github.com/tesseract-one/)
 * [Tesseract for iOS (Swift)](https://github.com/tesseract-one/Tesseract.swift)
 * [Tesseract shared Core (Rust)](https://github.com/tesseract-one/Tesseract.rs)
