@@ -42,7 +42,7 @@ impl Response {
                 let array = env
                     .call_method(jresponse, "getData", "()[B", &[])?
                     .l()?
-                    .into_inner();
+                    .into_raw();
                 let vec = env.convert_byte_array(array)?;
                 Ok(Self::Ok(vec))
             } else if env.is_instance_of(jresponse, clazz_canceled)? {

@@ -68,7 +68,7 @@ impl<'a> AndroidEnv<'a> for JNIEnv<'a> {
                 let class_name = self.new_string(name).expect("Couldn't create java string!");
 
                 self.call_method(
-                    JObject::from(loader.as_obj().into_inner()),
+                    unsafe {JObject::from_raw(loader.as_obj().into_raw())},
                     "loadClass",
                     "(Ljava/lang/String;)Ljava/lang/Class;",
                     &[JValue::from(class_name)],

@@ -99,6 +99,7 @@ impl<'a: 'b, 'b> Transceiver<'a, 'b> {
             data: &[u8], protocol: &str,
         ) -> Result<JCompletionStage<'a, 'b>> {
             let data = env.byte_array_from_slice(data)?;
+            let data = unsafe {JObject::from_raw(data)};
 
             let jproto = env.new_string(protocol)?;
 

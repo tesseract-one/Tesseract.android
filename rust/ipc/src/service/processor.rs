@@ -85,9 +85,10 @@ pub fn process<'a>(env: JNIEnv<'a>, jprocessor: JObject<'a>, data: jni::sys::jby
 
     let vm = env.get_java_vm().unwrap();
     let f = response.map(move |data| {
-        let env = vm.get_env().unwrap();
-        let bytes = env.byte_array_from_slice(&data).unwrap();
-        let r = env.new_global_ref(bytes).unwrap();
+        let env = vm.get_env()?;
+        let bytes = env.byte_array_from_slice(&data)?;
+        let bytes = unsafe {JObject::from_raw(bytes)};
+        let r = env.new_global_ref(bytes)?;
         return Result::Ok(r);
     });
 
