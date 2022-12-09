@@ -1,4 +1,4 @@
-## Adding Rust to your Android App
+# Adding Rust to your Android App
 
 Create a new Android application or open your existing project.
 
