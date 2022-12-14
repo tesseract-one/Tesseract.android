@@ -1,3 +1,9 @@
+<p align="left">
+	<a href="http://tesseract.one/">
+		<img alt="Tesseract" src ="./.github/logo-horiz.svg" height=128/>
+	</a>
+</p>
+
 # Adding Rust to your Android App
 
 Create a new Android application or open your existing project.
