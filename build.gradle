@@ -2,7 +2,7 @@
 buildscript {
     ext {
         compileSdkVersion = 32
-        minSdkVersion = 21
+        minSdkVersion = 24
         targetSdkVersion = 32
         ndkVersion = '24.0.8215888'
         rustNdkTargets = ["arm", "x86", "arm64", "x86_64"]
