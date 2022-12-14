@@ -4,13 +4,13 @@ plugins {
 }
 
 android {
-    compileSdk 32
-    ndkVersion "24.0.8215888"
+    compileSdk rootProject.ext.compileSdkVersion
+    ndkVersion rootProject.ext.ndkVersion
 
     defaultConfig {
         applicationId "one.tesseract.example.app"
-        minSdk 21
-        targetSdk 32
+        minSdk rootProject.ext.minSdkVersion
+        targetSdk rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
 
@@ -46,7 +46,7 @@ tasks.whenTaskAdded { task ->
 cargo {
     module  = "../app_native"       // Or whatever directory contains your Cargo.toml
     libname = "app"          // Or whatever matches Cargo.toml's [package] name.
-    targets = ["arm", "x86", "arm64", "x86_64"]  // See bellow for a longer list of options
+    targets = rootProject.ext.rustNdkTargets  // See bellow for a longer list of options
     targetDirectory = '../../target'
 }
 
