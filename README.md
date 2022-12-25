@@ -81,6 +81,22 @@ You can find the examples (**Demo Wallet** and a **Demo dApp**) in this repo [HE
 * For Rust we suggest VS Code: https://code.visualstudio.com/
 * Android NDK (no need for CMAKE): https://developer.android.com/studio/projects/install-ndk#default-version
 
+Rust must be set to `nightly`:
+```bash
+rustup default nightly
+```
+
+Following rust targets must be innstalled:
+```bash
+rustup target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
+```
+
+On Mac you might want to point to a python you have installed by specifying
+```properties
+rust.pythonCommand=python3
+```
+in `local.properties`.
+
 ### On the Rust side you might need:
 
 ```toml
