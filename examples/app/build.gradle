@@ -33,6 +33,7 @@ android {
     buildFeatures {
         viewBinding true
     }
+    namespace 'one.tesseract.example.app'
 }
 
 apply plugin: 'org.mozilla.rust-android-gradle.rust-android'

@@ -11,6 +11,7 @@ def getBuildProperty(prop, fallback) {
 
 android {
     compileSdk getBuildProperty('compileSdkVersion', DEFAULT_COMPILE_SDK_VERSION)
+    namespace 'one.tesseract.ipc.service'
 }
 
 dependencies {
