@@ -49,6 +49,7 @@ cargo {
     libname = "app"          // Or whatever matches Cargo.toml's [package] name.
     targets = rootProject.ext.rustNdkTargets  // See bellow for a longer list of options
     targetDirectory = '../../target'
+    rustupChannel = "nightly"
 }
 
 dependencies {

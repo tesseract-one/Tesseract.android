@@ -26,6 +26,7 @@ cargo {
     libname = "app"          // Or whatever matches Cargo.toml's [package] name.
     targets = ["arm", "x86", "arm64", "x86_64"]  // See bellow for a longer list of options
     targetDirectory = 'native/target' //or wgatever directory contains your target directory
+    rustupChannel = "nightly"
 }
 ```
 * add folloing dependencies:
