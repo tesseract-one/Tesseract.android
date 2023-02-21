@@ -1,0 +1,13 @@
+# Indicated location of Android SDK
+sdk.dir=/Users/USER/Library/Android/sdk
+
+# Version of NDK to use
+ndk.version=25.1.8937393
+
+# ndk.targets list the systems you are building for currently.
+# If ommited will default to: ndk.targets=arm,x86,arm64,x86_64
+# Useful to reduce build times
+ndk.targets=x86_64
+
+# rust.pythonCommand might be needed on newer versions of OS X
+rust.pythonCommand=python3

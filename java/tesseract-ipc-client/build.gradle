@@ -3,14 +3,8 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
-def DEFAULT_COMPILE_SDK_VERSION = 33
-
-def getBuildProperty(prop, fallback) {
-    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
-}
-
 android {
-    compileSdk getBuildProperty('compileSdkVersion', DEFAULT_COMPILE_SDK_VERSION)
+    compileSdk rootProject.ext.compileSdkVersion
     namespace 'one.tesseract.ipc.client'
 }
 
