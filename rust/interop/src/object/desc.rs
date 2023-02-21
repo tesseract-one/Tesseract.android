@@ -1,4 +1,4 @@
-//===------------ errors.rs --------------------------------------------===//
+//===------------ desc.rs --------------------------------------------===//
 //  Copyright 2022, Tesseract Systems, Inc.
 //
 //  Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,19 +14,6 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-/*use thiserror::Error;
-
-#[derive(Debug, Error)]
-enum JError {
-    #[error("An error came from Rust JNI: {0}")]
-    Jni(jni::errors::Error),
-
-    #[error("An error came from Rust JNI: {0:?}")]
-    Exception(jni::objects::JThrowable),
+pub trait JavaDesc {
+    fn java_class<'a>(&'a self) -> &'a str;
 }
-
-impl<T> From<::jni::errors::Error> for Error {
-    fn from(_: ::std::sync::TryLockError<T>) -> Self {
-        Error::TryLock
-    }
-}*/

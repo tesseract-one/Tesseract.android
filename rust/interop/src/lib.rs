@@ -14,6 +14,8 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
+#![feature(iterator_try_collect)]
+
 #[macro_use]
 extern crate log;
 extern crate android_log;
@@ -21,16 +23,20 @@ extern crate android_log;
 pub mod bi_consumer;
 mod contexted_global;
 pub mod env;
-pub mod errors;
+pub mod error;
 mod exception;
 mod jfuture;
 pub mod thread_pool;
 pub mod pointer;
 pub mod future;
+pub mod object;
 
 pub use contexted_global::ContextedGlobal;
 pub use exception::Exception;
+pub use error::deresultify;
 pub use jfuture::JFuture;
+
+pub use object::{JavaDesc, JavaWrappableDesc, JavaWrappable, JavaConvertibleDesc, JavaConvertible};
 
 #[cfg(test)]
 mod tests {
