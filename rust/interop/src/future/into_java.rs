@@ -37,12 +37,12 @@ impl<E: Send + Display, F: Future<Output = std::result::Result<GlobalRef, E>> + 
             let poll = fguard.as_mut().poll(&mut context);
 
             let resolved = match poll {
-                Poll::Pending => {false}
+                Poll::Pending => {true}
                 Poll::Ready(r) => {jfut.resolve3(r).unwrap()}
             };
 
             if !resolved {
-                panic!("Wrong future state after the waker is awoken. A bug?")
+                panic!("It's a bug in wake. Why is the resolved future gets resolved again?")
             };
 
             Ok(())
