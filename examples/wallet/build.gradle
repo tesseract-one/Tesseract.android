@@ -38,10 +38,14 @@ android {
 
 apply plugin: 'org.mozilla.rust-android-gradle.rust-android'
 
-tasks.whenTaskAdded { task ->
-    if ((task.name == 'javaPreCompileDebug' || task.name == 'javaPreCompileRelease')) {
-        task.dependsOn 'cargoBuild'
-    }
+task fixNotCopyingRustJniLibs(type: Delete) {
+    delete layout.buildDirectory.dir("intermediates/merged_jni_libs")
+}
+
+project.afterEvaluate {
+    tasks.getByName("mergeDebugJniLibFolders").dependsOn("cargoBuild")
+    tasks.getByName("mergeReleaseJniLibFolders").dependsOn("cargoBuild")
+    tasks.getByName("cargoBuild").dependsOn("fixNotCopyingRustJniLibs")
 }
 
 cargo {
