@@ -38,6 +38,7 @@ use interop_android::JFuture;
 use interop_android::future::completion_stage::JCompletionStage;
 use interop_android::future::IntoJava;
 use interop_android::thread_pool::AndroidThreadPoolBuilder;
+use interop_android::deresultify;
 
 use tesseract::client::{Service, Tesseract};
 
@@ -51,9 +52,9 @@ use crate::delegate::TransportDelegate;
 
 #[jni_fn("one.tesseract.example.app.RustCore")]
 pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) {
-    android_log::init("MyApp").unwrap();
+    deresultify(&env, || {
+        android_log::init("TestDApp")?;
 
-    fn init_res<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) -> Result<()> {
         let core = RustCore::from_env(&env, core);
 
         let application = core.get_application()?;
@@ -78,23 +79,14 @@ pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) {
             .create()
             .expect("Can't create ThreadPool");
 
-        core.set_executor(tp)
-    }
-
-    match init_res(env, core, loader) {
-        Ok(_) => {
-            debug!("!!!!!@@@@@####init_res was called without an accident");
-        }
-        Err(e) => {
-            debug!("!!!!!@@@@@####init_res created the following error: {}", e);
-        }
-    }
+        Ok(core.set_executor(tp)?)
+    })
 }
 
 #[jni_fn("one.tesseract.example.app.RustCore")]
 pub fn sign<'a>(env: JNIEnv<'a>, rcore: JObject<'a>, transaction: JString<'a>) -> JObject<'a> {
-    fn makeTransaction_res<'a: 'b, 'b>(env: &'b JNIEnv<'a>, rcore: JObject<'a>, transaction: JString<'a>) -> Result<impl Future<Output = tesseract::Result<GlobalRef>>> {
-        let core = RustCore::from_env(env, rcore);
+    deresultify(&env, || {
+        let core = RustCore::from_env(&env, rcore);
 
         let transaction: String = env
             .get_string(transaction)?
@@ -119,29 +111,8 @@ pub fn sign<'a>(env: JNIEnv<'a>, rcore: JObject<'a>, transaction: JString<'a>) -
             })
         });
 
-        return Ok(transaction);
-    }
-
-    let transaction = match makeTransaction_res(&env, rcore, transaction) {
-        Ok(transaction) => {
-            debug!("!!!!!@@@@@####makeTransaction was called without an accident");
-            transaction.into_java(&env)
-        }
-        Err(e) => {
-            debug!(
-                "!!!!!@@@@@####makeTransaction created the following error: {}",
-                e
-            );
-            async {
-                Err(tesseract::Error::nested(Box::new(e)))
-            }.into_java(&env)
-            
-        }
-    };
-
-    debug!("!!!!!!!!!!DONE!!!!!!!!!");
-
-    transaction.into()
+        Ok(transaction.into_java(&env))
+    })
 }
 
 #[jni_fn("one.tesseract.example.app.RustCore")]
