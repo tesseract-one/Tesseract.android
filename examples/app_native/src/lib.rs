@@ -36,7 +36,7 @@ use jni_fn::jni_fn;
 
 use interop_android::JFuture;
 use interop_android::future::completion_stage::JCompletionStage;
-use interop_android::future::into_java::FutureJava;
+use interop_android::future::IntoJava;
 use interop_android::thread_pool::AndroidThreadPoolBuilder;
 
 use tesseract::client::{Service, Tesseract};

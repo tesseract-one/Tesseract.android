@@ -7,9 +7,11 @@ use jni::errors::Result;
 
 use jni_fn::jni_fn;
 
-use interop_android::pointer::ArcPointer;
-use interop_android::env::AndroidEnv;
-use interop_android::future::into_java::FutureJava;
+use interop_android:: {
+    pointer::ArcPointer,
+    env::AndroidEnv,
+    future::IntoJava
+};
 
 use tesseract::service::TransportProcessor;
 

@@ -66,13 +66,13 @@ impl<E, F> Wake for Waker<E, F> where
     }
 }
 
-pub trait FutureJava {
+pub trait IntoJava {
     fn into_java<'a: 'b, 'b>(self, env: &'b JNIEnv<'a>) -> JCompletableFuture<'a, 'b> where Self: Sized;
     fn boxed_into_java<'a: 'b, 'b>(self: Box<Self>, env: &'b JNIEnv<'a>) -> JCompletableFuture<'a, 'b>;
     fn pinned_into_java<'a: 'b, 'b>(self: Pin<Box<Self>>, env: &'b JNIEnv<'a>) -> JCompletableFuture<'a, 'b>;
 }
 
-impl<E, F> FutureJava for F where
+impl<E, F> IntoJava for F where
     E: Send + Display + 'static,
     F: ?Sized + Send + 'static,
     F: Future<Output = Result<GlobalRef, E>> {
