@@ -30,6 +30,8 @@ pub mod thread_pool;
 pub mod pointer;
 pub mod future;
 pub mod object;
+pub mod collection;
+pub mod iter;
 
 pub use contexted_global::ContextedGlobal;
 pub use exception::Exception;
