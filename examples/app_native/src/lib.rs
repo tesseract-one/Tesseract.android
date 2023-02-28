@@ -21,6 +21,7 @@ extern crate android_log;
 mod core;
 mod delegate;
 mod application;
+mod error;
 
 use std::sync::Arc;
 
@@ -37,6 +38,7 @@ use jni_fn::jni_fn;
 use interop_android::JFuture;
 use interop_android::future::completion_stage::JCompletionStage;
 use interop_android::future::IntoJava;
+use interop_android::future::FutureExtJava;
 use interop_android::thread_pool::AndroidThreadPoolBuilder;
 use interop_android::deresultify;
 
@@ -94,24 +96,13 @@ pub fn sign<'a>(env: JNIEnv<'a>, rcore: JObject<'a>, transaction: JString<'a>) -
 
         let service = core.get_service()?;
 
-        let vm = env.get_java_vm()?;
-        let transaction = async move {
-            service.sign_transaction(&transaction).await
-        }.map(|x| {
-            x.and_then(|signed| {
-                fn convert(vm: JavaVM, str: String) -> jni::errors::Result<GlobalRef> {
-                    let env = vm.get_env()?;
-                    let jstr = env.new_string(str)?;
-                    env.new_global_ref(jstr)
-                }
-
-                convert(vm, signed).map_err(|e| {
-                    tesseract::Error::nested(Box::new(e))
-                })
+        Ok(async move {
+            service.sign_transaction(&transaction).await.map_err(|e| {
+                crate::error::Error::from(e)
             })
-        });
-
-        Ok(transaction.into_java(&env))
+        }.map_ok_java(&env, |env, signed| {
+            Ok(env.new_string(&signed)?.into())
+        }).boxed_into_java(&env))
     })
 }
 
