@@ -8,3 +8,5 @@ members = [
     "examples/app_native",
     "examples/wallet_native",
 ]
+
+resolver = "1"
