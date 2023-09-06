@@ -13,8 +13,8 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "TesseractAndroid"
-include ':examples:app'
-include ':examples:wallet'
+include ':examples:rust:app'
+include ':examples:rust:wallet'
 include ':java:tesseract-ipc'
 include ':java:tesseract-ipc-client'
 include ':java:tesseract-ipc-service'

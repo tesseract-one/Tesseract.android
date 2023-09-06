@@ -16,8 +16,8 @@ android_log = "0.1.3"
 futures = "0.3.21"
 # lazy_static = "1.4.0"
 
-interop_android = { path = "../../rust/interop" }
-tesseract_ipc_android = { path = "../../rust/ipc", features=["client"]}
+interop_android = { path = "../../../rust/interop" }
+tesseract_ipc_android = { path = "../../../rust/ipc", features=["client"]}
 tesseract = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client"]}
 tesseract-protocol-test = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client"]}
 

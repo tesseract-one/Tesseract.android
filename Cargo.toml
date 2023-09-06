@@ -5,8 +5,9 @@
 members = [
     "rust/interop",
     "rust/ipc",
-    "examples/app_native",
-    "examples/wallet_native",
+    "rust/tesseract",
+    "examples/rust/app_native",
+    "examples/rust/wallet_native",
 ]
 
 resolver = "1"
