@@ -52,7 +52,7 @@ cargo {
     module  = "../wallet_native"       // Or whatever directory contains your Cargo.toml
     libname = "wallet"          // Or whatever matches Cargo.toml's [package] name.
     targets = rootProject.ext.rustNdkTargets  // See bellow for a longer list of options
-    targetDirectory = '../../target'
+    targetDirectory = '../../../target'
     rustupChannel = "nightly"
 }
 

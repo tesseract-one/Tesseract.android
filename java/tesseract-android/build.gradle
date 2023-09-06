@@ -1,39 +1,25 @@
 plugins {
-    id 'com.android.application'
+    id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
 }
 
 android {
+    namespace 'one.tesseract.android'
+
     compileSdk rootProject.ext.compileSdkVersion
-    ndkVersion rootProject.ext.ndkVersion
 
     defaultConfig {
-        applicationId "one.tesseract.example.app"
         minSdk rootProject.ext.minSdkVersion
         targetSdk rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
-
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
-    }
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility rootProject.ext.javaVersion
+        targetCompatibility rootProject.ext.javaVersion
     }
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = rootProject.ext.javaTarget
     }
-    buildFeatures {
-        viewBinding true
-    }
-    namespace 'one.tesseract.example.app'
 }
 
 apply plugin: 'org.mozilla.rust-android-gradle.rust-android'
@@ -49,15 +35,14 @@ project.afterEvaluate {
 }
 
 cargo {
-    module  = "../app_native"       // Or whatever directory contains your Cargo.toml
-    libname = "app"          // Or whatever matches Cargo.toml's [package] name.
+    module  = "../../rusr/tesseract-android"       // Or whatever directory contains your Cargo.toml
+    libname = "tesseract-android"          // Or whatever matches Cargo.toml's [package] name.
     targets = rootProject.ext.rustNdkTargets  // See bellow for a longer list of options
-    targetDirectory = '../../../target'
+    targetDirectory = '../../target'
     rustupChannel = "nightly"
 }
 
 dependencies {
-
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.activity:activity-ktx:1.7.2'
@@ -65,9 +50,6 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation "androidx.navigation:navigation-fragment-ktx:$rootProject.ext.navVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$rootProject.ext.navVersion"
-    implementation project(':java:tesseract-ipc')
-    implementation project(':java:tesseract-ipc-client')
-    implementation project(':java::interop-rust')
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
