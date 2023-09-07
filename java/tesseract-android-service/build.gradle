@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'one.tesseract.android'
+    namespace 'one.tesseract.android.service'
 
     compileSdk rootProject.ext.compileSdkVersion
 
@@ -22,26 +22,6 @@ android {
     }
 }
 
-apply plugin: 'org.mozilla.rust-android-gradle.rust-android'
-
-task fixNotCopyingRustJniLibs(type: Delete) {
-    delete layout.buildDirectory.dir("intermediates/merged_jni_libs")
-}
-
-project.afterEvaluate {
-    tasks.getByName("mergeDebugJniLibFolders").dependsOn("cargoBuild")
-    tasks.getByName("mergeReleaseJniLibFolders").dependsOn("cargoBuild")
-    tasks.getByName("cargoBuild").dependsOn("fixNotCopyingRustJniLibs")
-}
-
-cargo {
-    module  = "../../rusr/tesseract-android"       // Or whatever directory contains your Cargo.toml
-    libname = "tesseract-android"          // Or whatever matches Cargo.toml's [package] name.
-    targets = rootProject.ext.rustNdkTargets  // See bellow for a longer list of options
-    targetDirectory = '../../target'
-    rustupChannel = "nightly"
-}
-
 dependencies {
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
@@ -52,6 +32,7 @@ dependencies {
     implementation "androidx.navigation:navigation-ui-ktx:$rootProject.ext.navVersion"
 
     implementation project(':java:interop-rust')
+    implementation project(':java:tesseract-android')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
