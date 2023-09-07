@@ -25,4 +25,5 @@ serde = { version = "1.0", features = ["derive"] }
 async-trait = "0.1"
 
 [lib]
+name = "tesseract"
 crate_type = ["cdylib"]
