@@ -13,6 +13,7 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "TesseractAndroid"
+include ':examples:native:wallet'
 include ':examples:rust:app'
 include ':examples:rust:wallet'
 include ':java:tesseract-android'

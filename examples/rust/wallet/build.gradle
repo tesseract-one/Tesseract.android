@@ -8,7 +8,7 @@ android {
     ndkVersion rootProject.ext.ndkVersion
 
     defaultConfig {
-        applicationId "one.tesseract.example.wallet"
+        applicationId "one.tesseract.example.rust.wallet"
         minSdk rootProject.ext.minSdkVersion
         targetSdk rootProject.ext.targetSdkVersion
         versionCode 1
