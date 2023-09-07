@@ -35,7 +35,7 @@ project.afterEvaluate {
 }
 
 cargo {
-    module  = "../../rusr/tesseract-android"       // Or whatever directory contains your Cargo.toml
+    module  = "../../rust/tesseract"       // Or whatever directory contains your Cargo.toml
     libname = "tesseract-android"          // Or whatever matches Cargo.toml's [package] name.
     targets = rootProject.ext.rustNdkTargets  // See bellow for a longer list of options
     targetDirectory = '../../target'
