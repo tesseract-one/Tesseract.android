@@ -1,9 +1,22 @@
 package one.tesseract.service
 
-class Tesseract {
+open class Tesseract(@Suppress("unused") private val ptr: Long = 0) {
     companion object {
         init {
             System.loadLibrary("tesseract")
         }
     }
+
+    init {
+        create()
+    }
+
+    private external fun create()
+
+    @Synchronized
+    external fun addService(service: Service)
+    @Synchronized
+    external fun addTransport(transport: Transport)
+
+    protected external fun finalize()
 }

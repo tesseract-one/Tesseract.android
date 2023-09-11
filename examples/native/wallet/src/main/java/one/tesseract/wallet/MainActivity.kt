@@ -11,13 +11,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import one.tesseract.service.Tesseract
+import one.tesseract.service.protocol.TestService
 import one.tesseract.wallet.ui.theme.TesseractAndroidTheme
+
+class WalletTestService: TestService {
+    override fun signTransaction(transaction: String) = transaction + "_signed"
+}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val tes = Tesseract()
+        tes.addService(WalletTestService())
 
         setContent {
             TesseractAndroidTheme {

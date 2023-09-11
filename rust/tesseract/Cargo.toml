@@ -18,8 +18,8 @@ futures = "0.3.21"
 
 interop_android = { path = "../interop" }
 tesseract_ipc_android = { path = "../ipc", features=["client", "service"]}
-tesseract = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client", "service"]}
-tesseract-protocol-test = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client", "service"]}
+tesseract = { path = "/Users/daniel/repo/Tesseract.rs/tesseract", features=["client", "service"]} #{git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client", "service"]}
+tesseract-protocol-test = { path = "/Users/daniel/repo/Tesseract.rs/protocols/test", features=["client", "service"]} #{git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client", "service"]}
 
 serde = { version = "1.0", features = ["derive"] }
 async-trait = "0.1"
