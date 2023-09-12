@@ -7,7 +7,7 @@ use jni::errors::Result as JResult;
 
 use crate::error::{tesseractify, tesseractify_no_exception};
 
-pub (crate) trait TesseractContext {
+pub trait TesseractContext {
     fn do_in_tesseract_context<F, R>(&self, capacity: i32, fun: F) -> TResult<R>
         where F: FnOnce(JNIEnv, JObject) -> JResult<R>;
 }

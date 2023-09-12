@@ -3,7 +3,7 @@ package one.tesseract.service
 open class Tesseract(@Suppress("unused") private val ptr: Long = 0) {
     companion object {
         init {
-            System.loadLibrary("tesseract")
+            System.loadLibrary("tesseracta")
         }
     }
 

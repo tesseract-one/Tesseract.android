@@ -1,4 +1,4 @@
 pub mod error;
-mod context;
+pub mod context;
 
 mod service;

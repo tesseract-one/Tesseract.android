@@ -18,6 +18,8 @@ use interop_android::{ContextedGlobal, JFuture};
 use jni::JNIEnv;
 use jni::objects::JObject;
 use jni::errors::Result;
+use tesseracta::error::tesseractify_global_result;
+use tesseracta::context::TesseractContext;
 
 use super::core::RustCore;
 
@@ -42,8 +44,10 @@ impl UI {
         }).map_err(|e| {tesseract::Error::nested(Box::new(e))})?.await;
         debug!("!!!UI returned");
 
+        let allow = tesseractify_global_result(allow);
+
         allow.and_then(|allow| {
-            allow.do_in_context_rret(64, |env, jallow| {
+            allow.do_in_tesseract_context(64, |env, jallow| {
                 env.call_method(jallow, "booleanValue", "()Z", &[])?.z()
             })
         }).map_err(|error| {
