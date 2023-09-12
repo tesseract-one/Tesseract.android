@@ -16,6 +16,7 @@
 
 use crate::bi_consumer::RBiConsumer;
 use crate::contexted_global::ContextedGlobal;
+use crate::error::LocalResult;
 use jni::errors::Result;
 use jni::objects::JObject;
 use jni::JNIEnv;
@@ -71,7 +72,7 @@ impl<'a: 'b, 'b> JCompletionStage<'a, 'b> {
         Ok(JCompletionStage::from_env(self.env, r.l()?))
     }
 
-    pub fn when_complete<'o, F: FnMut(JNIEnv, Result<JObject<'o>>) + Send + 'static>(
+    pub fn when_complete_legacy<'o, F: FnMut(JNIEnv, Result<JObject<'o>>) + Send + 'static>(
         self,
         mut f: F,
     ) -> Result<JCompletionStage<'a, 'b>> {
@@ -86,6 +87,27 @@ impl<'a: 'b, 'b> JCompletionStage<'a, 'b> {
                 } else {
                     //TODO: proper error handling with the actual exception passing
                     Err(jni::errors::Error::JavaException)
+                }
+            }
+
+            f(env, pick(&env, success, failure))
+        })?)
+    }
+
+    pub fn when_complete<'o, F: FnMut(JNIEnv, LocalResult<'o, JObject<'o>>) + Send + 'static>(
+        self,
+        mut f: F,
+    ) -> Result<JCompletionStage<'a, 'b>> {
+        self.when_complete_consumer(RBiConsumer::new(self.env, move |env, success, failure| {
+            fn pick<'a>(
+                env: &JNIEnv,
+                success: JObject<'a>,
+                failure: JObject<'a>,
+            ) -> LocalResult<'a, JObject<'a>> {
+                if env.is_same_object(failure, JObject::null())? {
+                    Ok(success)
+                } else {
+                    Err(crate::error::LocalError::Exception(failure))
                 }
             }
 

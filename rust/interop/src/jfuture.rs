@@ -21,11 +21,14 @@ use std::sync::Arc;
 use std::sync::Mutex;
 use std::task::{Context, Poll};
 
+use crate::error::GlobalError;
+use crate::error::GlobalResult;
+
 use super::future::completion_stage::JCompletionStage;
 use super::contexted_global::ContextedGlobal;
 
 pub struct JFuture {
-    result: Arc<Mutex<Option<Result<ContextedGlobal>>>>,
+    result: Arc<Mutex<Option<GlobalResult<ContextedGlobal>>>>,
     stage: Option<ContextedGlobal>,
 }
 
@@ -37,7 +40,7 @@ impl JFuture {
         }
     }
 
-    pub fn failed(error: Error) -> Self {
+    pub fn failed(error: GlobalError) -> Self {
         Self {
             stage: None,
             result: Arc::new(Mutex::new(Some(Err(error)))),
@@ -47,13 +50,13 @@ impl JFuture {
     pub fn from_stage_result(result: Result<JCompletionStage>) -> Self {
         match result {
             Ok(stage) => Self::from_stage(stage),
-            Err(err) => Self::failed(err),
+            Err(err) => Self::failed(err.into()),
         }
     }
 }
 
 impl Future for JFuture {
-    type Output = Result<ContextedGlobal>;
+    type Output = GlobalResult<ContextedGlobal>;
 
     fn poll(self: Pin<&mut Self>, cx: &mut Context<'_>) -> Poll<<Self as Future>::Output> {
         debug!("!@#$%POLLPOLLPOLL");
@@ -87,7 +90,11 @@ impl Future for JFuture {
                                     debug!("!@#$%GUARD2");
     
                                     let result = result
-                                        .and_then(|r| ContextedGlobal::from_local(&env, r));
+                                        .and_then(|r| ContextedGlobal::from_local(&env, r).map_err(|e| {
+                                            e.into()
+                                        }) ).map_err(|e| {
+                                            e.into_global(&env)
+                                        });
                                     *guard = Some(result);
                                     drop(guard);
                                 }
@@ -99,14 +106,14 @@ impl Future for JFuture {
                             Ok(Poll::Pending)
                         });
                         
-                        res.unwrap_or_else(|err| {
+                        res.map_err(|e| GlobalError::JniError(e)).unwrap_or_else(|err| {
                             debug!("!@#$%ERRRRRRR");
                             Poll::Ready(Err(err))
                         })
                     }
                     None => Poll::Ready(Err(Error::NullDeref(
                         "JFuture was created with no stage and no error. Please, report a bug.",
-                    ))),
+                    ).into())),
                 }
             }
             Some(result) => {

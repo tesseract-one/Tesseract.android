@@ -14,7 +14,8 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-use jni::errors::{Error, Result};
+use interop_android::error::{GlobalResult, GlobalError};
+use jni::errors::{Error, Result, JniError};
 use jni::objects::JObject;
 use jni::JNIEnv;
 
@@ -77,11 +78,16 @@ pub trait Flattener {
     fn flatten(self) -> Response;
 }
 
-impl Flattener for Result<Response> {
+impl Flattener for GlobalResult<Response> {
     fn flatten(self) -> Response {
         match self {
             Ok(response) => response,
-            Err(error) => Response::JniError(error),
+            Err(error) => {
+                Response::JniError(match error {
+                    GlobalError::JniError(e) => e,
+                    GlobalError::Exception(_) => jni::errors::Error::JavaException, //TODO: do the actual conversion
+                })
+            }
         }
     }
 }

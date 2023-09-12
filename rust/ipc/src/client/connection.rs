@@ -21,6 +21,7 @@ use async_trait::async_trait;
 
 use futures::lock::Mutex;
 
+use interop_android::error::GlobalResult;
 use tesseract::{Error, ErrorKind, Result, Protocol};
 use tesseract::client::Connection;
 
@@ -44,7 +45,7 @@ impl TransportIPCAndroidConnection {
         }
     }
 
-    async fn send_receive(self: Arc<Self>, request: Vec<u8>) -> jni::errors::Result<Response> {
+    async fn send_receive(self: Arc<Self>, request: Vec<u8>) -> GlobalResult<Response> {
         let data = {
             let result = self.transceiver.do_in_context_rret(64, |env, tran| {
                 let transceiver = Transceiver::from_env(&env, tran);

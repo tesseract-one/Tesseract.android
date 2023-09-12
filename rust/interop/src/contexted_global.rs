@@ -25,7 +25,7 @@ use jni::JavaVM;
 use crate::env::AndroidEnv;
 
 /// GlobalRef along with it's VM. Mainly to be used for thread traveling of objects.
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct ContextedGlobal {
     guard: Arc<(JavaVM, GlobalRef)>,
 }

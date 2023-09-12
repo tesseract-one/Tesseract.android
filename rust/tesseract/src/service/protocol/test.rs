@@ -2,12 +2,12 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 
-use interop_android::{ContextedGlobal, future::completion_stage::JCompletionStage};
+use interop_android::{ContextedGlobal, future::completion_stage::JCompletionStage, JFuture};
 
-use jni::{JNIEnv, objects::{JObject, JString}, errors::Result};
+use jni::{JNIEnv, objects::{JObject, JString, JValue}, errors::Result, signature};
 use tesseract_protocol_test::{Test, service::TestExecutor};
 
-use crate::error::tesseractify;
+use crate::error::{tesseractify, tesseractify_global_result};
 
 pub struct TestService {
     jservice: ContextedGlobal
@@ -44,10 +44,17 @@ use crate::context::TesseractContext;
 #[async_trait]
 impl tesseract_protocol_test::TestService for TestService {
     async fn sign_transaction(self: Arc<Self>, req: &str) -> tesseract::Result<String> {
-        self.jservice.do_in_tesseract_context(32, |env, jservice| {
+        let global_result = self.jservice.do_in_tesseract_context(32, |env, jservice| {
             let jservice = JTestService::from_env(&env, jservice);
-            jservice.sign_transaction(req)
-        })
+            let signed = jservice.sign_transaction(req);
+
+            Ok(JFuture::from_stage_result(signed))
+        })?.await;
+
+        tesseractify_global_result(global_result)?
+            .do_in_tesseract_context(32, |env, signature| {
+                Ok(env.get_string(signature.into())?.into())
+            })
     }
 }
 
@@ -86,15 +93,16 @@ impl<'a: 'b, 'b> JTestService<'a, 'b> {
     }
 
     fn sign_transaction(&self, request: &str) -> Result<JCompletionStage> {
-        let stage = self.env
-        .call_method(
-            self.internal,
-            "requestUserConfirmation",
-            "(Landroid/os/Parcelable;)Ljava/util/concurrent/CompletionStage;",
-            &[JValue::from(request)],
-        )?
-        .l()?;
+        // let stage = self.env
+        // .call_method(
+        //     self.internal,
+        //     "requestUserConfirmation",
+        //     "(Landroid/os/Parcelable;)Ljava/util/concurrent/CompletionStage;",
+        //     &[JValue::from(request)],
+        // )?
+        // .l()?;
 
-        Ok(JCompletionStage::from_env(&self.env, stage))
+        // Ok(JCompletionStage::from_env(&self.env, stage))
+        todo!()
     }
 }

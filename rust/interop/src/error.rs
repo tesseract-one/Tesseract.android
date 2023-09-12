@@ -16,7 +16,11 @@
 
 use std::{default::Default, error::Error};
 
-use jni::JNIEnv;
+use jni::{JNIEnv, objects::JObject};
+
+use thiserror::Error;
+
+use crate::ContextedGlobal;
 
 pub fn deresultify<T, I, F>(env: &JNIEnv, fun: F) -> T
 where
@@ -38,5 +42,43 @@ where
             }
         }
         Ok(value) => value.into()
+    }
+}
+
+#[derive(Debug, Error)]
+pub enum LocalError<'a> {
+    #[error("An exception occured. To know more convert the error properly")]
+    Exception(JObject<'a>),
+
+    #[error(transparent)]
+    JniError(#[from] jni::errors::Error)
+}
+
+#[derive(Debug, Error)]
+pub enum GlobalError {
+    #[error("An exception occured. To know more convert the error properly")]
+    Exception(ContextedGlobal),
+
+    #[error(transparent)]
+    JniError(#[from] jni::errors::Error)
+}
+
+pub type LocalResult<'a, T> = Result<T, LocalError<'a>>;
+pub type GlobalResult<T> = Result<T, GlobalError>;
+
+impl<'a: 'b, 'b> LocalError<'a> {
+    pub fn into_global(self, env: &'b JNIEnv<'a>) -> GlobalError {
+        match self {
+            Self::JniError(e) => GlobalError::JniError(e),
+            Self::Exception(e) => {
+                match ContextedGlobal::from_local(env, e) {
+                    Err(e) => {
+                        debug!("Something is going pretty bad; couldn't process exception in JNI: {0}", &e);
+                        GlobalError::JniError(e)
+                    },
+                    Ok(e) => GlobalError::Exception(e)
+                }
+            }
+        }
     }
 }
