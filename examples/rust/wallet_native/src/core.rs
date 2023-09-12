@@ -53,7 +53,7 @@ impl<'a: 'b, 'b> RustCore<'a, 'b> {
         }
     }
 
-    pub (crate) fn request_user_confirmation(&self, transaction: &str) -> Result<JCompletionStage> {
+    pub (crate) fn request_user_confirmation(&self, transaction: &str) -> Result<JCompletionStage<'a, 'b>> {
         let transaction = self.env.new_string(transaction)?;
 
         let stage = self.env

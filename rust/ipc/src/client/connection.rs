@@ -47,7 +47,7 @@ impl TransportIPCAndroidConnection {
 
     async fn send_receive(self: Arc<Self>, request: Vec<u8>) -> GlobalResult<Response> {
         let data = {
-            let result = self.transceiver.do_in_context_rret(64, |env, tran| {
+            let result = self.transceiver.with_safe_context_rret(64, |env, tran| {
                 let transceiver = Transceiver::from_env(&env, tran);
                 let result = transceiver.transceive(&request, &self.protocol.id());
                 Ok(result)
@@ -58,7 +58,7 @@ impl TransportIPCAndroidConnection {
         .await?;
 
         let response = {
-            data.do_in_context_rret(64, |env, response| {
+            data.with_safe_context_rret(64, |env, response| {
                 Ok(Response::from_java(&env, response))
             })?
         };

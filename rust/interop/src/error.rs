@@ -16,7 +16,7 @@
 
 use std::{default::Default, error::Error};
 
-use jni::{JNIEnv, objects::JObject};
+use jni::{JNIEnv, objects::{JObject, JThrowable}};
 
 use thiserror::Error;
 
@@ -51,7 +51,7 @@ pub enum LocalError<'a> {
     Exception(JObject<'a>),
 
     #[error(transparent)]
-    JniError(#[from] jni::errors::Error)
+    JniError(jni::errors::Error)
 }
 
 #[derive(Debug, Error)]
@@ -60,14 +60,21 @@ pub enum GlobalError {
     Exception(ContextedGlobal),
 
     #[error(transparent)]
-    JniError(#[from] jni::errors::Error)
+    JniError(jni::errors::Error)
 }
 
 pub type LocalResult<'a, T> = Result<T, LocalError<'a>>;
 pub type GlobalResult<T> = Result<T, GlobalError>;
 
-impl<'a: 'b, 'b> LocalError<'a> {
-    pub fn into_global(self, env: &'b JNIEnv<'a>) -> GlobalError {
+fn retrieve_exception<'a: 'b, 'b>(env: &'b JNIEnv<'a>) -> jni::errors::Result<JThrowable<'a>> {
+    let exception = env.exception_occurred()?;
+    env.exception_clear()?;
+
+    Ok(exception)
+}
+
+impl<'a> LocalError<'a> {
+    pub fn into_global(self, env: &JNIEnv<'a>) -> GlobalError {
         match self {
             Self::JniError(e) => GlobalError::JniError(e),
             Self::Exception(e) => {
@@ -81,4 +88,37 @@ impl<'a: 'b, 'b> LocalError<'a> {
             }
         }
     }
+
+    pub fn with_exceptions_checking(env: &JNIEnv<'a>, error: jni::errors::Error) -> Self {
+        match error {
+            jni::errors::Error::JavaException => {
+                let exception = retrieve_exception(env);
+                match exception {
+                    Err(e) => LocalError::JniError(e),
+                    Ok(exception) => {
+                        LocalError::Exception(exception.into())
+                    }
+                }
+            },
+            other => {
+                LocalError::JniError(other)
+            }
+        }
+    }
+
+    pub fn without_exceptions_checking(error: jni::errors::Error) -> Self {
+        LocalError::JniError(error)
+    }
 }
+
+// pub trait ExceptionCheck<'local> {
+//     fn with_exceptions_check<T, F>(&self, fun: F) -> LocalResult<'local, T>
+//         where F: FnOnce(&Self) -> jni::errors::Result<T>;
+// }
+
+// impl<'local> ExceptionCheck<'local> for JNIEnv<'local> {
+//     fn with_exceptions_check<T, F>(&self, fun: F) -> LocalResult<'local, T>
+//         where F: FnOnce(&Self) -> jni::errors::Result<T> {
+//             fun(self).map_err(|e| LocalError::with_exceptions_checking(self, e))
+//         }
+// }

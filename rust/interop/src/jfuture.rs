@@ -23,6 +23,7 @@ use std::task::{Context, Poll};
 
 use crate::error::GlobalError;
 use crate::error::GlobalResult;
+use crate::error::LocalError;
 
 use super::future::completion_stage::JCompletionStage;
 use super::contexted_global::ContextedGlobal;
@@ -47,10 +48,10 @@ impl JFuture {
         }
     }
 
-    pub fn from_stage_result(result: Result<JCompletionStage>) -> Self {
+    pub fn from_stage_result(result: GlobalResult<JCompletionStage>) -> Self {
         match result {
             Ok(stage) => Self::from_stage(stage),
-            Err(err) => Self::failed(err.into()),
+            Err(err) => Self::failed(err),
         }
     }
 }
@@ -91,7 +92,7 @@ impl Future for JFuture {
     
                                     let result = result
                                         .and_then(|r| ContextedGlobal::from_local(&env, r).map_err(|e| {
-                                            e.into()
+                                            LocalError::JniError(e)
                                         }) ).map_err(|e| {
                                             e.into_global(&env)
                                         });
@@ -111,9 +112,9 @@ impl Future for JFuture {
                             Poll::Ready(Err(err))
                         })
                     }
-                    None => Poll::Ready(Err(Error::NullDeref(
+                    None => Poll::Ready(Err(GlobalError::JniError(Error::NullDeref(
                         "JFuture was created with no stage and no error. Please, report a bug.",
-                    ).into())),
+                    )))),
                 }
             }
             Some(result) => {

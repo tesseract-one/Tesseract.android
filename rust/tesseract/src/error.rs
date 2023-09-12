@@ -44,7 +44,7 @@ where
 {
     match fun() {
         Err(jni::errors::Error::JavaException) => {
-            let tesseract_error = tesseractify(env, || {
+            let tesseract_error = tesseractify_no_exception( || {
                 let exception = env.exception_occurred()?;
                 env.exception_clear()?;
                 

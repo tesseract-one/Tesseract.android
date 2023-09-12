@@ -16,7 +16,7 @@
 
 use crate::bi_consumer::RBiConsumer;
 use crate::contexted_global::ContextedGlobal;
-use crate::error::LocalResult;
+use crate::error::{LocalResult, LocalError};
 use jni::errors::Result;
 use jni::objects::JObject;
 use jni::JNIEnv;
@@ -104,7 +104,7 @@ impl<'a: 'b, 'b> JCompletionStage<'a, 'b> {
                 success: JObject<'a>,
                 failure: JObject<'a>,
             ) -> LocalResult<'a, JObject<'a>> {
-                if env.is_same_object(failure, JObject::null())? {
+                if env.is_same_object(failure, JObject::null()).map_err(LocalError::JniError)? {
                     Ok(success)
                 } else {
                     Err(crate::error::LocalError::Exception(failure))

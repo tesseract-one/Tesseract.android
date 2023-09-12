@@ -14,10 +14,14 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
+use std::cell::RefCell;
+
 use jni::errors::{Error, Result};
 use jni::objects::{GlobalRef, JClass, JObject, JValue};
 use jni::strings::JNIString;
 use jni::JNIEnv;
+
+use crate::error::{LocalResult, LocalError};
 
 pub trait AndroidEnv<'a> {
     ///Is useful for loading classes on Android in non-main thread
@@ -36,9 +40,12 @@ pub trait AndroidEnv<'a> {
     fn with_local_frame_arbitrary<F, R>(&self, capacity: i32, f: F) -> Result<R>
     where
         F: FnOnce() -> Result<R>;
+
+    fn with_exceptions_check<F, R>(&self, fun: F) -> LocalResult<'a, R>
+    where
+        F: FnOnce() -> jni::errors::Result<R>;
 }
 
-use std::cell::RefCell;
 thread_local!(pub static LOADER: RefCell<Option<GlobalRef>> = RefCell::new(None));
 
 impl<'a> AndroidEnv<'a> for JNIEnv<'a> {
@@ -92,4 +99,10 @@ impl<'a> AndroidEnv<'a> for JNIEnv<'a> {
 
         result.unwrap()
     }
+
+    fn with_exceptions_check<F, R>(&self, fun: F) -> LocalResult<'a, R>
+    where
+        F: FnOnce() -> jni::errors::Result<R> {
+            fun().map_err(|e| LocalError::with_exceptions_checking(self, e))
+        }
 }

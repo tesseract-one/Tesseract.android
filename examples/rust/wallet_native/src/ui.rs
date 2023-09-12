@@ -36,12 +36,12 @@ impl UI {
 
     pub(crate) async fn request_user_confirmation(&self, transaction: &str) -> tesseract::Result<bool> {
         debug!("!!!Before UI call");
-        let allow = self.core.do_in_context_rret(64, |env, core| {
-            let core = RustCore::from_env(&env, core);
-            let allow = core.request_user_confirmation(transaction);
 
-            Ok(JFuture::from_stage_result(allow))
-        }).map_err(|e| {tesseract::Error::nested(Box::new(e))})?.await;
+        let allow = self.core.with_async_context(64, |env, core| {
+            let core = RustCore::from_env(&env, core);
+            core.request_user_confirmation(transaction)
+        }).await;
+
         debug!("!!!UI returned");
 
         let allow = tesseractify_global_result(allow);

@@ -46,13 +46,11 @@ use crate::context::TesseractContext;
 #[async_trait]
 impl tesseract_protocol_test::TestService for TestService {
     async fn sign_transaction(self: Arc<Self>, req: &str) -> tesseract::Result<String> {
-        let global_result = self.jservice.do_in_tesseract_context(32, |env, jservice| {
+        let global_result = self.jservice.with_async_context(32, |env, jservice| {
             let jservice = JTestService::from_env(&env, jservice);
             let req = env.new_string(req)?;
-            let signed = jservice.sign_transaction(req);
-
-            Ok(JFuture::from_stage_result(signed))
-        })?.await;
+            jservice.sign_transaction(req)
+        }).await;
 
         tesseractify_global_result(global_result)?
             .do_in_tesseract_context(32, |env, signature| {

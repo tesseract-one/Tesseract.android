@@ -114,6 +114,10 @@ impl<'a: 'b, 'b> Transceiver<'a, 'b> {
             Ok(JCompletionStage::from_env(env, raw))
         }
 
-        JFuture::from_stage_result(_transceive(self.env, self.internal, data, protocol))
+        let result = self.env.with_exceptions_check(|| {
+            _transceive(self.env, self.internal, data, protocol)
+        }).map_err(|e| e.into_global(&self.env));
+
+        JFuture::from_stage_result(result)
     }
 }

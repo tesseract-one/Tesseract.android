@@ -39,7 +39,7 @@ impl<'a: 'b, 'b> JTestService<'a, 'b> {
         )
     }
 
-    pub (super) fn sign_transaction(&self, request: JString<'a>) -> Result<JCompletionStage> {
+    pub (super) fn sign_transaction(&self, request: JString<'a>) -> Result<JCompletionStage<'a, 'b>> {
         let stage = self.env
             .call_method(
                 self.internal,
@@ -49,6 +49,6 @@ impl<'a: 'b, 'b> JTestService<'a, 'b> {
             )?
             .l()?;
 
-        Ok(JCompletionStage::from_env(&self.env, stage))
+        Ok(JCompletionStage::from_env(self.env, stage))
     }
 }
