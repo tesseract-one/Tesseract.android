@@ -2,12 +2,12 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 
-use interop_android::{ContextedGlobal, JFuture};
+use interop_android::ContextedGlobal;
 
 use jni::{JNIEnv, objects::JObject, errors::Result};
 use tesseract_protocol_test::{Test, service::TestExecutor};
 
-use crate::error::tesseractify_global_result;
+use crate::error::tesseractify_async;
 
 use super::jservice::JTestService;
 
@@ -43,18 +43,36 @@ impl tesseract::service::Service for TestService {
 
 use crate::context::TesseractContext;
 
+// #[async_trait]
+// impl tesseract_protocol_test::TestService for TestService {
+//     async fn sign_transaction(self: Arc<Self>, req: &str) -> tesseract::Result<String> {
+//         let global_result = self.jservice.with_async_context(32, |env, jservice| {
+//             let jservice = JTestService::from_env(&env, jservice);
+//             let req = env.new_string(req)?;
+//             jservice.sign_transaction(req)
+//         }).await.and_then(|signature| {
+//             signature.with_safe_context_rret(32, |env, signature| {
+//                 let string: String = env.get_string(signature.into())?.into();
+//                 Ok(string)
+//             })
+//         });
+
+//         tesseractify_global_result(global_result)
+//     }
+// }
+
 #[async_trait]
 impl tesseract_protocol_test::TestService for TestService {
     async fn sign_transaction(self: Arc<Self>, req: &str) -> tesseract::Result<String> {
-        let global_result = self.jservice.with_async_context(32, |env, jservice| {
-            let jservice = JTestService::from_env(&env, jservice);
-            let req = env.new_string(req)?;
-            jservice.sign_transaction(req)
-        }).await;
-
-        tesseractify_global_result(global_result)?
-            .do_in_tesseract_context(32, |env, signature| {
-                Ok(env.get_string(signature.into())?.into())
+        tesseractify_async( async || {
+            self.jservice.with_async_context(32, |env, jservice| {
+                let jservice = JTestService::from_env(&env, jservice);
+                let req = env.new_string(req)?;
+                jservice.sign_transaction(req)
+            }).await?.with_safe_context_rret(32, |env, signature| {
+                let string: String = env.get_string(signature.into())?.into();
+                Ok(string)
             })
+        }).await
     }
 }

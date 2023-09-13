@@ -1,3 +1,4 @@
+use futures::Future;
 use interop_android::error::{GlobalResult, GlobalError};
 use jni::{JNIEnv, objects::JThrowable};
 
@@ -61,6 +62,24 @@ where
 
 pub fn tesseractify_global_result<T>(result: GlobalResult<T>) -> tesseract::Result<T> {
     match result {
+        Ok(ok) => Ok(ok),
+        Err(error) => {
+            Err(match error {
+                GlobalError::JniError(error) => tesseractify_jni_error(error),
+                GlobalError::Exception(exception) => {
+                    exception.do_in_tesseract_context(10, |env, exception| {
+                        let throwable = JThrowable::from(exception);
+                        tesseractify_exception(&env, throwable)
+                    })?
+                }
+            })
+        }
+    }
+}
+
+pub async fn tesseractify_async<T, F>(fun: impl FnOnce() -> F) -> tesseract::Result<T>
+    where F: Future<Output = GlobalResult<T>>, {
+    match fun().await {
         Ok(ok) => Ok(ok),
         Err(error) => {
             Err(match error {
