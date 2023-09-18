@@ -11,7 +11,7 @@ import one.tesseract.ipc.*;
 
 class TesseractActivity : Activity() {
     companion object {
-        const val DEFAULT_CHANNEL: String = "channel"
+        const val DEFAULT_CHANNEL: String = "default"
     }
 
     private fun channelId(): String {

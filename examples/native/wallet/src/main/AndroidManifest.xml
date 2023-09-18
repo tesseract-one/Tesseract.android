@@ -9,6 +9,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TesseractAndroid">
         <activity
+            android:name=".SignActivity"
+            android:exported="false"
+            android:label="@string/title_activity_sign"
+            android:theme="@style/Theme.TesseractAndroid" />
+        <activity
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
@@ -27,7 +32,8 @@
                 <action android:name="one.tesseract.CALL" />
 
                 <category android:name="android.intent.category.DEFAULT" />
-                <data android:mimeType="tesseract/test"/>
+
+                <data android:mimeType="tesseract/test" />
             </intent-filter>
 
             <meta-data
