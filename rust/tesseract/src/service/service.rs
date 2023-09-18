@@ -1,14 +1,11 @@
 use jni::{JNIEnv, objects::JObject};
 use jni::errors::Result;
-use tesseract::service::Tesseract;
 
 use crate::service::protocol;
+use super::tesseract::Applicator;
 
-pub (crate) trait ServiceApplicator: FnOnce(Tesseract) -> Tesseract {}
-impl<F> ServiceApplicator for F where F: FnOnce(Tesseract) -> Tesseract {}
-
-pub (crate) fn jservice_to_services<'a: 'b, 'b>(env: &'b JNIEnv<'a>, service: JObject<'a>) -> Result<Vec<Box<dyn ServiceApplicator>>> {
-    let mut result = Vec::<Box<dyn ServiceApplicator>>::new();
+pub (crate) fn jservice_to_services<'a: 'b, 'b>(env: &'b JNIEnv<'a>, service: JObject<'a>) -> Result<Vec<Box<dyn Applicator>>> {
+    let mut result = Vec::<Box<dyn Applicator>>::new();
 
     if let Some(test_service) = protocol::TestService::maybe_new(env, service)? {
         result.push(Box::new(|tesseract| {

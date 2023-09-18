@@ -4,13 +4,18 @@ interface Transport {
     fun rustTransport(): RustTransport
 }
 
-class RustTransport: Transport {
+interface RustTransport: Transport {
+    fun createApplicator(): Long
+
     override fun rustTransport(): RustTransport {
         return this
     }
 }
+
 interface JavaTransport: Transport {
-    override fun rustTransport(): RustTransport {
-        return RustTransport() //do the actual wrapping here
-    }
+    override fun rustTransport(): RustTransport = JavaRustTransport(this)
+}
+
+class JavaRustTransport(private val transport: JavaTransport): RustTransport {
+    external override fun createApplicator(): Long
 }

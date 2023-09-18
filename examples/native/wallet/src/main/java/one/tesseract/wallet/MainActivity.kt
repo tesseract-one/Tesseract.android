@@ -12,18 +12,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import one.tesseract.service.Tesseract
 import one.tesseract.service.protocol.TestService
+import one.tesseract.service.transport.IPCTransport
 import one.tesseract.wallet.ui.theme.TesseractAndroidTheme
+import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionStage
+import java.util.concurrent.Future
 
 class WalletTestService: TestService {
-    override fun signTransaction(transaction: String) = transaction + "_signed"
+    override fun signTransaction(transaction: String): CompletionStage<String> = CompletableFuture.completedFuture(transaction + "_signed")
 }
 
-class MainActivity : ComponentActivity() {
+class MainActivity(@Suppress("unused") private var tesseract: Tesseract? = null) : ComponentActivity() {
+    init {
+        val tes = Tesseract()
+        tes.addTransport(IPCTransport())
+        tes.addService(WalletTestService())
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val tes = Tesseract()
-        tes.addService(WalletTestService())
 
         setContent {
             TesseractAndroidTheme {

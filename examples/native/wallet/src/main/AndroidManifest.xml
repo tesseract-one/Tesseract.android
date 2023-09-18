@@ -19,6 +19,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name="one.tesseract.ipc.service.TesseractActivity"
+            android:exported="true"
+            android:theme="@style/Theme.TesseractAndroid">
+            <intent-filter>
+                <action android:name="one.tesseract.CALL" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="tesseract/test"/>
+            </intent-filter>
+
+            <meta-data
+                android:name="channel"
+                android:value="default" />
+        </activity>
     </application>
 
 </manifest>

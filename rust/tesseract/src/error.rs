@@ -1,5 +1,5 @@
 use futures::Future;
-use interop_android::error::{GlobalResult, GlobalError};
+use interop_android::{error::{GlobalResult, GlobalError}, ContextedGlobal};
 use jni::{JNIEnv, objects::JThrowable};
 
 use tesseract::Error as TError;

@@ -51,7 +51,7 @@ struct BoundIPCTransport {
 impl BoundTransport for BoundIPCTransport {}
 
 impl Transport for IPCTransport {
-    fn bind(self, processor: Arc<dyn TransportProcessor + Send + Sync>) -> Box<dyn BoundTransport> {
+    fn bind(self, processor: Arc<dyn TransportProcessor + Send + Sync>) -> Box<dyn BoundTransport + Send> {
         debug!("!!!Binding");
         let env = self.vm.get_env().unwrap();
         debug!("!!!ENV");

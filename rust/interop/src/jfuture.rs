@@ -69,6 +69,8 @@ impl Future for JFuture {
             guard.take()
         };
 
+        let result2 = Arc::clone(&self.result);
+
         debug!("!@#$%GUARD");
 
         match result {
@@ -83,6 +85,14 @@ impl Future for JFuture {
                         let res = stage.do_in_context_rret(64, move |env, stage| {
                             let jstage = JCompletionStage::from_env(&env, stage);
                             debug!("!@#$%STAGE");
+
+                            let syncronizer: Arc<Mutex<bool>> = Arc::new(Mutex::new(false));
+                            let syncronizer_when: Arc<Mutex<bool>> = Arc::clone(&syncronizer);
+                            // let result_inner = Arc::clone(&result2);
+
+                            // let result2: Arc<Mutex<Option<GlobalResult<ContextedGlobal>>>> = Arc::new(Mutex::new(None));
+                            // let result_inner = Arc::clone(&result2);
+
                             jstage.when_complete(move |env, result| {
                                 debug!("!@#$%GUARD1");
                                 //the guard needs to be scoped and dropped before waker.wake() call
@@ -100,11 +110,33 @@ impl Future for JFuture {
                                     drop(guard);
                                 }
                                 debug!("!@#$%WAKERWAKE");
-                                waker.clone().wake();
-                                debug!("!@#$%WAKERWOKEN");
+
+                                let synchronizer_guard = syncronizer_when.lock().unwrap();
+                                debug!("!@#$%WAKERWAKE_SYNC_GUARD");
+                                if *synchronizer_guard {
+                                    waker.clone().wake();
+                                    debug!("!@#$%WAKERWOKEN");
+                                }
+                                debug!("!@#$%WAKERWAKE_SYNC_EXITING");
                             })?;
                             debug!("!@#$%PENDING");
-                            Ok(Poll::Pending)
+
+                            let result = {
+                                let mutex = result2;
+                                let mut guard = mutex.lock().unwrap();
+                                guard.take()
+                            };
+
+                            let result = match result {
+                                Some(result) => Poll::Ready(result),
+                                None => Poll::Pending,
+                            };
+
+                            let mut synchronizer_guard = syncronizer.lock().unwrap();
+                            *synchronizer_guard = true;
+                            drop(synchronizer_guard); //make it obvious
+
+                            Ok(result)
                         });
                         
                         res.map_err(|e| GlobalError::JniError(e)).unwrap_or_else(|err| {

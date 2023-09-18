@@ -46,20 +46,31 @@ impl<E, F> Wake for Waker<E, F> where
     fn wake(self: Arc<Self>) {
         self.j.do_in_context_rret(64, |env, object| {
             let jfut = JCompletableFuture::from_env(&env, object);
+            debug!("GOT JFUT");
 
-            let mut fguard = self.guard();
-            let waker = Arc::clone(&self).into();
-            let mut context = Context::from_waker(&waker);
-            let poll = fguard.as_mut().poll(&mut context);
+            let poll = {
+                let mut fguard = self.guard();
+                debug!("GOT GUARD");
+                let waker = Arc::clone(&self).into();
+                debug!("WAKER CLONED");
+                let mut context = Context::from_waker(&waker);
+                debug!("CONTEXT");
+                fguard.as_mut().poll(&mut context)
+            };
+            debug!("POLLED");
 
             let resolved = match poll {
                 Poll::Pending => {true}
                 Poll::Ready(r) => {jfut.resolve3(r).unwrap()}
             };
 
+            debug!("RESOLVED {}", resolved);
+
             if !resolved {
                 panic!("It's a bug in wake. Why is the resolved future gets resolved again?")
             };
+
+            debug!("NO PANIC");
 
             Ok(())
         }).unwrap();
@@ -82,12 +93,17 @@ impl<E, F> IntoJava for F where
         let gjfut = ContextedGlobal::from_local(env, *ljfut).unwrap();
 
         let waker = Arc::new(Waker::new(self, gjfut));
-        let mut fguard = waker.guard();
+        let poll = {
+            let mut fguard = waker.guard();
         
-        let waker = Arc::clone(&waker).into();
-        let mut context = Context::from_waker(&waker);
+            let waker = Arc::clone(&waker).into();
+            let mut context = Context::from_waker(&waker);
 
-        let poll = fguard.as_mut().poll(&mut context);
+            debug!("POLLJUSTPOLL");
+
+            fguard.as_mut().poll(&mut context)
+        };
+        debug!("POLLJUSTPOLLEND");
 
         let resolved = match poll {
             Poll::Pending => {true}
