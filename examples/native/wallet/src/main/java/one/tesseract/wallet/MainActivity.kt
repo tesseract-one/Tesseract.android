@@ -10,41 +10,23 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import one.tesseract.UserCancelledException
 import one.tesseract.ipc.activity.ActivityMonitor
 import one.tesseract.ipc.activity.free.Launcher
 import one.tesseract.service.Tesseract
-import one.tesseract.service.protocol.TestService
-import one.tesseract.service.transport.IPCTransport
-import one.tesseract.wallet.ui.theme.TesseractAndroidTheme
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CompletionStage
-import java.util.concurrent.Future
-import java.util.function.Supplier
 
-class WalletTestService(private val launcher: Launcher): TestService {
-    override fun signTransaction(transaction: String): CompletionStage<String> {
-        return SignActivity.requestUserConfirmation(launcher, transaction).thenCompose {
-            if(it) {
-                return@thenCompose CompletableFuture.completedFuture(transaction + "_signed")
-            } else {
-                val cc = CompletableFuture<String>()
-                cc.completeExceptionally(UserCancelledException("user cancelled for sure"))
-                return@thenCompose cc
-            }
-        }
-    }
-}
+import one.tesseract.wallet.ui.theme.TesseractAndroidTheme
+
+
 
 class MainActivity(@Suppress("unused") private var tesseract: Tesseract? = null) : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val launcher: Launcher = Launcher(ActivityMonitor(application))
+        val launcher = Launcher(ActivityMonitor(application))
 
-        val tes = Tesseract()
-        tes.addTransport(IPCTransport())
-        tes.addService(WalletTestService(launcher))
+        this.tesseract = Tesseract
+            .default()
+            .service(WalletTestService(launcher))
 
         setContent {
             TesseractAndroidTheme {

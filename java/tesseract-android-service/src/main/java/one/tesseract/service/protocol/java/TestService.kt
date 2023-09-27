@@ -1,7 +1,6 @@
-package one.tesseract.service.protocol
+package one.tesseract.service.protocol.java
 
-import one.tesseract.UserCancelledException
-import one.tesseract.service.Service
+import one.tesseract.service.service.java.Service
 import java.util.concurrent.CompletionStage
 
 interface TestService: Service {

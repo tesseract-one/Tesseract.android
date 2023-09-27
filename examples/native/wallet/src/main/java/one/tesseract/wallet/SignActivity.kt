@@ -13,21 +13,20 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+
 import one.tesseract.ipc.activity.free.Launcher
 import one.tesseract.ipc.activity.free.finishFreeActivity
+
 import one.tesseract.wallet.ui.theme.TesseractAndroidTheme
-import java.util.concurrent.CompletionStage
 
 class SignActivity : ComponentActivity() {
     companion object {
         const val TRANSACTION = "transaction"
 
-        fun requestUserConfirmation(launcher: Launcher, transaction: String): CompletionStage<Boolean> {
+        suspend fun requestUserConfirmation(launcher: Launcher, transaction: String): Boolean {
             val bundle = Bundle()
             bundle.putString(TRANSACTION, transaction)
-            return launcher.startFreeActivityForResult<Boolean>(SignActivity::class.java, bundle).thenApply {
-                it.second
-            }
+            return launcher.startFreeActivityForResult<Boolean>(SignActivity::class.java, bundle).second
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {

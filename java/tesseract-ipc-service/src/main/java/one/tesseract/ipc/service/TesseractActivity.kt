@@ -43,9 +43,7 @@ class TesseractActivity : Activity() {
                 ?: throw RuntimeException("No channel '$channelId' found")
 
         response.whenComplete { r, _ ->
-            val bundle = Bundle(2)
-            bundle.rx = r
-            bundle.id = id
+            val bundle = ResponseBundle(id, r)
 
             val intent = Intent()
             intent.action = "one.tesseract.REPLY"
