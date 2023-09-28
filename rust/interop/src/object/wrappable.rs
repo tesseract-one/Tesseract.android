@@ -18,13 +18,13 @@ use std::sync::Arc;
 
 use jni::objects::{JObject, JValue};
 use jni::JNIEnv;
-use jni::errors::Result;
+use jni::errors::{Error, Result};
 
 use jni_fn::jni_fn;
 
 use crate::env::AndroidEnv;
 use crate::pointer::ArcPointer;
-use crate::error::deresultify;
+use crate::error::Deresultify;
 
 use super::desc::JavaDesc;
 
@@ -101,7 +101,7 @@ impl<T> JavaWrappable for T where T: JavaWrappableDesc {
 
 #[jni_fn("one.tesseract.interop.rust.RustObject")]
 pub fn drop(env: JNIEnv, this: JObject) {
-    deresultify(&env, || {
+    Error::deresultify(&env, || {
         let handle = WrappableHandle::from_java_ref(this, &env)?;
         Ok(drop(handle))
     })

@@ -22,6 +22,65 @@ use thiserror::Error;
 
 use crate::ContextedGlobal;
 
+pub trait ExceptionConvertible {
+    fn to_exception<'a: 'b, 'b>(&self, env: &'b JNIEnv<'a>) -> jni::errors::Result<JObject<'a>>;
+}
+
+pub trait Deresultify: ExceptionConvertible + std::fmt::Display {
+    fn throw<'a: 'b, 'b>(&self, env: &'b JNIEnv<'a>) -> jni::errors::Result<()> {
+        let exception = self.to_exception(env)?;
+        let throwable = JThrowable::from(exception);
+
+        env.throw(throwable)
+    }
+
+    fn deresultify<T, I, F>(env: &JNIEnv, fun: F) -> T
+    where
+        Self: Sized,
+        T: Default,
+        I: Into<T>,
+        F: FnOnce() -> Result<I, Self>,
+    {
+        match fun() {
+            Err(err) => {
+                match err.throw(env) {
+                    Ok(_) => T::default(),
+                    Err(e) => {
+                        let message = err.to_string();
+                        debug!("Error '{}' occured, but couldn't be thrown as Exception because JNI returned: {}", message, e.to_string());
+                        panic!("Error '{}' occured, but couldn't be thrown as Exception because JNI returned: {}", message, e.to_string())
+                    },
+                }
+            }
+            Ok(value) => value.into()
+        }
+    }
+}
+
+impl ExceptionConvertible for jni::errors::Error {
+    fn to_exception<'a: 'b, 'b>(&self, env: &'b JNIEnv<'a>) -> jni::errors::Result<JObject<'a>> {
+        match self {
+            jni::errors::Error::JavaException => {
+                let exception = env.exception_occurred()?;
+                env.exception_clear()?; //let's see how it works. probably we should leave it here
+                Ok(exception.into())
+                //TODO: wrap into JNIException
+            },
+            e => {
+                let message = e.to_string();
+                let message = env.new_string(message)?;
+                env.new_object(
+                    "one/tesseract/interop/rust/InteropException",
+                    "(Ljava/lang.String;)V",
+                    &[message.into()])
+            }
+        }
+    }
+}
+
+impl<E> Deresultify for E where E: ExceptionConvertible + std::fmt::Display {
+}
+
 pub fn deresultify<T, I, F>(env: &JNIEnv, fun: F) -> T
 where
     T: Default,
