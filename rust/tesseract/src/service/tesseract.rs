@@ -10,8 +10,7 @@ use tesseract::service::Tesseract;
 
 use super::{service, transport};
 
-pub (crate) trait Applicator: FnOnce(Tesseract) -> Tesseract {}
-impl<F> Applicator for F where F: FnOnce(Tesseract) -> Tesseract {}
+use tesseract_ipc_android::service::Applicator;
 
 const PTR_FIELD: &str = "ptr";
 
@@ -48,7 +47,7 @@ pub fn transport<'a>(env: JNIEnv<'a>, this: JObject<'a>, transport: JObject<'a>)
         let transport = env.call_method(
             transport,
             "rustTransport",
-            "()Lone/tesseract/service/RustTransport;",
+            "()Lone/tesseract/transport/service/RustTransport;",
             &[])?.l()?;
 
         let transport = env.call_method(
@@ -66,7 +65,7 @@ pub fn transport<'a>(env: JNIEnv<'a>, this: JObject<'a>, transport: JObject<'a>)
         let tesseract = applicator(tesseract);
 
         unsafe {env.set_rust_field(this, PTR_FIELD, tesseract)?};
-        
+
         Ok(this)
     })
 }

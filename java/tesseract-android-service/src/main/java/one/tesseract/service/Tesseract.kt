@@ -3,7 +3,10 @@ package one.tesseract.service
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
-import one.tesseract.service.transport.IPCTransport
+
+import one.tesseract.ipc.service.IPCTransport
+import one.tesseract.transport.service.Transport
+
 import one.tesseract.service.service.java.Service as JavaService
 import one.tesseract.service.service.kotlin.Service as KotlinService
 

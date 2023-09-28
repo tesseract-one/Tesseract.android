@@ -2,7 +2,7 @@ use jni::{JNIEnv, objects::JObject};
 use jni::errors::Result;
 
 use crate::service::protocol;
-use super::tesseract::Applicator;
+use tesseract_ipc_android::service::Applicator;
 
 pub (crate) fn jservice_to_services<'a: 'b, 'b>(env: &'b JNIEnv<'a>, service: JObject<'a>) -> Result<Vec<Box<dyn Applicator>>> {
     let mut result = Vec::<Box<dyn Applicator>>::new();

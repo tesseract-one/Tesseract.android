@@ -1,3 +1,6 @@
+//!!!!!THIS IS JUST AND EXAMPLE (which was a former impl of IPCTransport)
+//! use code from here to implement rust transports importing to java
+
 use jni::objects::JObject;
 use jni::JNIEnv;
 use jni::sys::jlong;
@@ -6,10 +9,9 @@ use jni_fn::jni_fn;
 
 use interop_android::error::deresultify;
 
-use log::debug;
 use tesseract_ipc_android::service::Transport;
 
-use crate::service::tesseract::Applicator;
+use tesseract_ipc_android::service::Applicator;
 
 
 #[jni_fn("one.tesseract.service.transport.IPCTransport")]

@@ -1,88 +1,82 @@
-//===------------ transport.rs --------------------------------------------===//
-//  Copyright 2021, Tesseract Systems, Inc.
-//
-//  Licensed under the Apache License, Version 2.0 (the "License");
-//  you may not use this file except in compliance with the License.
-//  You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-//  Unless required by applicable law or agreed to in writing, software
-//  distributed under the License is distributed on an "AS IS" BASIS,
-//  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-//  See the License for the specific language governing permissions and
-//  limitations under the License.
-//===----------------------------------------------------------------------===//
-
 use std::sync::Arc;
 
+use interop_android::{ContextedGlobal, deresultify};
+
+use jni::objects::{JObject, JValue};
 use jni::JNIEnv;
-use jni::JavaVM;
-use jni::objects::GlobalRef;
+use jni::errors::Result;
+use jni::sys::jlong;
 
-use tesseract::service::BoundTransport;
-use tesseract::service::Transport;
-use tesseract::service::TransportProcessor;
+use jni_fn::jni_fn;
 
+use tesseract::service::{TransportProcessor, Transport, BoundTransport};
+
+use crate::service::Applicator;
+
+use super::bound::JBoundTransport;
 use super::processor::JProcessor;
 
-pub struct IPCTransport {
-    channel: String,
-    vm: JavaVM
+struct JTransport {
+    internal: ContextedGlobal
 }
 
-impl IPCTransport {
-    pub fn new<'a: 'b, 'b>(env: &'b JNIEnv<'a>, channel: &str) -> jni::errors::Result<Self> { //TODO: change to other error or implement status
+impl JTransport {
+    pub fn from_local(env: &JNIEnv, local: JObject) -> Result<Self> {
         Ok(Self {
-            channel: channel.to_owned(),
-            vm: env.get_java_vm()?
+            internal: ContextedGlobal::from_local(env, local)?
         })
     }
-
-    pub fn default<'a: 'b, 'b>(env: &'b JNIEnv<'a>) -> jni::errors::Result<Self> { //TODO: change to other error or implement status
-        Self::new(env, "default")
-    }
 }
 
-struct BoundIPCTransport {
-    _channel: GlobalRef //keeps the channel alive
-}
-
-impl BoundTransport for BoundIPCTransport {}
-
-impl Transport for IPCTransport {
+impl Transport for JTransport {
     fn bind(self, processor: Arc<dyn TransportProcessor + Send + Sync>) -> Box<dyn BoundTransport + Send> {
-        debug!("!!!Binding");
-        let env = self.vm.get_env().unwrap();
-        debug!("!!!ENV");
-        let processor = JProcessor::new(&env, processor).unwrap();
-        debug!("!!!PROC");
+        Box::new(self.internal.with_safe_context_rret(64, |env, transport| {
+            let processor = JProcessor::new(&env, processor)?;
 
-        let channel = env.new_string(&self.channel).unwrap();
-        debug!("!!!CHANNEL STRING");
-        // let clazz = env.find_class_android("one/tesseract/ipc/service/Channel").unwrap();
-        // debug!("!!!HAVE CHHANNEL CLASS");
+            debug!("!!!!PROCESSOR CREATED!!!");
 
-        // let e = env.call_static_method(clazz, "create",
-        //      "(Ljava/lang/String;Lone/tesseract/ipc/service/Processor;)Lone/tesseract/ipc/service/Channel;", 
-        //      &[channel.into(), processor.into()]).err().unwrap();
+            let processor: JValue = JValue::Object(processor.into());
 
-        // debug!("?????E: {}", e);
-        // panic!()
+            debug!("!!!!PROCESSOR CREATED VALUE!!!");
 
-        // let channel = env.call_static_method(clazz, "create",
-        //      "(Ljava/lang/String;Lone/tesseract/ipc/service/Processor;)Lone/tesseract/ipc/service/Channel;", 
-        //      &[channel.into(), processor.into()]).unwrap().l().unwrap();
-        // debug!("!!!GOT CHANNEL");
+            let bound = env.call_method(
+                transport,
+                "bind",
+                "(Lone/tesseract/transport/service/Processor;)Lone/tesseract/transport/service/BoundTransport;",
+                &[processor])?.l()?;
 
-        let channel = env.call_method(*processor, "createChannel",
-            "(Ljava/lang/String;)Lone/tesseract/ipc/service/Channel;", &[channel.into()]).unwrap().l().unwrap();
-        debug!("!!!GOT CHANNEL");
+            debug!("!!!!AND BOUND!!!");
 
-        let channel = env.new_global_ref(channel).unwrap();
-
-        debug!("!!!GLOBAL CHANNEL");
-
-        Box::new(BoundIPCTransport {_channel: channel})
+            JBoundTransport::from_local(env, bound)
+        })
+        .inspect_err(|e| {
+            match e {
+                interop_android::error::GlobalError::Exception(exception) => {
+                    debug!("!!!!AND HERE IS THE #$%!!!: {}", e);
+                    exception.do_in_context_rret(64, |env, exception| {
+                        env.call_method(exception, "printStackTrace", "()V", &[])?.v()
+                    }).unwrap()
+                },
+                interop_android::error::GlobalError::JniError(e) => {
+                    debug!("!!!!AND HERE IS THE JNI ERROR!!!: {}", e);
+                },
+            }
+        })
+        .expect("Maybe improve the rust transport API to be able to provide an error here?"))
     }
+}
+
+#[jni_fn("one.tesseract.transport.service.JavaRustTransport")]
+pub fn createApplicator<'a>(env: JNIEnv<'a>, this: JObject<'a>) -> jlong {
+    deresultify(&env, || {
+        let transport = env.get_field(this, "transport", "Lone/tesseract/transport/service/JavaTransport;")?.l()?;
+        
+        let transport = JTransport::from_local(&env, transport)?;
+
+        let applicator: Box<dyn Applicator> = Box::new(move |tesseract| {
+            tesseract.transport(transport)
+        });
+
+        Ok(Box::into_raw(Box::new(applicator)) as jlong)
+    })
 }

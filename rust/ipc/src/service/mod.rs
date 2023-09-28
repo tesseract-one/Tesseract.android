@@ -1,4 +1,8 @@
 mod processor;
 mod transport;
+mod bound;
 
-pub use transport::IPCTransport as Transport;
+use tesseract::service::Tesseract;
+
+pub trait Applicator: FnOnce(Tesseract) -> Tesseract {}
+impl<F> Applicator for F where F: FnOnce(Tesseract) -> Tesseract {}

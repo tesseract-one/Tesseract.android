@@ -17,6 +17,8 @@
 //#![feature(proc_macro_is_available)]
 //#![feature(once_cell)]
 
+#![feature(result_option_inspect)]
+
 #[macro_use]
 extern crate log;
 extern crate android_log;

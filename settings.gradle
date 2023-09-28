@@ -16,6 +16,9 @@ rootProject.name = "TesseractAndroid"
 include ':examples:native:wallet'
 include ':examples:rust:app'
 include ':examples:rust:wallet'
+
+include ':java:tesseract-transport-service'
+
 include ':java:tesseract-android'
 include ':java:tesseract-android-service'
 include ':java:tesseract-ipc'

@@ -8,7 +8,7 @@ class WalletTestService(private val launcher: Launcher): TestService {
     override suspend fun signTransaction(transaction: String): String {
         val allow = SignActivity.requestUserConfirmation(launcher, transaction)
         return if(allow) {
-            transaction + "_signe7"
+            transaction + "_signe15"
         } else {
             throw UserCancelledException("user cancelled for sure")
         }
