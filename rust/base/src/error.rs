@@ -26,7 +26,7 @@ where
 }
 
 pub fn tesseractify_exception<'a: 'b, 'b>(env: &'b JNIEnv<'a>, exception: JThrowable<'a>) -> jni::errors::Result<tesseract::Error> {
-    let user_cancelled_clazz = env.find_class_android("one/tesseract/UserCancelledException")?;
+    let user_cancelled_clazz = env.find_class_android("one/tesseract/exception/UserCancelledException")?;
     let this_clazz = env.get_object_class(exception)?;
     let is_cancelled = env.is_assignable_from(user_cancelled_clazz, this_clazz)?;
     //is_instance_of(exception, clazz)?;

@@ -35,7 +35,7 @@ pub mod iter;
 
 pub use contexted_global::ContextedGlobal;
 pub use exception::Exception;
-pub use error::deresultify;
+//pub use error::deresultify;
 pub use jfuture::JFuture;
 
 pub use object::{JavaDesc, JavaWrappableDesc, JavaWrappable, JavaConvertibleDesc, JavaConvertible};

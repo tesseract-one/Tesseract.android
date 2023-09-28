@@ -25,6 +25,7 @@ extern crate android_log;
 
 pub mod context;
 pub mod error;
+pub mod newe;
 
 // #[cfg(feature = "client")]
 // pub mod client;

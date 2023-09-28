@@ -1,10 +1,11 @@
 use std::sync::Arc;
 
-use interop_android::{ContextedGlobal, deresultify};
+use interop_android::error::Deresultify;
+use interop_android::ContextedGlobal;
 
 use jni::objects::{JObject, JValue};
 use jni::JNIEnv;
-use jni::errors::Result;
+use jni::errors::{Error, Result};
 use jni::sys::jlong;
 
 use jni_fn::jni_fn;
@@ -68,7 +69,7 @@ impl Transport for JTransport {
 
 #[jni_fn("one.tesseract.transport.service.JavaRustTransport")]
 pub fn createApplicator<'a>(env: JNIEnv<'a>, this: JObject<'a>) -> jlong {
-    deresultify(&env, || {
+    Error::deresultify(&env, || {
         let transport = env.get_field(this, "transport", "Lone/tesseract/transport/service/JavaTransport;")?.l()?;
         
         let transport = JTransport::from_local(&env, transport)?;
