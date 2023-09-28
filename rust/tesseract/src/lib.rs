@@ -1,6 +1,7 @@
 #![feature(async_closure)]
 
-pub mod error;
-pub mod context;
+// #[cfg(feature = "client")]
+// pub mod client;
 
-mod service;
+#[cfg(feature = "service")]
+pub mod service;

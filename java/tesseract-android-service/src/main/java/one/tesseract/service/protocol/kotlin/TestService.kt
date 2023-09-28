@@ -11,7 +11,7 @@ import one.tesseract.service.protocol.java.TestService as JavaTestService
 import kotlin.jvm.Throws
 
 interface TestService: KotlinService {
-    @Throws(UserCancelledException::class)
+    @Throws(one.tesseract.UserCancelledException::class)
     suspend fun signTransaction(transaction: String): String
 
     override fun toJava(scope: CoroutineScope): JavaService = TestServiceAdapter(this, scope)

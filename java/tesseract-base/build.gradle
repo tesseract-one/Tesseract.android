@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'one.tesseract.android.service'
+    namespace 'one.tesseract'
 
     compileSdk rootProject.ext.compileSdkVersion
 
@@ -27,20 +27,8 @@ dependencies {
 
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.activity:activity-ktx:1.7.2'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation "androidx.navigation:navigation-fragment-ktx:$rootProject.ext.navVersion"
-    implementation "androidx.navigation:navigation-ui-ktx:$rootProject.ext.navVersion"
 
-    implementation 'com.google.android.material:material:1.9.0'
-
-    implementation project(':java:interop-rust')
-    implementation project(':java:tesseract-base')
-
-
-    implementation project(':java:tesseract-transport-service')
-    implementation project(':java:tesseract-android')
-    implementation project(':java:tesseract-ipc-service')
+    implementation project(path: ':java:interop-rust')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

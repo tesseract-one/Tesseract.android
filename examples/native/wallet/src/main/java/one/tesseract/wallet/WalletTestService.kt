@@ -10,7 +10,7 @@ class WalletTestService(private val launcher: Launcher): TestService {
         return if(allow) {
             transaction + "_signe15"
         } else {
-            throw UserCancelledException("user cancelled for sure")
+            throw one.tesseract.UserCancelledException("user cancelled for sure")
         }
     }
 }

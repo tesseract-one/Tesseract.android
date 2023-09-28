@@ -4,10 +4,11 @@
 
 members = [
     "rust/interop",
+    "rust/base",
     "rust/ipc",
     "rust/tesseract",
-    "examples/rust/app_native",
-    "examples/rust/wallet_native",
+    #"examples/rust/app_native",
+    #"examples/rust/wallet_native",
 ]
 
 resolver = "1"

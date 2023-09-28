@@ -17,6 +17,8 @@ include ':examples:native:wallet'
 include ':examples:rust:app'
 include ':examples:rust:wallet'
 
+include ':java:tesseract-base'
+
 include ':java:tesseract-transport-service'
 
 include ':java:tesseract-android'

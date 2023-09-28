@@ -31,7 +31,6 @@ dependencies {
     implementation "androidx.navigation:navigation-fragment-ktx:$rootProject.ext.navVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$rootProject.ext.navVersion"
 
-    implementation project(':java:interop-rust')
     implementation project(':java:tesseract-transport-service')
     implementation project(':java:tesseract-ipc')
 

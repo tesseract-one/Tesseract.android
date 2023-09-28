@@ -7,7 +7,7 @@ use interop_android::ContextedGlobal;
 use jni::{JNIEnv, objects::JObject, errors::Result};
 use tesseract_protocol_test::{Test, service::TestExecutor};
 
-use crate::error::tesseractify_async;
+use tesseract_android_base::error::tesseractify_async;
 
 use super::jservice::JTestService;
 
@@ -40,8 +40,6 @@ impl tesseract::service::Service for TestService {
         ))
     }
 }
-
-use crate::context::TesseractContext;
 
 // #[async_trait]
 // impl tesseract_protocol_test::TestService for TestService {
