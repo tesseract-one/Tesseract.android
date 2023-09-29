@@ -12,12 +12,12 @@ use jni::{
     objects::GlobalRef
 };
 
-use crate::contexted_global::ContextedGlobal;
+use crate::{contexted_global::ContextedGlobal, error::ExceptionConvertible};
 
 use super::completable_future::JCompletableFuture;
 
 struct Waker<E, F> where
-    E: Send + Display + 'static,
+    E: Send + ExceptionConvertible + 'static,
     F: ?Sized + Send + 'static,
     F: Future<Output = Result<GlobalRef, E>> {
         rs: Mutex<Pin<Box<F>>>,
@@ -25,7 +25,7 @@ struct Waker<E, F> where
 }
 
 impl<E, F> Waker<E, F> where
-    E: Send + Display,
+    E: Send + ExceptionConvertible,
     F: ?Sized + Send,
     F: Future<Output = Result<GlobalRef, E>> {
 
@@ -39,7 +39,7 @@ impl<E, F> Waker<E, F> where
 }
 
 impl<E, F> Wake for Waker<E, F> where
-    E: Send + Display,
+    E: Send + ExceptionConvertible,
     F: ?Sized + Send,
     F: Future<Output = Result<GlobalRef, E>> {
 
@@ -84,7 +84,7 @@ pub trait IntoJava {
 }
 
 impl<E, F> IntoJava for F where
-    E: Send + Display + 'static,
+    E: Send + ExceptionConvertible + 'static,
     F: ?Sized + Send + 'static,
     F: Future<Output = Result<GlobalRef, E>> {
 

@@ -22,6 +22,7 @@ use jni::JNIEnv;
 
 use crate::env::AndroidEnv;
 use crate::contexted_global::ContextedGlobal;
+use crate::error::ExceptionConvertible;
 
 use super::completion_stage::JCompletionStage;
 
@@ -105,31 +106,24 @@ impl<'a: 'b, 'b> JCompletableFuture<'a, 'b> {
         }
     }
 
-    pub fn resolve3<E: Display>(&self, result: std::result::Result<GlobalRef, E>) -> Result<bool> {
+    pub fn resolve3<E: ExceptionConvertible>(&self, result: std::result::Result<GlobalRef, E>) -> Result<bool> {
         match result {
             Ok(ok) => self.success(ok.as_obj()),
             Err(err) => {
-                self.failure(JThrowable::from_error(self.env, err))
+                self.failure(JThrowable::from_error(self.env, err)?)
             }
         }
     }
 }
 
 trait ConvertThrowable<'a>: Sized {
-    fn from_error<E: Display>(env: &'a JNIEnv, e: E) -> Self;
+    fn from_error<E: ExceptionConvertible>(env: &'a JNIEnv, e: E) -> Result<Self>;
 }
 
 impl<'a> ConvertThrowable<'a> for JThrowable<'a> {
-    fn from_error<E: Display>(env: &'a JNIEnv, e: E) -> Self {
-        let clazz = env
-            .find_class_android("java/lang/Exception").unwrap();
+    fn from_error<E: ExceptionConvertible>(env: &'a JNIEnv, e: E) -> Result<Self> {
+        let exception = e.to_exception(env)?;
 
-        let message = format!("Rust error: {}", e);
-        let message = env.new_string(message).unwrap();
-
-        let exception = env
-            .new_object(clazz, "(Ljava/lang/String;)V", &[message.into()]).unwrap();
-
-        exception.into()
+        Ok(exception.into())
     }
 }
