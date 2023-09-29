@@ -2,15 +2,31 @@ use jni::{JNIEnv, objects::JObject, errors::Result};
 
 use thiserror::Error;
 
+use log::SetLoggerError;
+
 use interop_android::error::ExceptionConvertible;
 
 #[derive(Debug, Error)]
 pub enum TesseractAndroidError {
     #[error(transparent)]
-    Tesseract(tesseract::Error),
+    Tesseract(#[from] tesseract::Error),
 
     #[error(transparent)]
-    Jni(jni::errors::Error)
+    Logger(#[from] SetLoggerError),
+
+    #[error(transparent)]
+    Jni(#[from] jni::errors::Error)
+}
+
+fn logger_error_to_exception<'a: 'b, 'b>(error: &SetLoggerError, env: &'b JNIEnv<'a>) -> Result<JObject<'a>> {
+    let description = error.to_string();
+    let description = format!("Can't set android logger for Tesseract: {}", description);
+    let description = env.new_string(description)?;
+
+    env.new_object(
+        "java/lang/Exception",
+        "(Ljava/lang/String;)V",
+        &[description.into()])
 }
 
 fn tesseract_error_to_exception<'a: 'b, 'b>(error: &tesseract::Error, env: &'b JNIEnv<'a>) -> Result<JObject<'a>> {
@@ -52,6 +68,7 @@ impl ExceptionConvertible for TesseractAndroidError {
     fn to_exception<'a: 'b, 'b>(&self, env: &'b JNIEnv<'a>) -> Result<JObject<'a>> {
         match self {
             TesseractAndroidError::Tesseract(error) => tesseract_error_to_exception(error, env),
+            TesseractAndroidError::Logger(error) => logger_error_to_exception(error, env),
             TesseractAndroidError::Jni(error) => error.to_exception(env),
         }
     }

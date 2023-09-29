@@ -7,6 +7,7 @@ use jni_fn::jni_fn;
 use interop_android::env::AndroidEnv;
 use interop_android::error::Deresultify;
 use tesseract::service::Tesseract;
+use tesseract_android_base::newe::TesseractAndroidError;
 
 use super::{service, transport};
 
@@ -16,8 +17,8 @@ const PTR_FIELD: &str = "ptr";
 
 #[jni_fn("one.tesseract.service.Tesseract")]
 pub fn create<'a>(env: JNIEnv<'a>, this: JObject<'a>) {
-    Error::deresultify(&env, || {
-        android_log::init("TESSERACTNNNN").unwrap(); //TODO: custom error
+    TesseractAndroidError::deresultify(&env, || {
+        android_log::init("TESSERACTNNNN")?;
         let tesseract = Tesseract::new();
         unsafe {env.set_rust_field(this, PTR_FIELD, tesseract)?};
         Ok(())
