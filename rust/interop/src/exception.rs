@@ -56,4 +56,8 @@ impl<'a: 'b, 'b> Exception<'a, 'b> {
 
         Ok(self.env.get_string(message.into())?.into())
     }
+
+    pub fn print_stack_trace(&self) -> Result<()> {
+        self.env.call_method(self.internal, "printStackTrace", "()V", &[])?.v()
+    }
 }

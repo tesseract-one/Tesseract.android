@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <application
+        android:name=".Application"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -36,9 +37,9 @@
                 <data android:mimeType="tesseract/test" />
             </intent-filter>
 
-            <meta-data
+            <!--meta-data
                 android:name="channel"
-                android:value="default" />
+                android:value="default" /-->
         </activity>
     </application>
 

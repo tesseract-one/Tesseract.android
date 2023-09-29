@@ -18,15 +18,9 @@ import one.tesseract.wallet.ui.theme.TesseractAndroidTheme
 
 
 
-class MainActivity(@Suppress("unused") private var tesseract: Tesseract? = null) : ComponentActivity() {
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        val launcher = Launcher(ActivityMonitor(application))
-
-        this.tesseract = Tesseract
-            .default()
-            .service(WalletTestService(launcher))
 
         setContent {
             TesseractAndroidTheme {

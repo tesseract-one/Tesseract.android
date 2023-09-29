@@ -12,7 +12,7 @@ use jni::{
     objects::GlobalRef
 };
 
-use crate::{contexted_global::ContextedGlobal, error::ExceptionConvertible};
+use crate::{contexted_global::ContextedGlobal, error::ExceptionConvertible, Exception};
 
 use super::completable_future::JCompletableFuture;
 
@@ -61,7 +61,14 @@ impl<E, F> Wake for Waker<E, F> where
 
             let resolved = match poll {
                 Poll::Pending => {true}
-                Poll::Ready(r) => {jfut.resolve3(r).unwrap()}
+                Poll::Ready(r) => {jfut.resolve3(r).inspect_err(|e| {
+                    debug!("WTF: {}", e);
+                    let exc = e.to_exception(&env).unwrap();
+                    let exc = Exception::from_env(&env, exc);
+                    exc.print_stack_trace().unwrap();
+
+                    debug!("EXCEPTION PRINTED");
+                }).unwrap()}
             };
 
             debug!("RESOLVED {}", resolved);
