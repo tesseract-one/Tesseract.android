@@ -40,7 +40,7 @@ use interop_android::future::completion_stage::JCompletionStage;
 use interop_android::future::IntoJava;
 use interop_android::future::FutureExtJava;
 use interop_android::thread_pool::AndroidThreadPoolBuilder;
-use interop_android::error::Deresultify;
+use interop_android::error::JavaErrorContext;
 
 use tesseract::client::{Service, Tesseract};
 
@@ -55,7 +55,7 @@ use crate::delegate::TransportDelegate;
 
 #[jni_fn("one.tesseract.example.app.RustCore")]
 pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) {
-    TesseractAndroidError::deresultify(&env, || {
+    TesseractAndroidError::java_context(&env, || {
         android_log::init("TestDApp")?;
 
         let core = RustCore::from_env(&env, core);
@@ -88,7 +88,7 @@ pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) {
 
 #[jni_fn("one.tesseract.example.app.RustCore")]
 pub fn sign<'a>(env: JNIEnv<'a>, rcore: JObject<'a>, transaction: JString<'a>) -> JObject<'a> {
-    TesseractAndroidError::deresultify(&env, || {
+    TesseractAndroidError::java_context(&env, || {
         let core = RustCore::from_env(&env, rcore);
 
         let transaction: String = env
@@ -98,9 +98,7 @@ pub fn sign<'a>(env: JNIEnv<'a>, rcore: JObject<'a>, transaction: JString<'a>) -
         let service = core.get_service()?;
 
         Ok(async move {
-            service.sign_transaction(&transaction).await.map_err(|e| {
-                TesseractAndroidError::from(e)
-            })
+            service.sign_transaction(&transaction).await.map_err(TesseractAndroidError::from)
         }.map_ok_java(&env, |env, signed| {
             Ok(env.new_string(&signed)?.into())
         }).boxed_into_java(&env))

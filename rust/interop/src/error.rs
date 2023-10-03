@@ -20,30 +20,46 @@ use jni::{JNIEnv, objects::{JObject, JThrowable}};
 
 use thiserror::Error;
 
-use crate::ContextedGlobal;
+use crate::{ContextedGlobal, env::AndroidEnv};
 
 pub trait ExceptionConvertible {
     fn to_exception<'a: 'b, 'b>(&self, env: &'b JNIEnv<'a>) -> jni::errors::Result<JObject<'a>>;
 }
 
-pub trait Deresultify: ExceptionConvertible + std::fmt::Display {
-    fn throw<'a: 'b, 'b>(&self, env: &'b JNIEnv<'a>) -> jni::errors::Result<()> {
-        let exception = self.to_exception(env)?;
-        let throwable = JThrowable::from(exception);
+// pub trait Deresultify: ExceptionConvertible + std::fmt::Display {
+//     fn deresultify<T, I, F>(env: &JNIEnv, fun: F) -> T
+//     where
+//         Self: Sized,
+//         T: Default,
+//         I: Into<T>,
+//         F: FnOnce() -> Result<I, Self>,
+//     {
+//         match fun() {
+//             Err(err) => {
+//                 match env.throw_error(&err) {
+//                     Ok(_) => T::default(),
+//                     Err(e) => {
+//                         let message = err.to_string();
+//                         debug!("Error '{}' occured, but couldn't be thrown as Exception because JNI returned: {}", message, e.to_string());
+//                         panic!("Error '{}' occured, but couldn't be thrown as Exception because JNI returned: {}", message, e.to_string())
+//                     },
+//                 }
+//             }
+//             Ok(value) => value.into()
+//         }
+//     }
+// }
 
-        env.throw(throwable)
-    }
-
-    fn deresultify<T, I, F>(env: &JNIEnv, fun: F) -> T
+pub trait JavaErrorContext: ExceptionConvertible + std::error::Error {
+    fn java_context<T, I>(env: &JNIEnv, fun: impl FnOnce() -> Result<I, CompositeError<Self>>) -> T
     where
         Self: Sized,
         T: Default,
         I: Into<T>,
-        F: FnOnce() -> Result<I, Self>,
     {
         match fun() {
             Err(err) => {
-                match err.throw(env) {
+                match env.throw_error(&err) {
                     Ok(_) => T::default(),
                     Err(e) => {
                         let message = err.to_string();
@@ -78,8 +94,117 @@ impl ExceptionConvertible for jni::errors::Error {
     }
 }
 
-impl<E> Deresultify for E where E: ExceptionConvertible + std::fmt::Display {
+impl<E> JavaErrorContext for E where E: ExceptionConvertible + std::error::Error {
 }
+
+pub trait CompositeErrorContext: std::error::Error {
+    fn composite_context<T>(env: &JNIEnv, fun: impl FnOnce() -> Result<T, CompositeError<Self>>) -> Result<T, Self>
+    where
+        Self: Sized,
+        Self: From<GlobalError>,
+    {
+        fun()
+            .map_err(|e| e.flatten_java(env))
+    }
+
+    fn composite_context2<T>(env: &JNIEnv, fun: impl FnOnce() -> Result<T, CompositeError<Self>>) -> Result<T, CompositeError<Self>>
+    where
+        Self: Sized,
+        Self: From<GlobalError>,
+    {
+        fun()
+    }
+}
+
+impl<E> CompositeErrorContext for E
+where
+    E: std::error::Error
+{
+}
+
+use std::fmt;
+
+#[derive(Debug)]
+pub enum CompositeError<E: std::error::Error> {
+    Jni(jni::errors::Error),
+    Other(E)
+}
+
+impl<E> CompositeError<E>
+where
+    E: std::error::Error,
+    E: From<GlobalError>
+{
+    pub fn flatten_java(self, env: &JNIEnv) -> E {
+        match self {
+            CompositeError::Jni(e) => {
+                let local = LocalError::with_exceptions_checking(env, e);
+                E::from(local.into_global(env))
+            },
+            CompositeError::Other(e) => e,
+        }
+    }
+}
+
+impl<E> ExceptionConvertible for CompositeError<E>
+where
+    E: std::error::Error,
+    E: ExceptionConvertible
+{
+    fn to_exception<'a: 'b, 'b>(&self, env: &'b JNIEnv<'a>) -> jni::errors::Result<JObject<'a>> {
+        match self {
+            CompositeError::Jni(e) => e.to_exception(env),
+            CompositeError::Other(e) => e.to_exception(env),
+        }
+    }
+}
+
+impl<E: std::error::Error> fmt::Display for CompositeError<E> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            CompositeError::Jni(e) => e.fmt(f),
+            CompositeError::Other(e) => <E as fmt::Display>::fmt(e, f)
+        }
+    }
+}
+
+impl<E: std::error::Error + 'static> std::error::Error for CompositeError<E> {
+    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
+        match self {
+            CompositeError::Jni(e) => Some(e),
+            CompositeError::Other(e) => Some(e),
+        }
+    }
+}
+
+pub auto trait CompositeErrorInclude {
+}
+
+impl<T> !CompositeErrorInclude for CompositeError<T> {
+}
+
+impl<EI, E> From<EI> for CompositeError<E>
+where
+    E: std::error::Error + From<EI>,
+    EI: std::error::Error + CompositeErrorInclude,
+ {
+    fn from(value: EI) -> Self {
+        Self::Other(E::from(value))
+    }
+}
+
+impl !CompositeErrorInclude for jni::errors::Error {
+}
+
+impl<E> From<jni::errors::Error> for CompositeError<E>
+where
+    E: std::error::Error,
+ {
+    fn from(value: jni::errors::Error) -> Self {
+        Self::Jni(value)
+    }
+}
+
 
 // pub fn deresultify<T, I, F>(env: &JNIEnv, fun: F) -> T
 // where

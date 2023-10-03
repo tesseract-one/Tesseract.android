@@ -9,6 +9,8 @@ use jni::{
 
 use std::fmt::Display;
 
+use crate::error::{CompositeError, GlobalError};
+
 /*
     These extentions can be done with static typing of produced futures, though it requires significantly more work
     so leaving it as is for now.
@@ -32,17 +34,22 @@ pub trait FutureExtJava: FutureExt {
             }))
         }
 
-    fn map_ok_java<'a: 'b, 'b, T, E, F>(self, env: &'b JNIEnv<'a>, f: F) -> Box<dyn Future<Output=Result<GlobalRef, E>> + Send + 'static> where
+    fn map_ok_java<'a: 'b, 'b, T, E, F>(self, env: &'b JNIEnv<'a>, f: F) -> Box<dyn Future<Output=Result<GlobalRef, CompositeError<E>>> + Send + 'static> where
         Self: Sized + Send + 'static,
         Self: Future<Output=Result<T,E>>,
-        E: From<JError> + Send + Display + 'static,
+        E: std::error::Error + Send + Display + 'static,
+        E: From<GlobalError>,
         F: Send + 'static,
-        F: for <'k> FnOnce(&'k JNIEnv<'k>, T) -> Result<JObject<'k>, E> {
+        F: for <'k> FnOnce(&'k JNIEnv<'k>, T) -> Result<JObject<'k>, CompositeError<E>> {
             let vm = env.get_java_vm();
             let vm = match vm {
                 Ok(vm) => vm,
-                Err(err) => return Box::new(futures::future::ready(Err(err.into())))
+                Err(err) => {
+                    let composite = CompositeError::<E>::Jni(err);
+                    return Box::new(futures::future::ready(Err(composite)))
+                }
             };
+
             Box::new(self.map(move |it| {
                 match it {
                     Ok(it) => {
@@ -50,7 +57,7 @@ pub trait FutureExtJava: FutureExt {
                         let u = f(&env, it)?;
                         Ok(env.new_global_ref(u)?)
                     },
-                    Err(err) => Err(err)
+                    Err(err) => Err(CompositeError::Other(err))
                 }
             }))
         }

@@ -24,7 +24,7 @@ use jni_fn::jni_fn;
 
 use crate::env::AndroidEnv;
 use crate::pointer::ArcPointer;
-use crate::error::Deresultify;
+use crate::error::JavaErrorContext;
 
 use super::desc::JavaDesc;
 
@@ -101,7 +101,7 @@ impl<T> JavaWrappable for T where T: JavaWrappableDesc {
 
 #[jni_fn("one.tesseract.interop.rust.RustObject")]
 pub fn drop(env: JNIEnv, this: JObject) {
-    Error::deresultify(&env, || {
+    Error::java_context(&env, || {
         let handle = WrappableHandle::from_java_ref(this, &env)?;
         Ok(drop(handle))
     })

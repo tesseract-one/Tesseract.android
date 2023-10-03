@@ -7,7 +7,7 @@ use interop_android::ContextedGlobal;
 use jni::{JNIEnv, objects::JObject, errors::Result};
 use tesseract_protocol_test::{Test, service::TestExecutor};
 
-use tesseract_android_base::error::tesseractify_async;
+use tesseract_android_base::{error::tesseractify_async, newe::TesseractAndroidError};
 
 use super::jservice::JTestService;
 
@@ -59,18 +59,24 @@ impl tesseract::service::Service for TestService {
 //     }
 // }
 
+use tesseract::error::TesseractErrorContext;
+
 #[async_trait]
 impl tesseract_protocol_test::TestService for TestService {
     async fn sign_transaction(self: Arc<Self>, req: &str) -> tesseract::Result<String> {
-        tesseractify_async( async || {
-            self.jservice.with_async_context(32, |env, jservice| {
+        TesseractAndroidError::tesseract_context_async( async || {
+            let response = self.jservice.with_async_context(32, |env, jservice| {
                 let jservice = JTestService::from_env(&env, jservice);
                 let req = env.new_string(req)?;
                 jservice.sign_transaction(req)
-            }).await?.with_safe_context_rret(32, |env, signature| {
+            }).await?;
+
+            let response = response.with_safe_context_rret(32, |env, signature| {
                 let string: String = env.get_string(signature.into())?.into();
                 Ok(string)
-            })
+            })?;
+
+            Ok(response)
         }).await
     }
 }

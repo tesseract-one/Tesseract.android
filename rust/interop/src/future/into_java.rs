@@ -2,7 +2,6 @@ use std::{
     pin::Pin,
     future::Future,
     result::Result,
-    fmt::Display,
     sync::{Arc, Mutex, MutexGuard},
     task::{Wake, Context, Poll},
 };

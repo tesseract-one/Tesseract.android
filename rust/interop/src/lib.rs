@@ -17,6 +17,8 @@
 #![feature(iterator_try_collect)]
 #![feature(result_option_inspect)]
 
+#![feature(auto_traits, negative_impls)]
+
 #[macro_use]
 extern crate log;
 extern crate android_log;
@@ -33,6 +35,7 @@ pub mod future;
 pub mod object;
 pub mod collection;
 pub mod iter;
+pub mod context;
 
 pub use contexted_global::ContextedGlobal;
 pub use exception::Exception;

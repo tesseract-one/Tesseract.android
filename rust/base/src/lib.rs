@@ -19,6 +19,8 @@
 
 #![feature(result_option_inspect)]
 
+#![feature(auto_traits, negative_impls)]
+
 #[macro_use]
 extern crate log;
 extern crate android_log;
