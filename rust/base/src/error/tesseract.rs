@@ -1,32 +1,19 @@
-use futures::Future;
-use interop_android::{error::{GlobalResult, GlobalError}, ContextedGlobal, env::AndroidEnv};
 use jni::{JNIEnv, objects::JThrowable};
+
+use interop_android::{error::GlobalError, env::AndroidEnv};
 
 use log::debug;
 use tesseract::Error as TError;
 use jni::errors::Error as JError;
 
-pub fn tesseractify_jni_error(error: JError) -> TError {
+pub fn jni_error_to_tesseract(error: JError) -> TError {
     TError::new(
         tesseract::error::ErrorKind::Weird,
         &format!("JNI Error: {}", error.to_string()),
         error)
 }
 
-pub fn tesseractify_no_exception<T, I, F>(fun: F) -> tesseract::Result<T>
-where
-    I: Into<T>,
-    F: FnOnce() -> jni::errors::Result<I>,
-{
-    match fun() {
-        Err(err) => {
-            Err(tesseractify_jni_error(err))
-        }
-        Ok(value) => Ok(value.into())
-    }
-}
-
-pub fn tesseractify_exception<'a: 'b, 'b>(env: &'b JNIEnv<'a>, exception: JThrowable<'a>) -> jni::errors::Result<tesseract::Error> {
+pub fn exception_to_tesseract<'a: 'b, 'b>(env: &'b JNIEnv<'a>, exception: JThrowable<'a>) -> jni::errors::Result<tesseract::Error> {
     let user_cancelled_clazz = env.find_class_android("one/tesseract/exception/UserCancelledException")?;
     let this_clazz = env.get_object_class(exception)?;
     let is_cancelled = env.is_assignable_from(user_cancelled_clazz, this_clazz)?;
@@ -45,4 +32,19 @@ pub fn tesseractify_exception<'a: 'b, 'b>(env: &'b JNIEnv<'a>, exception: JThrow
     };
 
     Ok(TError::described(kind, &message))
+}
+
+pub fn global_error_to_tesseract(error: GlobalError) -> tesseract::Error {
+    match error {
+        GlobalError::Exception(e) => {
+            let result = e.do_in_context_rret(64, |env, exception| {
+                exception_to_tesseract(&env, exception.into())
+            });
+            match result {
+                Ok(e) => e,
+                Err(e) => jni_error_to_tesseract(e)
+            }
+        },
+        GlobalError::JniError(e) => jni_error_to_tesseract(e)
+    }
 }

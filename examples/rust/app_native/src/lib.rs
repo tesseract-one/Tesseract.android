@@ -44,7 +44,7 @@ use interop_android::error::JavaErrorContext;
 
 use tesseract::client::{Service, Tesseract};
 
-use tesseract_android_base::newe::TesseractAndroidError;
+use tesseract_android_base::TesseractAndroidError;
 use tesseract_ipc_android::client::TransportIPCAndroid;
 
 use tesseract_protocol_test::{Test, TestService};

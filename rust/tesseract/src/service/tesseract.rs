@@ -7,7 +7,7 @@ use jni_fn::jni_fn;
 use interop_android::env::AndroidEnv;
 use interop_android::error::JavaErrorContext;
 use tesseract::service::Tesseract;
-use tesseract_android_base::newe::TesseractAndroidError;
+use tesseract_android_base::TesseractAndroidError;
 
 use super::{service, transport};
 

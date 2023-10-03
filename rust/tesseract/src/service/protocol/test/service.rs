@@ -7,7 +7,7 @@ use interop_android::ContextedGlobal;
 use jni::{JNIEnv, objects::JObject, errors::Result};
 use tesseract_protocol_test::{Test, service::TestExecutor};
 
-use tesseract_android_base::{newe::TesseractAndroidError};
+use tesseract_android_base::TesseractAndroidError;
 
 use super::jservice::JTestService;
 
