@@ -17,7 +17,7 @@ futures = "0.3.21"
 # lazy_static = "1.4.0"
 
 interop_android = { path = "../../../rust/interop" }
-tesseract-android = { path = "../../../rust/tesseract" }
+tesseract-android-base = { path = "../../../rust/base" }
 tesseract_ipc_android = { path = "../../../rust/ipc", features=["service"]}
 tesseract = { path = "/Users/daniel/repo/Tesseract.rs/tesseract", features=["service"]}
 #tesseract = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["service"]}

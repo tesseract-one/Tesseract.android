@@ -14,6 +14,8 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
+#![feature(async_closure)]
+
 #[macro_use]
 extern crate log;
 extern crate android_log;

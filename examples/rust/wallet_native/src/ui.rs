@@ -14,12 +14,12 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-use interop_android::{ContextedGlobal, JFuture};
+use interop_android::ContextedGlobal;
 use jni::JNIEnv;
 use jni::objects::JObject;
 use jni::errors::Result;
-use tesseracta::error::tesseractify_global_result;
-use tesseracta::context::TesseractContext;
+use tesseract::error::TesseractErrorContext;
+use tesseract_android_base::TesseractAndroidError;
 
 use super::core::RustCore;
 
@@ -35,23 +35,19 @@ impl UI {
     }
 
     pub(crate) async fn request_user_confirmation(&self, transaction: &str) -> tesseract::Result<bool> {
-        debug!("!!!Before UI call");
+        TesseractAndroidError::tesseract_context_async(async || {
+            debug!("!!!Before UI call");
 
-        let allow = self.core.with_async_context(64, |env, core| {
-            let core = RustCore::from_env(&env, core);
-            core.request_user_confirmation(transaction)
-        }).await;
+            let allow = self.core.with_async_context(64, |env, core| {
+                let core = RustCore::from_env(&env, core);
+                core.request_user_confirmation(transaction)
+            }).await?;
+    
+            debug!("!!!UI returned");
 
-        debug!("!!!UI returned");
-
-        let allow = tesseractify_global_result(allow);
-
-        allow.and_then(|allow| {
-            allow.do_in_tesseract_context(64, |env, jallow| {
+            Ok(allow.with_safe_context_rret(64, |env, jallow| {
                 env.call_method(jallow, "booleanValue", "()Z", &[])?.z()
-            })
-        }).map_err(|error| {
-            tesseract::Error::nested(Box::new(error))
-        })
+            })?)
+        }).await
     }
 }

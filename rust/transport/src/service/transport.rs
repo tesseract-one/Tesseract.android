@@ -12,7 +12,7 @@ use jni_fn::jni_fn;
 
 use tesseract::service::{TransportProcessor, Transport, BoundTransport};
 
-use crate::service::Applicator;
+use tesseract_android_base::service::Applicator;
 
 use super::bound::JBoundTransport;
 use super::processor::JProcessor;

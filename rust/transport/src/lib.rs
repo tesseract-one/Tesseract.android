@@ -25,10 +25,6 @@
 extern crate log;
 extern crate android_log;
 
-pub mod error;
-
-pub use error::android::TesseractAndroidError;
-
 // #[cfg(feature = "client")]
 // pub mod client;
 

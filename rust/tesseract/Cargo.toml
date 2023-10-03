@@ -9,8 +9,8 @@ edition = "2021"
 
 [features]
 default = ["client", "service"]
-client = ["tesseract/client", "dep:async-trait"]
-service = ["tesseract/service", "dep:async-trait"]
+client = ["tesseract/client", "tesseract-android-base/client", "tesseract-android-transport/client", "dep:async-trait"]
+service = ["tesseract/service", "tesseract-android-base/service", "tesseract-android-transport/service", "dep:async-trait"]
 
 [dependencies]
 thiserror = "1.0.31"
@@ -25,8 +25,9 @@ tesseract = { path = "/Users/daniel/repo/Tesseract.rs/tesseract", features=["cli
 tesseract-protocol-test = { path = "/Users/daniel/repo/Tesseract.rs/protocols/test", features=["client", "service"]} #{git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client", "service"]}
 
 interop_android = { path = "../interop" }
-tesseract-android-base = { path = "../base", features=["client", "service"]}
-tesseract_ipc_android = { path = "../ipc", features=["client", "service"]}
+tesseract-android-base = { path = "../base" }
+tesseract-android-transport = { path = "../transport" }
+#tesseract_ipc_android = { path = "../ipc", features=["client", "service"]}
 
 serde = { version = "1.0", features = ["derive"] }
 async-trait = {version="0.1", optional=true}

@@ -11,7 +11,7 @@ use tesseract_android_base::TesseractAndroidError;
 
 use super::{service, transport};
 
-use tesseract_ipc_android::service::Applicator;
+use tesseract_android_base::service::Applicator;
 
 const PTR_FIELD: &str = "ptr";
 

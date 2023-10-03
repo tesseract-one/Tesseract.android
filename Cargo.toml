@@ -5,6 +5,7 @@
 members = [
     "rust/interop",
     "rust/base",
+    "rust/transport",
     "rust/ipc",
     "rust/tesseract",
     "examples/rust/app_native",
