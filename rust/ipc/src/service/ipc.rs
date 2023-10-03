@@ -1,33 +1,39 @@
-//!!!!!THIS IS JUST AND EXAMPLE (which was a former impl of IPCTransport)
-//! use code from here to implement rust transports importing to java
+use jni::{JNIEnv, objects::JObject};
 
-use jni::objects::JObject;
-use jni::JNIEnv;
-use jni::sys::jlong;
+use tesseract::service::Transport;
 
-use jni_fn::jni_fn;
+use tesseract_android_transport::service::JTransport;
 
-use interop_android::error::deresultify;
+use jni::errors::Result;
 
-use tesseract_ipc_android::service::Transport;
+const TRANSPORT_CLASS: &str = "one/tesseract/ipc/service/IPCTransport";
 
-use tesseract_ipc_android::service::Applicator;
+pub struct IPCTransport {
+    internal: JTransport
+}
 
+impl IPCTransport {
+    pub fn from_transport<'a: 'b, 'b>(env: &'b JNIEnv<'a>, transport: JObject<'a>) -> Result<Self> {
+        let transport = JTransport::from_local(env, transport)?;
+        Ok(Self {
+            internal: transport
+        })
+    }
 
-#[jni_fn("one.tesseract.service.transport.IPCTransport")]
-pub fn createApplicator<'a>(env: JNIEnv<'a>, this: JObject<'a>) -> jlong {
-    deresultify(&env, || {
-        //debug!("!!!INSIDE CREATE APPLICATOR");
-        let chennel = env.call_method(this, "getChannel", "()Ljava/lang/String;", &[])?.l()?;
-        //debug!("!!!GOT CHANNEL");
-        let channel: String = env.get_string(chennel.into())?.into();
+    pub fn new(env: &JNIEnv, channel: &str) -> Result<Self> {
+        let channel = env.new_string(channel)?;
+        let transport = env.new_object(TRANSPORT_CLASS, "(Ljava/lang/String;)V", &[channel.into()])?;
+        Self::from_transport(env, transport)
+    }
 
-        let transport = Transport::new(&env, &channel)?;
+    pub fn default(env: &JNIEnv) -> Result<Self> {
+        let transport = env.call_static_method(TRANSPORT_CLASS, "default", "()Lone/tesseract/ipc/service/IPCTransport;", &[])?.l()?;
+        Self::from_transport(env, transport)
+    }
+}
 
-        let applicator: Box<dyn Applicator> = Box::new(move |tesseract| {
-            tesseract.transport(transport)
-        });
-
-        Ok(Box::into_raw(Box::new(applicator)) as jlong)
-    })
+impl Transport for IPCTransport {
+    fn bind(self, processor: std::sync::Arc<dyn tesseract::service::TransportProcessor + Send + Sync>) -> Box<dyn tesseract::service::BoundTransport + Send> {
+        self.internal.bind(processor)
+    }
 }

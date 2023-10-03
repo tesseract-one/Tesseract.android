@@ -17,7 +17,7 @@ use tesseract_android_base::service::Applicator;
 use super::bound::JBoundTransport;
 use super::processor::JProcessor;
 
-struct JTransport {
+pub struct JTransport {
     internal: ContextedGlobal
 }
 

@@ -16,7 +16,7 @@ class SignActivity : AppCompatActivity() {
         fun requestUserConfirmation(launcher: Launcher, transaction: String): CompletionStage<Boolean> {
             val bundle = Bundle()
             bundle.putString(TRANSACTION, transaction)
-            return launcher.startFreeActivityForResult<Boolean>(SignActivity::class.java, bundle).thenApply {
+            return launcher.startFreeActivityForResultFuture<Boolean>(SignActivity::class.java, bundle).thenApply {
                 it.second
             }
         }

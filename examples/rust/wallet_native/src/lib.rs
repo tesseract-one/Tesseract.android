@@ -34,7 +34,7 @@ use jni::JNIEnv;
 use jni_fn::jni_fn;
 
 use tesseract::service::Tesseract;
-use tesseract_ipc_android::service::Transport;
+use tesseract_ipc_android::service::IPCTransport;
 
 use crate::core::RustCore;
 use crate::service::TestService;
@@ -53,7 +53,7 @@ pub fn rustInit(env: JNIEnv, core: JObject, data_dir: JString) {
 
         debug!("!!!Before Tesseract");
         let tesseract = Tesseract::new()
-            .transport(Transport::default(&env)?)
+            .transport(IPCTransport::default(&env)?)
             .service(TestService::new(ui, Arc::clone(&signature_provider)));
         debug!("!!!Tesseract initialized succesfully");
         let _ = Box::leak(Box::new(tesseract));//let's keep it alive. make a field later
