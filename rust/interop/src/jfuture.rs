@@ -14,7 +14,7 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-use jni::errors::{Error, Result};
+use jni::errors::Error;
 use std::future::Future;
 use std::pin::Pin;
 use std::sync::Arc;

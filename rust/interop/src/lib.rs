@@ -35,7 +35,6 @@ pub mod future;
 pub mod object;
 pub mod collection;
 pub mod iter;
-pub mod context;
 
 pub use contexted_global::ContextedGlobal;
 pub use exception::Exception;
