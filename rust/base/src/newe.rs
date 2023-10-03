@@ -6,6 +6,8 @@ use log::SetLoggerError;
 
 use interop_android::error::{ExceptionConvertible, CompositeError, CompositeErrorInclude, GlobalError};
 
+use crate::tesseractify::tesseractify_exception;
+
 #[derive(Debug, Error)]
 pub enum TesseractAndroidError {
     #[error(transparent)]
@@ -23,7 +25,32 @@ pub enum TesseractAndroidError {
 
 impl Into<tesseract::Error> for TesseractAndroidError {
     fn into(self) -> tesseract::Error {
-        todo!()
+        match self {
+            TesseractAndroidError::Tesseract(e) => e,
+            TesseractAndroidError::Logger(e) => tesseract::Error::described(
+                tesseract::ErrorKind::Weird,
+                &e.to_string()),
+            TesseractAndroidError::Gllobal(e) => {
+                match e {
+                    GlobalError::Exception(e) => {
+                        let result = e.do_in_context_rret(64, |env, exception| {
+                            tesseractify_exception(&env, exception.into())
+                        });
+                        match result {
+                            Ok(e) => e,
+                            Err(e) => tesseract::Error::described(
+                                tesseract::ErrorKind::Weird,
+                                &e.to_string()),
+                        }
+                    },
+                    GlobalError::JniError(e) => {
+                        tesseract::Error::described(
+                            tesseract::ErrorKind::Weird,
+                            &e.to_string())
+                    },
+                }
+            },
+        }
     }
 }
 

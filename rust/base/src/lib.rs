@@ -28,6 +28,7 @@ extern crate android_log;
 pub mod context;
 pub mod error;
 pub mod newe;
+mod tesseractify;
 
 // #[cfg(feature = "client")]
 // pub mod client;
