@@ -14,8 +14,6 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-use std::fmt::Display;
-
 use jni::errors::Result;
 use jni::objects::{JObject, JThrowable, GlobalRef};
 use jni::JNIEnv;

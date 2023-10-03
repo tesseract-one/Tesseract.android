@@ -26,8 +26,6 @@ use crate::JFuture;
 use crate::env::AndroidEnv;
 use crate::error::GlobalError;
 use crate::error::GlobalResult;
-use crate::error::LocalError;
-use crate::error::LocalResult;
 use crate::future::completion_stage::JCompletionStage;
 
 /// GlobalRef along with it's VM. Mainly to be used for thread traveling of objects.

@@ -43,14 +43,6 @@ pub trait CompositeErrorContext: std::error::Error {
         fun()
             .map_err(|e| e.flatten_java(env))
     }
-
-    fn composite_context2<T>(env: &JNIEnv, fun: impl FnOnce() -> Result<T, CompositeError<Self>>) -> Result<T, CompositeError<Self>>
-    where
-        Self: Sized,
-        Self: From<GlobalError>,
-    {
-        fun()
-    }
 }
 
 impl<E> CompositeErrorContext for E
