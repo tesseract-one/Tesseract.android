@@ -21,7 +21,6 @@ extern crate android_log;
 mod core;
 mod delegate;
 mod application;
-mod error;
 
 use std::sync::Arc;
 
@@ -61,6 +60,9 @@ use crate::delegate::TransportDelegate;
 pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) {
     TesseractAndroidError::java_context(&env, || {
         android_log::init("TestDApp")?;
+        log_panics::Config::new()
+            .backtrace_mode(log_panics::BacktraceMode::Unresolved)
+            .install_panic_hook();
 
         let core = RustCore::from_env(&env, core);
 
@@ -71,8 +73,7 @@ pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) {
                     Application::from_env(&env, application)?))
             .transport(IPCTransport::new(&env, application));
 
-        let service: Arc<dyn Service<Protocol = Test>> =
-            tesseract.service(Test::Protocol);
+        let service = tesseract.service(Test::Protocol);
 
         core.set_service(service)?;
 

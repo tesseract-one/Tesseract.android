@@ -10,8 +10,9 @@ edition = "2021"
 [dependencies]
 async-trait = "0.1"
 
-thiserror = "1.0.31"
 log = "0.4.17"
+log-panics = { version = "2", features = ["with-backtrace"]}
+
 futures = "0.3.21"
 
 jni = "0.20.0"

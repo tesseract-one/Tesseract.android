@@ -27,16 +27,19 @@ impl Delegate for TransportDelegate {
 
         let status = &transports[&tid];
 
-        match status {
-            Status::Ready => Some(tid),
+        let result = match status {
+            Status::Ready => Ok(Some(tid)),
             Status::Unavailable(reason) => {
-                self.application.show_alert(&format!("Transport '{}' is not available because of the following reason: {}", tid, reason)).unwrap();
-                None
+                Err(format!("Transport '{}' is not available because of the following reason: {}", tid, reason))
             },
             Status::Error(e) => {
-                self.application.show_alert(&format!("Transport '{}' is not available because the transport produced an error: {}", tid, e.to_string())).unwrap();
-                None
+                Err(format!("Transport '{}' is not available because the transport produced an error: {}", tid, e.to_string()))
             },
-        }
+        };
+
+        result.unwrap_or_else(|e| {
+            self.application.show_alert(&e).unwrap();
+            None
+        })
     }
 }
