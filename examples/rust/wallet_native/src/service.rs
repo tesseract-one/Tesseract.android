@@ -18,7 +18,9 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 
+use tesseract::error::TesseractErrorContext;
 use tesseract::{Error, ErrorKind};
+use tesseract_android::error::TesseractAndroidError;
 use tesseract_protocol_test::Test;
 
 use super::ui::UI;
@@ -52,20 +54,22 @@ impl tesseract::service::Service for TestService {
 #[async_trait]
 impl tesseract_protocol_test::TestService for TestService {
     async fn sign_transaction(self: Arc<Self>, req: &str) -> tesseract::Result<String> {
-        let allow = self.ui.request_user_confirmation(req).await?;
+        TesseractAndroidError::tesseract_context_async(async || {
+            let allow = self.ui.request_user_confirmation(req).await?;
 
-        if allow {
-            if req == "make_error" {
-                Err(Error::described(
-                    ErrorKind::Weird,
-                    "intentional error for test",
-                ))
+            Ok(if allow {
+                if req == "make_error" {
+                    Err(Error::described(
+                        ErrorKind::Weird,
+                        "intentional error for test",
+                    ))
+                } else {
+                    let signature = self.signature_provider.get_signature();
+                    Ok(format!("{}{}", req, signature))
+                }
             } else {
-                let signature = self.signature_provider.get_signature();
-                Ok(format!("{}{}", req, signature))
-            }
-        } else {
-            Err(tesseract::Error::kinded(tesseract::ErrorKind::Cancelled))
-        }
+                Err(tesseract::Error::kinded(tesseract::ErrorKind::Cancelled))
+            }?)
+        }).await
     }
 }

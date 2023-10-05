@@ -22,15 +22,13 @@ mod core;
 mod delegate;
 mod application;
 
-use std::sync::Arc;
+use futures::{
+    future::FutureExt,
+    executor::ThreadPoolBuilder
+};
 
-use futures::Future;
-use futures::future::FutureExt;
-use futures::executor::ThreadPoolBuilder;
-
-use jni::{JNIEnv, JavaVM};
-use jni::objects::{GlobalRef, JObject, JString};
-use jni::errors::Result;
+use jni::JNIEnv;
+use jni::objects::{JObject, JString};
 
 use jni_fn::jni_fn;
 
@@ -45,12 +43,11 @@ use crabdroid::{
     JFuture
 };
 
-use tesseract::client::{Service, Tesseract};
+use tesseract::client::Tesseract;
+use tesseract_protocol_test::{Test, TestService};
 
 use tesseract_android::error::TesseractAndroidError;
 use tesseract_android::client::transport::IPCTransport;
-
-use tesseract_protocol_test::{Test, TestService};
 
 use crate::application::Application;
 use crate::core::RustCore;
@@ -59,7 +56,7 @@ use crate::delegate::TransportDelegate;
 #[jni_fn("one.tesseract.example.app.RustCore")]
 pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) {
     TesseractAndroidError::java_context(&env, || {
-        android_log::init("TestDApp")?;
+        android_log::init("DemoDAppRust")?;
         log_panics::Config::new()
             .backtrace_mode(log_panics::BacktraceMode::Unresolved)
             .install_panic_hook();

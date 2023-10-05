@@ -17,8 +17,7 @@
 use crabdroid::ContextedGlobal;
 use jni::JNIEnv;
 use jni::objects::JObject;
-use jni::errors::Result;
-use tesseract::error::TesseractErrorContext;
+use jni::errors::Result as JResult;
 use tesseract_android::error::TesseractAndroidError;
 
 use super::core::RustCore;
@@ -28,26 +27,24 @@ pub(crate) struct UI {
 }
 
 impl UI {
-    pub(crate) fn with_core(env: &JNIEnv, core: JObject) -> Result<Self> {
+    pub(crate) fn with_core(env: &JNIEnv, core: JObject) -> JResult<Self> {
         ContextedGlobal::from_local(env, core).map(|core| {
             UI {core: core}
         })
     }
 
-    pub(crate) async fn request_user_confirmation(&self, transaction: &str) -> tesseract::Result<bool> {
-        TesseractAndroidError::tesseract_context_async(async || {
-            debug!("!!!Before UI call");
+    pub(crate) async fn request_user_confirmation(&self, transaction: &str) -> Result<bool, TesseractAndroidError> {
+        debug!("!!!Before UI call");
 
-            let allow = self.core.with_async_context(64, |env, core| {
-                let core = RustCore::from_env(&env, core);
-                core.request_user_confirmation(transaction)
-            }).await?;
-    
-            debug!("!!!UI returned");
+        let allow = self.core.with_async_context(64, |env, core| {
+            let core = RustCore::from_env(&env, core);
+            core.request_user_confirmation(transaction)
+        }).await?;
 
-            Ok(allow.with_safe_context_rret(64, |env, jallow| {
-                env.call_method(jallow, "booleanValue", "()Z", &[])?.z()
-            })?)
-        }).await
+        debug!("!!!UI returned");
+
+        Ok(allow.with_safe_context_rret(64, |env, jallow| {
+            env.call_method(jallow, "booleanValue", "()Z", &[])?.z()
+        })?)
     }
 }

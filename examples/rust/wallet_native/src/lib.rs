@@ -27,13 +27,14 @@ mod signature_provider;
 
 use std::sync::Arc;
 
+use crabdroid::error::JavaErrorContext;
 use jni::objects::{JObject, JString};
-use jni::errors::Result;
 use jni::JNIEnv;
 
 use jni_fn::jni_fn;
 
 use tesseract::service::Tesseract;
+use tesseract_android::error::TesseractAndroidError;
 use tesseract_android::service::transport::IPCTransport;
 
 use crate::core::RustCore;
@@ -43,7 +44,12 @@ use crate::signature_provider::SignatureProvider;
 
 #[jni_fn("one.tesseract.example.wallet.RustCore")]
 pub fn rustInit(env: JNIEnv, core: JObject, data_dir: JString) {
-    fn init_res(env: JNIEnv, core: JObject, data_dir: JString) -> Result<()> {
+    TesseractAndroidError::java_context(&env, || {
+        android_log::init("DemoWalletRust")?;
+        log_panics::Config::new()
+            .backtrace_mode(log_panics::BacktraceMode::Unresolved)
+            .install_panic_hook();
+
         let data_dir: String = env
             .get_string(data_dir)?
             .into();
@@ -62,23 +68,12 @@ pub fn rustInit(env: JNIEnv, core: JObject, data_dir: JString) {
         core.set_signature_provider(signature_provider)?;
 
         Ok(())
-    }
-
-    android_log::init("MyApp").unwrap();
-
-    match init_res(env, core, data_dir) {
-        Ok(_) => {
-            debug!("!!!!!@@@@@####init_res was called without an accident");
-        }
-        Err(e) => {
-            debug!("!!!!!@@@@@####init_res created the following error: {}", e);
-        }
-    }
+    })
 }
 
 #[jni_fn("one.tesseract.example.wallet.RustCore")]
 pub fn saveSignature(env: JNIEnv, core: JObject, signature: JString) {
-    fn save_sig_res(env: JNIEnv, core: JObject, signature: JString) -> Result<()> {
+    TesseractAndroidError::java_context(&env, || {
         let signature: String = env
             .get_string(signature)?
             .into();
@@ -88,28 +83,15 @@ pub fn saveSignature(env: JNIEnv, core: JObject, signature: JString) {
         provider.set_signature(&signature);
 
         Ok(())
-    }
-
-    match save_sig_res(env, core, signature) {
-        Ok(_) => {
-            debug!("!!!!!@@@@@####save_sig_res was called without an accident");
-        }
-        Err(e) => {
-            debug!("!!!!!@@@@@####save_sig_res created the following error: {}", e);
-        }
-    }
+    })
 }
 
 #[jni_fn("one.tesseract.example.wallet.RustCore")]
 pub fn readSignature<'a>(env: JNIEnv<'a>, core: JObject<'a>) -> JString<'a> {
-    fn read_sig_res<'a>(env: JNIEnv<'a>, core: JObject<'a>) -> Result<JString<'a>> {
+    TesseractAndroidError::java_context(&env, || {
         let core = RustCore::from_env(&env, core);
         let provider = core.get_signature_provider()?;
         let signature = provider.get_signature();
-        env.new_string(&signature)
-    }
-
-    read_sig_res(env, core).unwrap_or_else(|_| {
-        env.new_string("can't read signature").unwrap()
+        Ok(env.new_string(&signature)?)
     })
 }
