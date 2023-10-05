@@ -1,0 +1,23 @@
+# Licensed under the Apache License, Version 2.0.
+
+[package]
+name = "tesseract-android"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[features]
+client = [
+    "tesseract-android-base/client",
+    "tesseract-android-transport/client",
+    "tesseract-android-ipc/client"]
+service = [
+    "tesseract-android-base/service",
+    "tesseract-android-transport/service",
+    "tesseract-android-ipc/service"]
+
+[dependencies]
+tesseract-android-base = { path = "../base" }
+tesseract-android-transport = { path = "../transport" }
+tesseract-android-ipc = { path = "../ipc" }

@@ -2,7 +2,7 @@ use jni::objects::JObject;
 use jni::JNIEnv;
 use jni::errors::Result;
 
-use interop_android::ContextedGlobal;
+use crabdroid::ContextedGlobal;
 
 use tesseract::service::BoundTransport;
 

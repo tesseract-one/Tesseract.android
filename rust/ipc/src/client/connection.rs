@@ -21,11 +21,11 @@ use async_trait::async_trait;
 
 use futures::lock::Mutex;
 
-use interop_android::error::GlobalResult;
+use crabdroid::error::GlobalResult;
 use tesseract::{Error, ErrorKind, Result, Protocol};
 use tesseract::client::Connection;
 
-use interop_android::ContextedGlobal;
+use crabdroid::ContextedGlobal;
 
 use super::response::Response;
 use super::transceiver::Transceiver;

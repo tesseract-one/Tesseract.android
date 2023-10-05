@@ -35,17 +35,21 @@ use jni::errors::Result;
 
 use jni_fn::jni_fn;
 
-use interop_android::JFuture;
-use interop_android::future::completion_stage::JCompletionStage;
-use interop_android::future::IntoJava;
-use interop_android::future::FutureExtJava;
-use interop_android::thread_pool::AndroidThreadPoolBuilder;
-use interop_android::error::JavaErrorContext;
+use crabdroid::{
+    future::{
+        completion_stage::JCompletionStage,
+        IntoJava,
+        FutureExtJava
+    },
+    thread_pool::AndroidThreadPoolBuilder,
+    error::JavaErrorContext,
+    JFuture
+};
 
 use tesseract::client::{Service, Tesseract};
 
-use tesseract_android_base::TesseractAndroidError;
-use tesseract_ipc_android::client::TransportIPCAndroid;
+use tesseract_android::error::TesseractAndroidError;
+use tesseract_android::client::transport::IPCTransport;
 
 use tesseract_protocol_test::{Test, TestService};
 
@@ -65,7 +69,7 @@ pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) {
         let tesseract = Tesseract::new(
                 TransportDelegate::arc(
                     Application::from_env(&env, application)?))
-            .transport(TransportIPCAndroid::new(&env, application));
+            .transport(IPCTransport::new(&env, application));
 
         let service: Arc<dyn Service<Protocol = Test>> =
             tesseract.service(Test::Protocol);

@@ -19,9 +19,9 @@ use jni::objects::JObject;
 use jni::objects::JValue;
 use jni::JNIEnv;
 
-use interop_android::future::completion_stage::JCompletionStage;
-use interop_android::env::AndroidEnv;
-use interop_android::JFuture;
+use crabdroid::future::completion_stage::JCompletionStage;
+use crabdroid::env::AndroidEnv;
+use crabdroid::JFuture;
 
 /// Lifetime'd representation of a `Transceiver`. Just a `JObject` wrapped in a
 /// new class.

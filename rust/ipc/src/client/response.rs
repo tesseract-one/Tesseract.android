@@ -14,13 +14,13 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-use interop_android::error::{GlobalResult, GlobalError};
+use crabdroid::error::{GlobalResult, GlobalError};
 use jni::errors::{Error, Result, JniError};
 use jni::objects::JObject;
 use jni::JNIEnv;
 
-use interop_android::env::AndroidEnv;
-use interop_android::Exception;
+use crabdroid::env::AndroidEnv;
+use crabdroid::Exception;
 
 pub enum Response {
     Ok(Vec<u8>),

@@ -1,6 +1,6 @@
 use jni::{JNIEnv, objects::JThrowable};
 
-use interop_android::{error::GlobalError, env::AndroidEnv};
+use crabdroid::{error::GlobalError, env::AndroidEnv};
 
 use log::debug;
 use tesseract::Error as TError;

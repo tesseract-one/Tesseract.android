@@ -19,7 +19,7 @@ use std::sync::Arc;
 use jni::{objects::{JObject, JValue}, JNIEnv};
 use jni::errors::Result;
 
-use interop_android::{future::completion_stage::JCompletionStage, pointer::ArcPointer};
+use crabdroid::{future::completion_stage::JCompletionStage, pointer::ArcPointer};
 
 use crate::signature_provider::SignatureProvider;
 

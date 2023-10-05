@@ -35,8 +35,8 @@ project.afterEvaluate {
 }
 
 cargo {
-    module  = "../../rust/tesseract"       // Or whatever directory contains your Cargo.toml
-    libname = "tesseracta"          // Or whatever matches Cargo.toml's [package] name.
+    module  = "../../rust/library"       // Or whatever directory contains your Cargo.toml
+    libname = "tesseract"          // Or whatever matches Cargo.toml's [package] name.
     targets = rootProject.ext.rustNdkTargets  // See bellow for a longer list of options
     targetDirectory = '../../target'
     rustupChannel = "nightly"

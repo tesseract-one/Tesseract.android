@@ -7,7 +7,7 @@ use jni::errors::Result;
 
 use jni_fn::jni_fn;
 
-use interop_android:: {
+use crabdroid:: {
     pointer::ArcPointer,
     env::AndroidEnv,
     future::IntoJava

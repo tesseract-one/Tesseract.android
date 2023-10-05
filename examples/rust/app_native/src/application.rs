@@ -1,7 +1,7 @@
 use jni::{JNIEnv, objects::JObject};
 use jni::errors::Result;
 
-use interop_android::ContextedGlobal;
+use crabdroid::ContextedGlobal;
 
 pub (crate) struct Application {
     application: ContextedGlobal

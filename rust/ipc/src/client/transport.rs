@@ -26,7 +26,7 @@ use tesseract::Protocol;
 use tesseract::client::transport::Status;
 use tesseract::client::{Connection, Transport};
 
-use interop_android::ContextedGlobal;
+use crabdroid::ContextedGlobal;
 
 use super::connection::TransportIPCAndroidConnection;
 use super::transceiver::Transceiver;

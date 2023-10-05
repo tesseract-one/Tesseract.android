@@ -13,7 +13,7 @@ import one.tesseract.service.service.kotlin.Service as KotlinService
 open class Tesseract @OptIn(DelicateCoroutinesApi::class) constructor(@Suppress("unused") private val ptr: Long = 0, private val scope: CoroutineScope = GlobalScope) {
     companion object {
         init {
-            System.loadLibrary("tesseracta")
+            System.loadLibrary("tesseract")
         }
 
         @OptIn(DelicateCoroutinesApi::class)

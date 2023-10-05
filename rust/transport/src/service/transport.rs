@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
-use interop_android::error::JavaErrorContext;
-use interop_android::ContextedGlobal;
+use crabdroid::error::JavaErrorContext;
+use crabdroid::ContextedGlobal;
 
 use jni::objects::{JObject, JValue};
 use jni::JNIEnv;
@@ -52,13 +52,13 @@ impl Transport for JTransport {
         })
         .inspect_err(|e| {
             match e {
-                interop_android::error::GlobalError::Exception(exception) => {
+                crabdroid::error::GlobalError::Exception(exception) => {
                     debug!("!!!!AND HERE IS THE #$%!!!: {}", e);
                     exception.do_in_context_rret(64, |env, exception| {
                         env.call_method(exception, "printStackTrace", "()V", &[])?.v()
                     }).unwrap()
                 },
-                interop_android::error::GlobalError::JniError(e) => {
+                crabdroid::error::GlobalError::JniError(e) => {
                     debug!("!!!!AND HERE IS THE JNI ERROR!!!: {}", e);
                 },
             }

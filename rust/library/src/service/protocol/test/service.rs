@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 
-use interop_android::ContextedGlobal;
+use crabdroid::ContextedGlobal;
 
 use jni::{JNIEnv, objects::JObject, errors::Result};
 use tesseract_protocol_test::{Test, service::TestExecutor};

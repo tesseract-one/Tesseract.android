@@ -1,6 +1,6 @@
 use jni::{JNIEnv, objects::JObject, errors::Result};
 
-use interop_android::error::{GlobalError, ExceptionConvertible};
+use crabdroid::error::{GlobalError, ExceptionConvertible};
 
 use log::SetLoggerError;
 

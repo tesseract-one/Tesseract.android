@@ -6,7 +6,7 @@ use jni::JNIEnv;
 use jni::objects::{JObject, JValue};
 use jni::errors::Result;
 
-use interop_android::pointer::ArcPointer;
+use crabdroid::pointer::ArcPointer;
 
 use tesseract::client::Service;
 

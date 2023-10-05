@@ -4,7 +4,7 @@ use thiserror::Error;
 
 use log::SetLoggerError;
 
-use interop_android::error::{ExceptionConvertible, CompositeError, CompositeErrorInclude, GlobalError};
+use crabdroid::error::{ExceptionConvertible, CompositeError, CompositeErrorInclude, GlobalError};
 
 use super::tesseract::global_error_to_tesseract;
 

@@ -4,8 +4,8 @@ use jni::errors::{Error, Result};
 
 use jni_fn::jni_fn;
 
-use interop_android::env::AndroidEnv;
-use interop_android::error::JavaErrorContext;
+use crabdroid::env::AndroidEnv;
+use crabdroid::error::JavaErrorContext;
 use tesseract::service::Tesseract;
 use tesseract_android_base::TesseractAndroidError;
 

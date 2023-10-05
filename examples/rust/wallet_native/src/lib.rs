@@ -34,7 +34,7 @@ use jni::JNIEnv;
 use jni_fn::jni_fn;
 
 use tesseract::service::Tesseract;
-use tesseract_ipc_android::service::IPCTransport;
+use tesseract_android::service::transport::IPCTransport;
 
 use crate::core::RustCore;
 use crate::service::TestService;

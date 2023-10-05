@@ -1,4 +1,4 @@
-use interop_android::future::completion_stage::JCompletionStage;
+use crabdroid::future::completion_stage::JCompletionStage;
 
 use jni::{JNIEnv, objects::{JObject, JString, JValue}, errors::Result};
 

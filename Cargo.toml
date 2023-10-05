@@ -3,13 +3,18 @@
 [workspace]
 
 members = [
-    "rust/interop",
-    "rust/base",
-    "rust/transport",
-    "rust/ipc",
-    "rust/tesseract",
-    "examples/rust/app_native",
-    "examples/rust/wallet_native",
+    "rust/crabdroid", #primitives for easier Java/Rust interop
+
+    "rust/base", #basic primitives of Tesseract on Android
+    "rust/transport", #transport runtime bindings for Java/Kotlin transports
+
+    "rust/ipc", #IPC transport
+
+    "rust/sdk", #aggregate crate for android dApp/Wallet integration in Rust
+    "rust/library", #dylib that has everything java/kotlin only (nu rust) apps need in runtime
+
+    "examples/rust/app_native", #example of how to use Tesseract in a dApp in Rust
+    "examples/rust/wallet_native", #example of how to use Tesseract in a Wallet in Rust
 ]
 
 resolver = "1"
