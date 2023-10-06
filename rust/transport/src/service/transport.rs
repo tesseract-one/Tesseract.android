@@ -7,8 +7,7 @@ use jni::sys::jlong;
 
 use jni_fn::jni_fn;
 
-use crabdroid::error::JavaErrorContext;
-use crabdroid::ContextedGlobal;
+use crabdroid::{JavaErrorContext, ContextedGlobal};
 
 use tesseract::error::TesseractErrorContext;
 use tesseract::service::{TransportProcessor, Transport, BoundTransport};

@@ -15,13 +15,12 @@
 //===----------------------------------------------------------------------===//
 
 #![feature(iterator_try_collect)]
-#![feature(result_option_inspect)]
-
 #![feature(auto_traits, negative_impls)]
+
+#![feature(result_option_inspect)]
 
 #[macro_use]
 extern crate log;
-extern crate android_log;
 
 pub mod bi_consumer;
 mod contexted_global;
@@ -38,16 +37,7 @@ pub mod iter;
 
 pub use contexted_global::ContextedGlobal;
 pub use exception::Exception;
-//pub use error::deresultify;
 pub use jfuture::JFuture;
 
 pub use object::{JavaDesc, JavaWrappableDesc, JavaWrappable, JavaConvertibleDesc, JavaConvertible};
-
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        let result = 2 + 2;
-        assert_eq!(result, 4);
-    }
-}
+pub use error::JavaErrorContext;

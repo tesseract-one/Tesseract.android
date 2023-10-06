@@ -7,10 +7,10 @@ use jni::errors::Result;
 use jni_fn::jni_fn;
 
 use crabdroid:: {
+    JavaErrorContext,
     pointer::ArcPointer,
     env::AndroidEnv,
-    error::JavaErrorContext,
-    future::completion_stage::JCompletionStage
+    future::JCompletionStage
 };
 
 use tesseract::service::TransportProcessor;

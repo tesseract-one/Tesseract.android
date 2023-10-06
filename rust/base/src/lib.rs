@@ -14,16 +14,10 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-//#![feature(proc_macro_is_available)]
-//#![feature(once_cell)]
-
-#![feature(result_option_inspect)]
-
 #![feature(auto_traits, negative_impls)]
 
 #[macro_use]
 extern crate log;
-extern crate android_log;
 
 pub mod error;
 
