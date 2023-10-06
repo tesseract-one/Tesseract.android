@@ -1,17 +1,19 @@
 use std::sync::Arc;
 
-use crabdroid::error::JavaErrorContext;
-use crabdroid::ContextedGlobal;
-
-use jni::objects::{JObject, JValue};
 use jni::JNIEnv;
+use jni::objects::{JObject, JValue};
 use jni::errors::{Error, Result};
 use jni::sys::jlong;
 
 use jni_fn::jni_fn;
 
+use crabdroid::error::JavaErrorContext;
+use crabdroid::ContextedGlobal;
+
+use tesseract::error::TesseractErrorContext;
 use tesseract::service::{TransportProcessor, Transport, BoundTransport};
 
+use tesseract_android_base::TesseractAndroidError;
 use tesseract_android_base::service::Applicator;
 
 use super::bound::JBoundTransport;
@@ -31,46 +33,35 @@ impl JTransport {
 
 impl Transport for JTransport {
     fn bind(self, processor: Arc<dyn TransportProcessor + Send + Sync>) -> Box<dyn BoundTransport + Send> {
-        Box::new(self.internal.with_safe_context_rret(64, |env, transport| {
-            let processor = JProcessor::new(&env, processor)?;
-
-            debug!("!!!!PROCESSOR CREATED!!!");
-
-            let processor: JValue = JValue::Object(processor.into());
-
-            debug!("!!!!PROCESSOR CREATED VALUE!!!");
-
-            let bound = env.call_method(
-                transport,
-                "bind",
-                "(Lone/tesseract/transport/service/Processor;)Lone/tesseract/transport/service/BoundTransport;",
-                &[processor])?.l()?;
-
-            debug!("!!!!AND BOUND!!!");
-
-            JBoundTransport::from_local(env, bound)
-        })
-        .inspect_err(|e| {
-            match e {
-                crabdroid::error::GlobalError::Exception(exception) => {
-                    debug!("!!!!AND HERE IS THE #$%!!!: {}", e);
-                    exception.do_in_context_rret(64, |env, exception| {
-                        env.call_method(exception, "printStackTrace", "()V", &[])?.v()
-                    }).unwrap()
-                },
-                crabdroid::error::GlobalError::JniError(e) => {
-                    debug!("!!!!AND HERE IS THE JNI ERROR!!!: {}", e);
-                },
-            }
-        })
-        .expect("Maybe improve the rust transport API to be able to provide an error here?"))
+        Box::new(TesseractAndroidError::tesseract_context_panicable(|| {
+            Ok(self.internal.with_safe_context_rret(64, |env, transport| {
+                debug!("About to create JProcessor");
+                let processor = JProcessor::new(&env, processor)?;
+                debug!("JProcessor created successfully");
+                let processor: JValue = JValue::Object(processor.into());
+                debug!("JProcessor value created");
+    
+                let bound = env.call_method(
+                    transport,
+                    "bind",
+                    "(Lone/tesseract/transport/service/Processor;)Lone/tesseract/transport/service/BoundTransport;",
+                    &[processor])?.l()?;
+    
+                debug!("JProcessor bound successfully");
+    
+                JBoundTransport::from_local(env, bound)
+            })?)
+        }))
     }
 }
 
 #[jni_fn("one.tesseract.transport.service.JavaRustTransport")]
 pub fn createApplicator<'a>(env: JNIEnv<'a>, this: JObject<'a>) -> jlong {
     Error::java_context(&env, || {
-        let transport = env.get_field(this, "transport", "Lone/tesseract/transport/service/JavaTransport;")?.l()?;
+        let transport = env.get_field(
+            this,
+            "transport",
+            "Lone/tesseract/transport/service/JavaTransport;")?.l()?;
         
         let transport = JTransport::from_local(&env, transport)?;
 
