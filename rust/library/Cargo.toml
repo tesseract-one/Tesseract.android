@@ -8,29 +8,32 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-default = ["client", "service"]
+default = ["client", "service", "protocol-all"]
 client = ["tesseract/client", "tesseract-android-base/client", "tesseract-android-transport/client", "dep:async-trait"]
 service = ["tesseract/service", "tesseract-android-base/service", "tesseract-android-transport/service", "dep:async-trait"]
+protocol-test = ["dep:tesseract-protocol-test"]
+protocol-all = ["protocol-test"]
 
 [dependencies]
-thiserror = "1.0.31"
+async-trait = {version="0.1", optional=true}
+
+#logger
 log = "0.3.9"
 log-panics = { version = "1.2", features = ["with-backtrace"]}
-futures = "0.3.21"
-# lazy_static = "1.4.0"
+android_log = "0.1.3"
 
+#android interop
 jni = "0.20.0"
 jni_fn = "0.1.0"
-android_log = "0.1.3"
 crabdroid = { path = "../crabdroid" }
 
+#tesseract
 tesseract = { path = "/Users/daniel/repo/Tesseract.rs/tesseract", features=["client", "service"]} #{git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client", "service"]}
-tesseract-protocol-test = { path = "/Users/daniel/repo/Tesseract.rs/protocols/test", features=["client", "service"]} #{git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client", "service"]}
 tesseract-android-base = { path = "../base" }
 tesseract-android-transport = { path = "../transport" }
 
-serde = { version = "1.0", features = ["derive"] }
-async-trait = {version="0.1", optional=true}
+#protocols
+tesseract-protocol-test = { path = "/Users/daniel/repo/Tesseract.rs/protocols/test", optional=true, features=["client", "service"]} #{git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client", "service"]}
 
 [lib]
 name = "tesseract"

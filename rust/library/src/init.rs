@@ -2,7 +2,7 @@ use jni::{JNIEnv, objects::JClass};
 
 use jni_fn::jni_fn;
 
-use crabdroid::error::JavaErrorContext;
+use crabdroid::JavaErrorContext;
 
 use tesseract_android_base::TesseractAndroidError;
 

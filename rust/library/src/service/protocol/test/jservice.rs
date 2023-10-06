@@ -1,6 +1,10 @@
-use crabdroid::future::completion_stage::JCompletionStage;
+use jni::{
+    JNIEnv,
+    errors::Result,
+    objects::{JObject, JString, JValue}
+};
 
-use jni::{JNIEnv, objects::{JObject, JString, JValue}, errors::Result};
+use crabdroid::future::JCompletionStage;
 
 /// Lifetime'd representation of a `TestService`. Just a `JObject` wrapped in a
 /// new class.

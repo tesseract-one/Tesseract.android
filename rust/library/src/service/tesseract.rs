@@ -1,17 +1,16 @@
-use jni::objects::{JObject, JValue};
+use jni::objects::JObject;
 use jni::JNIEnv;
-use jni::errors::{Error, Result};
+use jni::errors::Error;
 
 use jni_fn::jni_fn;
 
-use crabdroid::env::AndroidEnv;
 use crabdroid::error::JavaErrorContext;
+
 use tesseract::service::Tesseract;
 use tesseract_android_base::TesseractAndroidError;
-
-use super::{service, transport};
-
 use tesseract_android_base::service::Applicator;
+
+use super::service;
 
 const PTR_FIELD: &str = "ptr";
 
