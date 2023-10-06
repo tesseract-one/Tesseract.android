@@ -82,7 +82,7 @@ pub fn saveSignature(env: JNIEnv, core: JObject, signature: JString) {
 
         let core = RustCore::from_env(&env, core);
         let provider = core.get_signature_provider()?;
-        provider.set_signature(&signature);
+        provider.set_signature(&signature).map_err(WalletError::from)?;
 
         Ok(())
     })
