@@ -14,10 +14,12 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-use crabdroid::ContextedGlobal;
 use jni::JNIEnv;
 use jni::objects::JObject;
 use jni::errors::Result as JResult;
+
+use crabdroid::ContextedGlobal;
+
 use tesseract_android::error::TesseractAndroidError;
 
 use super::core::RustCore;

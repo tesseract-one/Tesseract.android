@@ -27,13 +27,15 @@ mod signature_provider;
 
 use std::sync::Arc;
 
-use crabdroid::error::JavaErrorContext;
 use jni::objects::{JObject, JString};
 use jni::JNIEnv;
 
 use jni_fn::jni_fn;
 
+use crabdroid::error::JavaErrorContext;
+
 use tesseract::service::Tesseract;
+
 use tesseract_android::error::TesseractAndroidError;
 use tesseract_android::service::transport::IPCTransport;
 
@@ -45,10 +47,8 @@ use crate::signature_provider::SignatureProvider;
 #[jni_fn("one.tesseract.example.wallet.RustCore")]
 pub fn rustInit(env: JNIEnv, core: JObject, data_dir: JString) {
     TesseractAndroidError::java_context(&env, || {
-        android_log::init("DemoWalletRust")?;
-        log_panics::Config::new()
-            .backtrace_mode(log_panics::BacktraceMode::Unresolved)
-            .install_panic_hook();
+        android_log::init("RustWalletDemo")?;
+        log_panics::init();
 
         let data_dir: String = env
             .get_string(data_dir)?

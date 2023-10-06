@@ -20,8 +20,9 @@ use async_trait::async_trait;
 
 use tesseract::error::TesseractErrorContext;
 use tesseract::{Error, ErrorKind};
-use tesseract_android::error::TesseractAndroidError;
 use tesseract_protocol_test::Test;
+
+use tesseract_android::error::TesseractAndroidError;
 
 use super::ui::UI;
 use super::signature_provider::SignatureProvider;
@@ -61,7 +62,7 @@ impl tesseract_protocol_test::TestService for TestService {
                 if req == "make_error" {
                     Err(Error::described(
                         ErrorKind::Weird,
-                        "intentional error for test",
+                        "intentional intentional error for test",
                     ))
                 } else {
                     let signature = self.signature_provider.get_signature();
