@@ -14,12 +14,14 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
+use jni::errors::Result;
+use jni::objects::{JObject, GlobalRef};
+use jni::{JNIEnv, JavaVM};
+
 use crate::bi_consumer::RBiConsumer;
 use crate::contexted_global::ContextedGlobal;
-use crate::error::{LocalResult, LocalError};
-use jni::errors::Result;
-use jni::objects::JObject;
-use jni::JNIEnv;
+use crate::error::{LocalResult, LocalError, CompositeError, GlobalError, ExceptionConvertible};
+use crate::future::IntoJava;
 
 /// Lifetime'd representation of a `CompletableFuture`. Just a `JObject` wrapped in a
 /// new class.
@@ -47,6 +49,28 @@ impl<'a: 'b, 'b> From<JCompletionStage<'a, 'b>> for ContextedGlobal {
     fn from(other: JCompletionStage<'a, 'b>) -> ContextedGlobal {
         ContextedGlobal::from_local(other.env, other.internal)
             .expect("If developer is doing things properly it should work") //Better ideas than expect?
+    }
+}
+
+impl<'a: 'b, 'b> JCompletionStage<'a, 'b> {
+    pub fn launch_async<E, I, F>(env: &'b JNIEnv<'a>, fun: impl FnOnce(JavaVM) -> F + Send + 'static) -> std::result::Result<Self, CompositeError<E>>
+    where
+        E: std::error::Error + ExceptionConvertible + Sized + From<GlobalError> + Send + 'static,
+        I: Into<GlobalRef>,
+        F: std::future::Future<Output = std::result::Result<I, CompositeError<E>>> + Send
+    {
+        let vm = env.get_java_vm().unwrap();
+        let vm2 = env.get_java_vm().unwrap();
+
+        let future = async move {
+            let result = fun(vm).await;
+            let env = vm2.get_env().unwrap();
+            result
+                .map(|i| i.into())
+                .map_err(|e| e.flatten_java(&env))
+        };
+
+        Ok(future.into_java(env).into())
     }
 }
 

@@ -14,6 +14,8 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
+#![feature(async_closure)]
+
 #[macro_use]
 extern crate log;
 extern crate android_log;
@@ -22,6 +24,7 @@ mod core;
 mod delegate;
 mod application;
 
+use crabdroid::error::CompositeErrorContext;
 use futures::{
     future::FutureExt,
     executor::ThreadPoolBuilder
@@ -99,11 +102,14 @@ pub fn sign<'a>(env: JNIEnv<'a>, rcore: JObject<'a>, transaction: JString<'a>) -
 
         let service = core.get_service()?;
 
-        Ok(async move {
-            service.sign_transaction(&transaction).await.map_err(TesseractAndroidError::from)
-        }.map_ok_java(&env, |env, signed| {
-            Ok(env.new_string(&signed)?.into())
-        }).boxed_into_java(&env))
+        JCompletionStage::launch_async(&env, async move |vm| {
+            let signed = service.sign_transaction(&transaction).await?;
+    
+            let env = vm.get_env()?;
+            let signed = env.new_string(&signed)?;
+    
+            Ok(env.new_global_ref(signed)?)
+        })
     })
 }
 
