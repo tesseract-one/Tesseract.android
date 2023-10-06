@@ -18,7 +18,6 @@ const PTR_FIELD: &str = "ptr";
 #[jni_fn("one.tesseract.service.Tesseract")]
 pub fn create<'a>(env: JNIEnv<'a>, this: JObject<'a>) {
     TesseractAndroidError::java_context(&env, || {
-        android_log::init("TESSERACTNNNN")?;
         let tesseract = Tesseract::new();
         unsafe {env.set_rust_field(this, PTR_FIELD, tesseract)?};
         Ok(())

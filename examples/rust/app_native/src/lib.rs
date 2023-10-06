@@ -60,9 +60,7 @@ use crate::delegate::TransportDelegate;
 pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) {
     TesseractAndroidError::java_context(&env, || {
         android_log::init("DemoDAppRust")?;
-        log_panics::Config::new()
-            .backtrace_mode(log_panics::BacktraceMode::Unresolved)
-            .install_panic_hook();
+        log_panics::init();
 
         let core = RustCore::from_env(&env, core);
 
