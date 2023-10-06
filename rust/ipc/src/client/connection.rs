@@ -22,10 +22,10 @@ use async_trait::async_trait;
 use futures::lock::Mutex;
 
 use crabdroid::error::GlobalResult;
+use crabdroid::ContextedGlobal;
+
 use tesseract::{Error, ErrorKind, Result, Protocol};
 use tesseract::client::Connection;
-
-use crabdroid::ContextedGlobal;
 
 use super::response::Response;
 use super::transceiver::Transceiver;

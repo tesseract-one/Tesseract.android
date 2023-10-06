@@ -8,16 +8,20 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
+default = ["transport-all"]
 client = [
     "tesseract-android-base/client",
-    "tesseract-android-transport/client",
-    "tesseract-android-ipc/client"]
+    "tesseract-android-transport?/client",
+    "tesseract-android-ipc?/client"]
 service = [
     "tesseract-android-base/service",
-    "tesseract-android-transport/service",
-    "tesseract-android-ipc/service"]
+    "tesseract-android-transport?/service",
+    "tesseract-android-ipc?/service"]
+transport-sdk = ["dep:tesseract-android-transport"]
+transport-ipc = ["transport-sdk", "dep:tesseract-android-ipc"]
+transport-all = ["transport-sdk", "transport-ipc"]
 
 [dependencies]
 tesseract-android-base = { path = "../base" }
-tesseract-android-transport = { path = "../transport" }
-tesseract-android-ipc = { path = "../ipc" }
+tesseract-android-transport = { path = "../transport", optional = true}
+tesseract-android-ipc = { path = "../ipc", optional = true}

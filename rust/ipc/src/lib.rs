@@ -14,11 +14,8 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-#![feature(result_option_inspect)]
-
 #[macro_use]
 extern crate log;
-extern crate android_log;
 
 #[cfg(feature = "client")]
 pub mod client;

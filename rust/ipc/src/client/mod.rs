@@ -3,4 +3,4 @@ mod response;
 mod transceiver;
 mod transport;
 
-pub use transport::TransportIPCAndroid;
+pub use transport::IPCTransport;

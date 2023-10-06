@@ -31,11 +31,11 @@ use crabdroid::ContextedGlobal;
 use super::connection::TransportIPCAndroidConnection;
 use super::transceiver::Transceiver;
 
-pub struct TransportIPCAndroid {
+pub struct IPCTransport {
     transceiver: Result<ContextedGlobal>,
 }
 
-impl TransportIPCAndroid {
+impl IPCTransport {
     pub fn new<'a: 'b, 'b>(env: &'b JNIEnv<'a>, application: JObject<'a>) -> Self {
         let transceiver = Transceiver::new(env, application)
             .and_then(|transceiver| ContextedGlobal::from_local(env, transceiver.into()));
@@ -49,7 +49,7 @@ impl TransportIPCAndroid {
 }
 
 #[async_trait]
-impl Transport for TransportIPCAndroid {
+impl Transport for IPCTransport {
     fn id(&self) -> std::string::String {
         Self::ID.to_owned()
     }
@@ -59,7 +59,7 @@ impl Transport for TransportIPCAndroid {
             Ok(transceiver) => {
                 let result = transceiver.do_in_context_rret(10, |env, transceiver| {
                     let transceiver = Transceiver::from_env(&env, transceiver);
-                    let available = transceiver.ping(&protocol.id());
+                    let available = transceiver.ping(&protocol.id())?;
                     Ok(available)
                 });
 

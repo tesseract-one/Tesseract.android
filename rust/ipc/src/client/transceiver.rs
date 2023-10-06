@@ -64,32 +64,17 @@ impl<'a: 'b, 'b> Transceiver<'a, 'b> {
         }
     }
 
-    pub fn ping(&self, protocol: &str) -> bool {
-        fn _ping<'a: 'b, 'b>(
-            env: &'b JNIEnv<'a>,
-            transceiver: JObject<'a>,
-            protocol: &str,
-        ) -> Result<bool> {
-            let jproto = env.new_string(protocol)?;
+    pub fn ping(&self, protocol: &str) -> Result<bool> {
+        let jproto = self.env.new_string(protocol)?;
 
-            let pinging = env
-                .call_method(
-                    transceiver,
-                    "ping",
-                    "(Ljava/lang/String;)Z",
-                    &[jproto.into()],
-                )?
-                .z()?;
+        let pinging = self.env.call_method(
+            self.internal,
+            "ping",
+            "(Ljava/lang/String;)Z",
+            &[jproto.into()],
+        )?.z()?;
 
-            Ok(pinging)
-        }
-
-        let result = _ping(self.env, self.internal, protocol);
-
-        result.unwrap_or_else(|e| {
-            debug!("Pinging wallet returned an error.\nDescription: {}", e);
-            false
-        })
+        Ok(pinging)
     }
 
     pub fn transceive(&self, data: &[u8], protocol: &str) -> JFuture {

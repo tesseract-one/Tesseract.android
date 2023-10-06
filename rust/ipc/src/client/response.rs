@@ -14,13 +14,13 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-use crabdroid::error::{GlobalResult, GlobalError};
-use jni::errors::{Error, Result, JniError};
+use jni::errors::{Error, Result};
 use jni::objects::JObject;
 use jni::JNIEnv;
 
-use crabdroid::env::AndroidEnv;
 use crabdroid::Exception;
+use crabdroid::error::{GlobalResult, GlobalError};
+use crabdroid::env::AndroidEnv;
 
 pub enum Response {
     Ok(Vec<u8>),
@@ -83,10 +83,16 @@ impl Flattener for GlobalResult<Response> {
         match self {
             Ok(response) => response,
             Err(error) => {
-                Response::JniError(match error {
-                    GlobalError::JniError(e) => e,
-                    GlobalError::Exception(_) => jni::errors::Error::JavaException, //TODO: do the actual conversion
-                })
+                match error {
+                    GlobalError::JniError(e) => Response::JniError(e),
+                    GlobalError::Exception(exception) => {
+                        Response::Exception(exception.with_safe_context_rret(64, |env, exception| {
+                            let exception = crabdroid::Exception::from_env(env, exception);
+                            exception.print_stack_trace()?;
+                            exception.get_message()
+                        }).expect("If it can't convert exception, it's pretty serious. Report a bug."))
+                    }
+                }
             }
         }
     }
