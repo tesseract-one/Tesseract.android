@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use futures::FutureExt;
 use jni::objects::JObject;
 use jni::JNIEnv;
 use jni::errors::Result;
@@ -10,7 +9,8 @@ use jni_fn::jni_fn;
 use crabdroid:: {
     pointer::ArcPointer,
     env::AndroidEnv,
-    future::{IntoJava, completion_stage::JCompletionStage}, error::JavaErrorContext
+    error::JavaErrorContext,
+    future::completion_stage::JCompletionStage
 };
 
 use tesseract::service::TransportProcessor;
