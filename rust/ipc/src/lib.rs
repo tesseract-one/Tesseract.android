@@ -14,9 +14,6 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-//#![feature(proc_macro_is_available)]
-//#![feature(once_cell)]
-
 #![feature(result_option_inspect)]
 
 #[macro_use]

@@ -1,10 +1,7 @@
-use jni::{JNIEnv, objects::JObject};
+use jni::{JNIEnv, objects::JObject, errors::Result};
 
 use tesseract::service::Transport;
-
 use tesseract_android_transport::service::JTransport;
-
-use jni::errors::Result;
 
 const TRANSPORT_CLASS: &str = "one/tesseract/ipc/service/IPCTransport";
 
