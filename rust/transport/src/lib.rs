@@ -17,8 +17,8 @@
 //#![feature(proc_macro_is_available)]
 //#![feature(once_cell)]
 
+#![feature(async_closure)]
 #![feature(result_option_inspect)]
-
 #![feature(auto_traits, negative_impls)]
 
 #[macro_use]

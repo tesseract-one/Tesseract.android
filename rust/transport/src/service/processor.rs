@@ -10,10 +10,11 @@ use jni_fn::jni_fn;
 use crabdroid:: {
     pointer::ArcPointer,
     env::AndroidEnv,
-    future::IntoJava
+    future::{IntoJava, completion_stage::JCompletionStage}, error::JavaErrorContext
 };
 
 use tesseract::service::TransportProcessor;
+use tesseract_android_base::TesseractAndroidError;
 
 #[derive(Clone, Copy)]
 pub struct JProcessor<'a: 'b, 'b> {
@@ -75,26 +76,23 @@ impl<'a: 'b, 'b> JProcessor<'a, 'b> {
 
 #[jni_fn("one.tesseract.transport.service.Processor")]
 pub fn process<'a>(env: JNIEnv<'a>, jprocessor: JObject<'a>, data: jni::sys::jbyteArray) -> JObject<'a> { //returns CompletionStage<ByteArray>
+    TesseractAndroidError::java_context(&env, || {
+        let jprocessor = JProcessor::from_env(&env, jprocessor);
+        let processor = jprocessor.processor()?;
+
+        let data = env.convert_byte_array(data)?;
+
+        JCompletionStage::launch_async(&env, async move |vm| {
+            let data = processor.process(&data).await;
     
-    let jprocessor = JProcessor::from_env(&env, jprocessor);
-    let processor = jprocessor.processor().unwrap();//TODO: handle error
+            let env = vm.get_env()?;
 
-    let data = env.convert_byte_array(data).unwrap();//TODO: handle error
+            let bytes = env.byte_array_from_slice(&data)?;
+            let bytes = unsafe {JObject::from_raw(bytes)};
 
-    let response = async move {
-        processor.process(&data).await
-    };
-
-    let vm = env.get_java_vm().unwrap();
-    let f = response.map(move |data| {
-        let env = vm.get_env()?;
-        let bytes = env.byte_array_from_slice(&data)?;
-        let bytes = unsafe {JObject::from_raw(bytes)};
-        let r = env.new_global_ref(bytes)?;
-        return Result::Ok(r);
-    });
-
-    *f.into_java(&env)
+            Ok(env.new_global_ref(bytes)?)
+        })
+    })
 }
 
 #[jni_fn("one.tesseract.transport.service.Processor")]
