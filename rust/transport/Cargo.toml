@@ -8,21 +8,15 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-client = ["tesseract/client", "tesseract-android-base/client", "dep:async-trait"]
-service = ["tesseract/service", "tesseract-android-base/service", "dep:async-trait"]
+client = ["tesseract/client", "tesseract-android-base/client"]
+service = ["tesseract/service", "tesseract-android-base/service"]
 
 [dependencies]
-async-trait = {version="0.1", optional=true}
-
-thiserror = "1.0.31"
 log = "0.3.9"
-futures = "0.3.21"
 
 jni = "0.20.0"
 jni_fn = "0.1.0"
-android_log = "0.1.3"
 crabdroid = { path = "../crabdroid" }
 
-tesseract = { path = "/Users/daniel/repo/Tesseract.rs/tesseract"}
+tesseract = { path = "/Users/daniel/repo/Tesseract.rs/tesseract"} #tesseract = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="master"}
 tesseract-android-base = { path = "../base" }
-#tesseract = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="master"}

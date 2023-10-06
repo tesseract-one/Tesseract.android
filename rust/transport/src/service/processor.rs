@@ -97,9 +97,13 @@ pub fn process<'a>(env: JNIEnv<'a>, jprocessor: JObject<'a>, data: jni::sys::jby
 
 #[jni_fn("one.tesseract.transport.service.Processor")]
 pub fn finalize(env: JNIEnv, jprocessor: JObject) {
-    let jprocessor = JProcessor::from_env(&env, jprocessor);
+    TesseractAndroidError::java_context(&env, || {
+        let jprocessor = JProcessor::from_env(&env, jprocessor);
 
-    jprocessor.destroy_rust().unwrap();
+        jprocessor.destroy_rust()?;
+    
+        debug!("JProcessor dropped");
 
-    debug!("!!!!drop jprocessor");
+        Ok(())
+    })
 }
