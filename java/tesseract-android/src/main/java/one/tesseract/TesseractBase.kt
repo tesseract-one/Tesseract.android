@@ -6,7 +6,7 @@ open class TesseractBase {
     @SuppressLint("UseValueOf")
     companion object {
         @SuppressLint("UseValueOf")
-        @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+        @Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN", "DEPRECATION")
         private var initialized: java.lang.Boolean = java.lang.Boolean(false)
 
         init {
@@ -14,6 +14,7 @@ open class TesseractBase {
                 if(!initialized.booleanValue()) {
                     System.loadLibrary("tesseract")
                     runtimeInit()
+                    @Suppress("DEPRECATION")
                     initialized = java.lang.Boolean(true)
                 }
             }

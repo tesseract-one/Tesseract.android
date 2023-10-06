@@ -3,11 +3,9 @@ package one.tesseract.ipc.service
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
-import androidx.annotation.RequiresApi
 
-import one.tesseract.ipc.*;
+import one.tesseract.ipc.*
 
 class TesseractActivity : Activity() {
     companion object {
@@ -28,7 +26,6 @@ class TesseractActivity : Activity() {
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
