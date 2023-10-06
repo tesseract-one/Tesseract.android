@@ -7,6 +7,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import one.tesseract.exception.UserCancelledException
 import java.util.concurrent.CompletionStage
 
 class MainActivity : AppCompatActivity() {
@@ -33,7 +34,11 @@ class MainActivity : AppCompatActivity() {
         buttonSign.setOnClickListener {
             signTransaction().whenComplete { result, error ->
                 if (error != null) {
-                    signatureText.text = error.toString()
+                    if(error is UserCancelledException) {
+                        signatureText.text = "You just cancelled, no signature for you."
+                    } else {
+                        signatureText.text = error.toString()
+                    }
                 } else {
                     signatureText.text = result
                 }
