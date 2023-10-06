@@ -70,7 +70,7 @@ impl<'a: 'b, 'b> JCompletionStage<'a, 'b> {
                 .map_err(|e| e.flatten_java(&env))
         };
 
-        Ok(future.into_java(env).into())
+        Ok(future.into_java(env)?.into())
     }
 }
 

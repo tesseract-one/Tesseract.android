@@ -43,7 +43,7 @@ impl<E, F> Wake for Waker<E, F> where
     F: Future<Output = Result<GlobalRef, E>> {
 
     fn wake(self: Arc<Self>) {
-        self.j.do_in_context_rret(64, |env, object| {
+        self.j.with_safe_context_rret(64, |env, object| {
             let jfut = JCompletableFuture::from_env(&env, object);
             debug!("GOT JFUT");
 
@@ -67,7 +67,7 @@ impl<E, F> Wake for Waker<E, F> where
                     exc.print_stack_trace().unwrap();
 
                     debug!("EXCEPTION PRINTED");
-                }).unwrap()}
+                })?}
             };
 
             debug!("RESOLVED {}", resolved);
@@ -84,9 +84,9 @@ impl<E, F> Wake for Waker<E, F> where
 }
 
 pub trait IntoJava {
-    fn into_java<'a: 'b, 'b>(self, env: &'b JNIEnv<'a>) -> JCompletableFuture<'a, 'b> where Self: Sized;
-    fn boxed_into_java<'a: 'b, 'b>(self: Box<Self>, env: &'b JNIEnv<'a>) -> JCompletableFuture<'a, 'b>;
-    fn pinned_into_java<'a: 'b, 'b>(self: Pin<Box<Self>>, env: &'b JNIEnv<'a>) -> JCompletableFuture<'a, 'b>;
+    fn into_java<'a: 'b, 'b>(self, env: &'b JNIEnv<'a>) -> jni::errors::Result<JCompletableFuture<'a, 'b>> where Self: Sized;
+    fn boxed_into_java<'a: 'b, 'b>(self: Box<Self>, env: &'b JNIEnv<'a>) -> jni::errors::Result<JCompletableFuture<'a, 'b>>;
+    fn pinned_into_java<'a: 'b, 'b>(self: Pin<Box<Self>>, env: &'b JNIEnv<'a>) -> jni::errors::Result<JCompletableFuture<'a, 'b>>;
 }
 
 impl<E, F> IntoJava for F where
@@ -94,9 +94,9 @@ impl<E, F> IntoJava for F where
     F: ?Sized + Send + 'static,
     F: Future<Output = Result<GlobalRef, E>> {
 
-    fn pinned_into_java<'a: 'b, 'b>(self: Pin<Box<Self>>, env: &'b JNIEnv<'a>) -> JCompletableFuture<'a, 'b> {
-        let ljfut = JCompletableFuture::new(env).unwrap();
-        let gjfut = ContextedGlobal::from_local(env, *ljfut).unwrap();
+    fn pinned_into_java<'a: 'b, 'b>(self: Pin<Box<Self>>, env: &'b JNIEnv<'a>) -> jni::errors::Result<JCompletableFuture<'a, 'b>> {
+        let ljfut = JCompletableFuture::new(env)?;
+        let gjfut = ContextedGlobal::from_local(env, *ljfut)?;
 
         let waker = Arc::new(Waker::new(self, gjfut));
         let poll = {
@@ -113,21 +113,21 @@ impl<E, F> IntoJava for F where
 
         let resolved = match poll {
             Poll::Pending => {true}
-            Poll::Ready(r) => {ljfut.resolve3(r).unwrap()}
+            Poll::Ready(r) => {ljfut.resolve3(r)?}
         };
 
         if !resolved {
             panic!("It's a bug. Why is the resolved future gets resolved again?")
         }
 
-        ljfut
+        Ok(ljfut)
     }
 
-    fn into_java<'a: 'b, 'b>(self, env: &'b JNIEnv<'a>) -> JCompletableFuture<'a, 'b> where Self: Sized {
+    fn into_java<'a: 'b, 'b>(self, env: &'b JNIEnv<'a>) -> jni::errors::Result<JCompletableFuture<'a, 'b>> where Self: Sized {
         Box::pin(self).pinned_into_java(env)
     }
 
-    fn boxed_into_java<'a: 'b, 'b>(self: Box<Self>, env: &'b JNIEnv<'a>) -> JCompletableFuture<'a, 'b> {
+    fn boxed_into_java<'a: 'b, 'b>(self: Box<Self>, env: &'b JNIEnv<'a>) -> jni::errors::Result<JCompletableFuture<'a, 'b>> {
         unsafe { Pin::new_unchecked(self) }.pinned_into_java(env)
     }
 }
