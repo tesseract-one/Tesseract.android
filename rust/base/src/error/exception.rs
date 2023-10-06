@@ -5,8 +5,7 @@ use crabdroid::error::{GlobalError, ExceptionConvertible};
 use log::SetLoggerError;
 
 pub fn logger_error_to_exception<'a: 'b, 'b>(error: &SetLoggerError, env: &'b JNIEnv<'a>) -> Result<JObject<'a>> {
-    let description = error.to_string();
-    let description = format!("Can't set android logger for Tesseract: {}", description);
+    let description = format!("Can't set android logger for Tesseract: {}", error);
     let description = env.new_string(description)?;
 
     env.new_object(

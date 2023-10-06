@@ -15,6 +15,7 @@
 //===----------------------------------------------------------------------===//
 
 #![feature(async_closure)]
+#![feature(auto_traits, negative_impls)]
 
 #[macro_use]
 extern crate log;
@@ -22,6 +23,7 @@ extern crate android_log;
 
 mod ui;
 mod core;
+mod error;
 mod service;
 mod signature_provider;
 
@@ -36,9 +38,9 @@ use crabdroid::error::JavaErrorContext;
 
 use tesseract::service::Tesseract;
 
-use tesseract_android::error::TesseractAndroidError;
 use tesseract_android::service::transport::IPCTransport;
 
+use crate::error::WalletError;
 use crate::core::RustCore;
 use crate::service::TestService;
 use crate::ui::UI;
@@ -46,7 +48,7 @@ use crate::signature_provider::SignatureProvider;
 
 #[jni_fn("one.tesseract.example.wallet.RustCore")]
 pub fn rustInit(env: JNIEnv, core: JObject, data_dir: JString) {
-    TesseractAndroidError::java_context(&env, || {
+    WalletError::java_context(&env, || {
         android_log::init("RustWalletDemo")?;
         log_panics::init();
 
@@ -73,7 +75,7 @@ pub fn rustInit(env: JNIEnv, core: JObject, data_dir: JString) {
 
 #[jni_fn("one.tesseract.example.wallet.RustCore")]
 pub fn saveSignature(env: JNIEnv, core: JObject, signature: JString) {
-    TesseractAndroidError::java_context(&env, || {
+    WalletError::java_context(&env, || {
         let signature: String = env
             .get_string(signature)?
             .into();
@@ -88,10 +90,10 @@ pub fn saveSignature(env: JNIEnv, core: JObject, signature: JString) {
 
 #[jni_fn("one.tesseract.example.wallet.RustCore")]
 pub fn readSignature<'a>(env: JNIEnv<'a>, core: JObject<'a>) -> JString<'a> {
-    TesseractAndroidError::java_context(&env, || {
+    WalletError::java_context(&env, || {
         let core = RustCore::from_env(&env, core);
         let provider = core.get_signature_provider()?;
-        let signature = provider.get_signature();
+        let signature = provider.get_signature().map_err(WalletError::from)?;
         Ok(env.new_string(&signature)?)
     })
 }

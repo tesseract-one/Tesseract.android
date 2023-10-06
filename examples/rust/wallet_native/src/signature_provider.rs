@@ -15,6 +15,7 @@
 //===----------------------------------------------------------------------===//
 
 use std::fs;
+use std::io;
 
 pub (crate) struct SignatureProvider {
     data_dir: String
@@ -29,15 +30,13 @@ impl SignatureProvider {
         format!("{}/signature", &self.data_dir)
     }
 
-    pub (crate) fn set_signature(&self, signature: &str) {
+    pub (crate) fn set_signature(&self, signature: &str) -> io::Result<()> {
         let file = self.file();
-        fs::write(&file, signature).expect("Unable to write file");
+        fs::write(&file, signature)
     }
 
-    pub (crate) fn get_signature(&self) -> String {
+    pub (crate) fn get_signature(&self) -> io::Result<String> {
         let file = self.file();
-        fs::read_to_string(&file).unwrap_or_else(|_| {
-            "_signed_default!".to_owned()
-        })
+        fs::read_to_string(&file)
     }
 }

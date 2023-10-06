@@ -20,9 +20,8 @@ use jni::errors::Result as JResult;
 
 use crabdroid::ContextedGlobal;
 
-use tesseract_android::error::TesseractAndroidError;
-
-use super::core::RustCore;
+use crate::error::WalletError;
+use crate::core::RustCore;
 
 pub(crate) struct UI {
     core: ContextedGlobal,
@@ -35,7 +34,7 @@ impl UI {
         })
     }
 
-    pub(crate) async fn request_user_confirmation(&self, transaction: &str) -> Result<bool, TesseractAndroidError> {
+    pub(crate) async fn request_user_confirmation(&self, transaction: &str) -> Result<bool, WalletError> {
         debug!("!!!Before UI call");
 
         let allow = self.core.with_async_context(64, |env, core| {

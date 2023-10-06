@@ -22,8 +22,7 @@ use tesseract::error::TesseractErrorContext;
 use tesseract::{Error, ErrorKind};
 use tesseract_protocol_test::Test;
 
-use tesseract_android::error::TesseractAndroidError;
-
+use crate::error::WalletError;
 use super::ui::UI;
 use super::signature_provider::SignatureProvider;
 
@@ -55,7 +54,7 @@ impl tesseract::service::Service for TestService {
 #[async_trait]
 impl tesseract_protocol_test::TestService for TestService {
     async fn sign_transaction(self: Arc<Self>, req: &str) -> tesseract::Result<String> {
-        TesseractAndroidError::tesseract_context_async(async || {
+        WalletError::tesseract_context_async(async || {
             let allow = self.ui.request_user_confirmation(req).await?;
 
             Ok(if allow {
@@ -65,7 +64,7 @@ impl tesseract_protocol_test::TestService for TestService {
                         "intentional intentional error for test",
                     ))
                 } else {
-                    let signature = self.signature_provider.get_signature();
+                    let signature = self.signature_provider.get_signature()?;
                     Ok(format!("{}{}", req, signature))
                 }
             } else {
