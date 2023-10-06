@@ -9,7 +9,6 @@ use jni::errors::Result;
 use crabdroid::pointer::ArcPointer;
 
 use tesseract::client::Service;
-
 use tesseract_protocol_test::Test;
 
 /// Lifetime'd representation of a `RustCore`. Just a `JObject` wrapped in a

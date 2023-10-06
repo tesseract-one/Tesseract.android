@@ -24,7 +24,6 @@ mod core;
 mod delegate;
 mod application;
 
-use crabdroid::error::CompositeErrorContext;
 use futures::{
     future::FutureExt,
     executor::ThreadPoolBuilder
@@ -36,11 +35,7 @@ use jni::objects::{JObject, JString};
 use jni_fn::jni_fn;
 
 use crabdroid::{
-    future::{
-        completion_stage::JCompletionStage,
-        IntoJava,
-        FutureExtJava
-    },
+    future::JCompletionStage,
     thread_pool::AndroidThreadPoolBuilder,
     error::JavaErrorContext,
     JFuture
@@ -59,7 +54,7 @@ use crate::delegate::TransportDelegate;
 #[jni_fn("one.tesseract.example.app.RustCore")]
 pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) {
     TesseractAndroidError::java_context(&env, || {
-        android_log::init("DemoDAppRust")?;
+        android_log::init("RustDAppDemo")?;
         log_panics::init();
 
         let core = RustCore::from_env(&env, core);

@@ -2,6 +2,7 @@ use jni::{JNIEnv, objects::JObject};
 use jni::errors::Result as JResult;
 
 use crabdroid::ContextedGlobal;
+
 use tesseract_android::error::TesseractAndroidError;
 
 pub (crate) struct Application {
