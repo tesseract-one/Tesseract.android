@@ -1,4 +1,4 @@
-package one.tesseract.wallet
+package one.tesseract.example.native_wallet
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import one.tesseract.ipc.activity.free.Launcher
 import one.tesseract.ipc.activity.free.finishFreeActivity
 
-import one.tesseract.wallet.ui.theme.TesseractAndroidTheme
+import one.tesseract.example.native_wallet.ui.theme.TesseractAndroidTheme
 
 class SignActivity : ComponentActivity() {
     companion object {

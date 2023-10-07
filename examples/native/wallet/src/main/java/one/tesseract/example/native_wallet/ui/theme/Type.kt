@@ -1,4 +1,4 @@
-package one.tesseract.wallet.ui.theme
+package one.tesseract.example.native_wallet.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

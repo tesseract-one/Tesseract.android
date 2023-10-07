@@ -1,4 +1,4 @@
-package one.tesseract.wallet
+package one.tesseract.example.native_wallet
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,11 +10,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import one.tesseract.ipc.activity.ActivityMonitor
-import one.tesseract.ipc.activity.free.Launcher
-import one.tesseract.service.Tesseract
 
-import one.tesseract.wallet.ui.theme.TesseractAndroidTheme
+import one.tesseract.example.native_wallet.ui.theme.TesseractAndroidTheme
 
 
 

@@ -1,4 +1,4 @@
-package one.tesseract.wallet.ui.theme
+package one.tesseract.example.native_wallet.ui.theme
 
 import android.app.Activity
 import android.os.Build

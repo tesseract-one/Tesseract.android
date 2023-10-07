@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'one.tesseract.wallet'
+    namespace 'one.tesseract.example.native_wallet'
     compileSdk rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        applicationId "one.tesseract.example.native.wallet"
+        applicationId "one.tesseract.example.native_wallet"
         minSdk rootProject.ext.minSdkVersion
         targetSdk rootProject.ext.targetSdkVersion
         versionCode 1
@@ -58,6 +58,7 @@ dependencies {
 
     implementation project(':java:tesseract-base')
     implementation project(':java:tesseract-ipc')
+    implementation project(':java:tesseract')
     implementation project(':java:tesseract-service')
 
     testImplementation 'junit:junit:4.13.2'
