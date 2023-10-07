@@ -1,4 +1,4 @@
-package one.tesseract.example.wallet
+package one.tesseract.example.rust_wallet
 
 import one.tesseract.ipc.activity.ActivityMonitor
 import one.tesseract.ipc.activity.free.Launcher

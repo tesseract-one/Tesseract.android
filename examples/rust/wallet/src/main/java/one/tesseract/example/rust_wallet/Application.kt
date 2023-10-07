@@ -1,4 +1,4 @@
-package one.tesseract.example.wallet
+package one.tesseract.example.rust_wallet
 
 class Application: android.app.Application() {
     lateinit var rustCore: RustCore

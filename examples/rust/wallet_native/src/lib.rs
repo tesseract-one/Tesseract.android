@@ -46,7 +46,7 @@ use crate::service::TestService;
 use crate::ui::UI;
 use crate::signature_provider::SignatureProvider;
 
-#[jni_fn("one.tesseract.example.wallet.RustCore")]
+#[jni_fn("one.tesseract.example.rust_wallet.RustCore")]
 pub fn rustInit(env: JNIEnv, core: JObject, data_dir: JString) {
     WalletError::java_context(&env, || {
         android_log::init("RustWalletDemo")?;
@@ -73,7 +73,7 @@ pub fn rustInit(env: JNIEnv, core: JObject, data_dir: JString) {
     })
 }
 
-#[jni_fn("one.tesseract.example.wallet.RustCore")]
+#[jni_fn("one.tesseract.example.rust_wallet.RustCore")]
 pub fn saveSignature(env: JNIEnv, core: JObject, signature: JString) {
     WalletError::java_context(&env, || {
         let signature: String = env
@@ -88,12 +88,12 @@ pub fn saveSignature(env: JNIEnv, core: JObject, signature: JString) {
     })
 }
 
-#[jni_fn("one.tesseract.example.wallet.RustCore")]
+#[jni_fn("one.tesseract.example.rust_wallet.RustCore")]
 pub fn readSignature<'a>(env: JNIEnv<'a>, core: JObject<'a>) -> JString<'a> {
     WalletError::java_context(&env, || {
         let core = RustCore::from_env(&env, core);
         let provider = core.get_signature_provider()?;
-        let signature = provider.get_signature().map_err(WalletError::from)?;
+        let signature = provider.get_signature();
         Ok(env.new_string(&signature)?)
     })
 }

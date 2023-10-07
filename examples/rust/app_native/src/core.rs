@@ -46,7 +46,7 @@ impl<'a: 'b, 'b> RustCore<'a, 'b> {
             .call_method(
                 self.internal,
                 "getApplication",
-                "()Lone/tesseract/example/app/Application;",
+                "()Lone/tesseract/example/rust_app/Application;",
                 &[],
             )?
             .l()

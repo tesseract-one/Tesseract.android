@@ -1,4 +1,4 @@
-package one.tesseract.example.app
+package one.tesseract.example.rust_wallet
 
 import org.junit.Test
 

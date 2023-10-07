@@ -35,8 +35,11 @@ impl SignatureProvider {
         fs::write(&file, signature)
     }
 
-    pub (crate) fn get_signature(&self) -> io::Result<String> {
+    pub (crate) fn get_signature(&self) -> String {
         let file = self.file();
-        fs::read_to_string(&file)
+        fs::read_to_string(&file).unwrap_or_else(|e| {
+            debug!("The signature file is not found: {}", e);
+            "_signed_default".to_owned()
+        })
     }
 }

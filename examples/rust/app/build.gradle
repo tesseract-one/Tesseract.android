@@ -4,11 +4,13 @@ plugins {
 }
 
 android {
+    namespace 'one.tesseract.example.rust_app'
+
     compileSdk rootProject.ext.compileSdkVersion
     ndkVersion rootProject.ext.ndkVersion
 
     defaultConfig {
-        applicationId "one.tesseract.example.app"
+        applicationId "one.tesseract.example.rust_app"
         minSdk rootProject.ext.minSdkVersion
         targetSdk rootProject.ext.targetSdkVersion
         versionCode 1
@@ -33,7 +35,6 @@ android {
     buildFeatures {
         viewBinding true
     }
-    namespace 'one.tesseract.example.app'
 }
 
 apply plugin: 'org.mozilla.rust-android-gradle.rust-android'

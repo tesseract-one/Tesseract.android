@@ -1,10 +1,11 @@
-package one.tesseract.example.wallet
+package one.tesseract.example.rust_wallet
 
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import one.tesseract.example.rust_wallet.R
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

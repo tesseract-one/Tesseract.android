@@ -51,7 +51,7 @@ use crate::application::Application;
 use crate::core::RustCore;
 use crate::delegate::TransportDelegate;
 
-#[jni_fn("one.tesseract.example.app.RustCore")]
+#[jni_fn("one.tesseract.example.rust_app.RustCore")]
 pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) {
     TesseractAndroidError::java_context(&env, || {
         android_log::init("RustDAppDemo")?;
@@ -84,7 +84,7 @@ pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) {
     })
 }
 
-#[jni_fn("one.tesseract.example.app.RustCore")]
+#[jni_fn("one.tesseract.example.rust_app.RustCore")]
 pub fn sign<'a>(env: JNIEnv<'a>, rcore: JObject<'a>, transaction: JString<'a>) -> JObject<'a> {
     TesseractAndroidError::java_context(&env, || {
         let core = RustCore::from_env(&env, rcore);
@@ -106,7 +106,7 @@ pub fn sign<'a>(env: JNIEnv<'a>, rcore: JObject<'a>, transaction: JString<'a>) -
     })
 }
 
-#[jni_fn("one.tesseract.example.app.RustCore")]
+#[jni_fn("one.tesseract.example.rust_app.RustCore")]
 pub fn execute<'a>(env: JNIEnv<'a>, core: JObject<'a>, future: JObject<'a>) {
     let core = RustCore::from_env(&env, core);
 

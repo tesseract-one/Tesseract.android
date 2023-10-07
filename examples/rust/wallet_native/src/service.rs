@@ -64,7 +64,7 @@ impl tesseract_protocol_test::TestService for TestService {
                         "intentional intentional error for test",
                     ))
                 } else {
-                    let signature = self.signature_provider.get_signature()?;
+                    let signature = self.signature_provider.get_signature();
                     Ok(format!("{}{}", req, signature))
                 }
             } else {

@@ -1,4 +1,4 @@
 <resources>
-    <string name="app_name">Wallet</string>
+    <string name="app_name">Native Wallet Demo</string>
     <string name="title_activity_sign">SignActivity</string>
 </resources>

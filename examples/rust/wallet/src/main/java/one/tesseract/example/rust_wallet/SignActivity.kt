@@ -1,9 +1,10 @@
-package one.tesseract.example.wallet
+package one.tesseract.example.rust_wallet
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import one.tesseract.example.rust_wallet.R
 import one.tesseract.ipc.activity.free.Launcher
 
 import one.tesseract.ipc.activity.free.finishFreeActivity

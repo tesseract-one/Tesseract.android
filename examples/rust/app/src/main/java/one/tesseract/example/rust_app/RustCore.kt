@@ -14,7 +14,7 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-package one.tesseract.example.app
+package one.tesseract.example.rust_app
 
 import java.util.concurrent.CompletionStage
 
