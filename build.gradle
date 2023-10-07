@@ -20,7 +20,7 @@ buildscript {
         javaVersion = JavaVersion.VERSION_1_8
         javaTarget = '1.8'
 
-        navVersion = '2.7.3'
+        navVersion = '2.7.4'
         composeVersion = '1.4.3'
         kotlinxVersion = '1.6.4'
     }
@@ -39,5 +39,5 @@ task clean(type: Delete) {
 }
 
 allprojects {
-    group 'one.tesseract.android'
+    group 'one.tesseract'
 }

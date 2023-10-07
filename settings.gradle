@@ -17,13 +17,14 @@ include ':examples:native:wallet'
 include ':examples:rust:app'
 include ':examples:rust:wallet'
 
-include ':java:tesseract-base'
+include ':java:interop-rust'
 
+include ':java:tesseract-base'
 include ':java:tesseract-transport-service'
 
-include ':java:tesseract-android'
-include ':java:tesseract-android-service'
 include ':java:tesseract-ipc'
 include ':java:tesseract-ipc-client'
 include ':java:tesseract-ipc-service'
-include ':java:interop-rust'
+
+include ':java:tesseract'
+include ':java:tesseract-service'

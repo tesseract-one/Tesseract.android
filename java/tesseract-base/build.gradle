@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'one.tesseract'
+    namespace 'one.tesseract.base'
 
     compileSdk rootProject.ext.compileSdkVersion
 
@@ -23,12 +23,7 @@ android {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$rootProject.ext.kotlinxVersion"
-
-    implementation 'androidx.core:core-ktx:1.12.0'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-
-    implementation project(path: ':java:interop-rust')
+    implementation project(path: ':java:interop-rust') //don't delete. we need it
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
