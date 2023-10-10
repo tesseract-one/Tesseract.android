@@ -99,7 +99,7 @@ impl<T> JavaWrappable for T where T: JavaWrappableDesc {
     }
 }
 
-#[jni_fn("one.tesseract.interop.rust.RustObject")]
+#[jni_fn("one.tesseract.crabdroid.RustObject")]
 pub fn drop(env: JNIEnv, this: JObject) {
     Error::java_context(&env, || {
         let handle = WrappableHandle::from_java_ref(this, &env)?;

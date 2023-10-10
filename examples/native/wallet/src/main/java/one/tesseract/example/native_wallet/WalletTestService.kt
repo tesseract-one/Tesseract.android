@@ -1,6 +1,5 @@
 package one.tesseract.example.native_wallet
 
-import one.tesseract.example.native_wallet.SignActivity
 import one.tesseract.exception.UserCancelledException
 import one.tesseract.ipc.activity.free.Launcher
 import one.tesseract.service.protocol.kotlin.TestService

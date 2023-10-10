@@ -51,7 +51,7 @@ impl<'a: 'b, 'b> RBiConsumer<'a, 'b> {
         let long = raw as *const () as i64;
 
         let clazz = env
-            .find_class_android("one/tesseract/interop/rust/RBiConsumer")?;
+            .find_class_android("one/tesseract/crabdroid/RBiConsumer")?;
 
         let consumer = env
             .new_object(clazz, "(J)V", &[JValue::from(long)])?;
@@ -77,7 +77,7 @@ impl<'a: 'b, 'b> RBiConsumer<'a, 'b> {
     }
 }
 
-#[jni_fn("one.tesseract.interop.rust.RBiConsumer")]
+#[jni_fn("one.tesseract.crabdroid.RBiConsumer")]
 pub fn accept(env: JNIEnv, consumer: JObject, a: JObject, b: JObject) {
     debug!("!@#$BEFORE JUST START");
     let consumer = RBiConsumer::from_env(&env, consumer);
@@ -88,7 +88,7 @@ pub fn accept(env: JNIEnv, consumer: JObject, a: JObject, b: JObject) {
     closure(env, a, b);
 }
 
-#[jni_fn("one.tesseract.interop.rust.RBiConsumer")]
+#[jni_fn("one.tesseract.crabdroid.RBiConsumer")]
 pub fn finalize(env: JNIEnv, consumer: JObject) {
     let consumer = RBiConsumer::from_env(&env, consumer);
 

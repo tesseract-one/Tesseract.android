@@ -23,7 +23,7 @@ android {
 }
 
 dependencies {
-    implementation project(path: ':java:interop-rust') //don't delete
+    implementation project(path: ':java:crabdroid')//don't delete
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

@@ -14,7 +14,7 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-package one.tesseract.interop.rust
+package one.tesseract.crabdroid
 
 import java.util.function.BiConsumer
 

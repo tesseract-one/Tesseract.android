@@ -17,7 +17,7 @@ impl ExceptionConvertible for jni::errors::Error {
                 let message = e.to_string();
                 let message = env.new_string(message)?;
                 env.new_object(
-                    "one/tesseract/interop/rust/InteropException",
+                    "one/tesseract/crabdroid/InteropException",
                     "(Ljava/lang.String;)V",
                     &[message.into()])
             }
