@@ -9,6 +9,7 @@ description = "Android easy(er) interop for Rust. Especially helpful with async 
 homepage = "https://github.com/tesseract-one/"
 repository = "https://github.com/tesseract-one/Tesseract.android"
 readme = "README.MD"
+authors = ["Daniel Leping", "Tesseract Systems, Inc."]
 categories = ["development-tools::ffi", "external-ffi-bindings", "os"]
 keywords = ["android", "interop", "jni", "futures", "async"]
 
