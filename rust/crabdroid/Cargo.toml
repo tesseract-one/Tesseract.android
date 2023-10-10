@@ -4,6 +4,13 @@
 name = "crabdroid"
 version = "0.1.0"
 edition = "2021"
+license = "Apache-2.0"
+description = "Android easy(er) interop for Rust. Especially helpful with async operations, error handling, collections, etc."
+homepage = "https://github.com/tesseract-one/"
+repository = "https://github.com/tesseract-one/Tesseract.android"
+readme = "README.MD"
+categories = ["development-tools::ffi", "external-ffi-bindings", "os"]
+keywords = ["android", "interop", "jni", "futures", "async"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
