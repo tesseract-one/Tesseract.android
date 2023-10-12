@@ -1,6 +1,6 @@
 use jni::{JNIEnv, objects::JObject, errors::Result};
 
-use crabdroid::error::{GlobalError, ExceptionConvertible};
+use crabdroid::{error::{GlobalError, ExceptionConvertible}, env::AndroidEnv};
 
 use log::SetLoggerError;
 
@@ -17,15 +17,16 @@ pub fn logger_error_to_exception<'a: 'b, 'b>(error: &SetLoggerError, env: &'b JN
 pub fn tesseract_error_to_exception<'a: 'b, 'b>(error: &tesseract::Error, env: &'b JNIEnv<'a>) -> Result<JObject<'a>> {
     match &error.kind {
         tesseract::ErrorKind::Cancelled => {
+            let clazz = env.find_class_android("one/tesseract/exception/UserCancelledException")?;
             if let Some(description) = &error.description {
                 let description = env.new_string(description)?;
                 env.new_object(
-                    "one/tesseract/exception/UserCancelledException",
+                    clazz,
                     "(Ljava/lang/String;)V",
                     &[description.into()])
             } else {
                 env.new_object(
-                    "one/tesseract/exception/UserCancelledException",
+                    clazz,
                     "()V",
                     &[])
             }

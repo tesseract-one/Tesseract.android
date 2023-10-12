@@ -16,4 +16,3 @@ It's yet to be made. The library was created as a part of [Tesseract](https://gi
 * [Tesseract.android](https://github.com/tesseract-one/Tesseract.android)
 * [Developer Wallet](https://github.com/tesseract-one/dev-wallet)
 * [Polkadot demo dApp](https://github.com/tesseract-one/polkachat.rs)
-

@@ -18,7 +18,8 @@ use std::sync::Arc;
 
 use async_trait::async_trait;
 
-use tesseract::error::TesseractErrorContext;
+use errorcon::convertible::ErrorContext;
+
 use tesseract::{Error, ErrorKind};
 use tesseract_protocol_test::Test;
 
@@ -54,7 +55,7 @@ impl tesseract::service::Service for TestService {
 #[async_trait]
 impl tesseract_protocol_test::TestService for TestService {
     async fn sign_transaction(self: Arc<Self>, req: &str) -> tesseract::Result<String> {
-        WalletError::tesseract_context_async(async || {
+        WalletError::context_async(async || {
             let allow = self.ui.request_user_confirmation(req).await?;
 
             Ok(if allow {

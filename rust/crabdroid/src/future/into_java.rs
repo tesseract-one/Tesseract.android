@@ -79,7 +79,7 @@ impl<E, F> Wake for Waker<E, F> where
             debug!("NO PANIC");
 
             Ok(())
-        }).unwrap();
+        }).expect("Panic once awake");
     }
 }
 

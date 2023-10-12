@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use errorcon::simple::ErrorContext;
+
 use jni::JNIEnv;
 use jni::objects::{JObject, JValue};
 use jni::errors::{Error, Result};
@@ -9,7 +11,6 @@ use jni_fn::jni_fn;
 
 use crabdroid::{JavaErrorContext, ContextedGlobal};
 
-use tesseract::error::TesseractErrorContext;
 use tesseract::service::{TransportProcessor, Transport, BoundTransport};
 
 use tesseract_android_base::TesseractAndroidError;
@@ -32,7 +33,7 @@ impl JTransport {
 
 impl Transport for JTransport {
     fn bind(self, processor: Arc<dyn TransportProcessor + Send + Sync>) -> Box<dyn BoundTransport + Send> {
-        Box::new(TesseractAndroidError::tesseract_context_panicable(|| {
+        Box::new(TesseractAndroidError::context_panicable(|| {
             Ok(self.internal.with_safe_context_rret(64, |env, transport| {
                 debug!("About to create JProcessor");
                 let processor = JProcessor::new(&env, processor)?;

@@ -6,7 +6,7 @@ use jni::{JNIEnv, objects::JObject, errors::Result};
 
 use crabdroid::ContextedGlobal;
 
-use tesseract::error::TesseractErrorContext;
+use errorcon::convertible::ErrorContext;
 use tesseract_protocol_test::{Test, service::TestExecutor};
 use tesseract_android_base::TesseractAndroidError;
 
@@ -45,7 +45,7 @@ impl tesseract::service::Service for TestService {
 #[async_trait]
 impl tesseract_protocol_test::TestService for TestService {
     async fn sign_transaction(self: Arc<Self>, req: &str) -> tesseract::Result<String> {
-        TesseractAndroidError::tesseract_context_async( async || {
+        TesseractAndroidError::context_async( async || {
             let response = self.jservice.with_async_context(32, |env, jservice| {
                 let jservice = JTestService::from_env(&env, jservice);
                 let req = env.new_string(req)?;
