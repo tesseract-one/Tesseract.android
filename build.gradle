@@ -29,6 +29,7 @@ buildscript {
         navVersion = '2.7.4'
         composeVersion = '1.5.3'
         kotlinxVersion = '1.6.4'
+        tesseractVersion = '0.1.1'
     }
 }
 
@@ -46,4 +47,36 @@ task clean(type: Delete) {
 
 allprojects {
     group 'one.tesseract'
+}
+
+def publishTesseract = tasks.register("tesseract-publish")
+
+subprojects {
+    afterEvaluate { Project project ->
+        if(!project.path.contains("crabdroid") && !project.path.contains("examples") && project.name != "java") {
+
+            publishTesseract.get().dependsOn(project.tasks.named("publish"))
+
+            project.afterEvaluate {
+                publishing {
+                    repositories {
+                        maven {
+                            name = "GitHubPackages"
+                            url = uri("https://maven.pkg.github.com/tesseract-one/Tesseract.android")
+                            credentials {
+                                username = rootProject.ext.usr ?: System.getenv("USERNAME")
+                                password = rootProject.ext.key ?: System.getenv("TOKEN")
+                            }
+                        }
+                    }
+                    publications {
+                        gpr(MavenPublication) {
+                            println components
+                            from(components.release)
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

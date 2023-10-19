@@ -1,10 +1,12 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'maven-publish'
 }
 
 android {
     namespace 'one.tesseract.ipc.client'
+    version rootProject.ext.tesseractVersion
 
     compileSdk rootProject.ext.compileSdkVersion
 
@@ -19,6 +21,10 @@ android {
     }
     kotlinOptions {
         jvmTarget = rootProject.ext.javaTarget
+    }
+    publishing {
+        singleVariant("release") {
+        }
     }
 }
 

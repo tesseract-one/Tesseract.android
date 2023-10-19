@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace 'one.tesseract.base'
-    version "0.1.0"
+    version rootProject.ext.tesseractVersion
 
     compileSdk rootProject.ext.compileSdkVersion
 
@@ -37,24 +37,4 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-}
-
-afterEvaluate {
-    publishing {
-        repositories {
-            maven {
-                name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/tesseract-one/Tesseract.android")
-                credentials {
-                    username = rootProject.ext.usr ?: System.getenv("USERNAME")
-                    password = rootProject.ext.key ?: System.getenv("TOKEN")
-                }
-            }
-        }
-        publications {
-            gpr(MavenPublication) {
-                from(components.release)
-            }
-        }
-    }
 }
