@@ -46,7 +46,7 @@ pub fn transport<'a>(env: JNIEnv<'a>, this: JObject<'a>, transport: JObject<'a>)
         let transport = env.call_method(
             transport,
             "rustTransport",
-            "()Lone/tesseract/transport/service/RustTransport;",
+            "()Lone/tesseract/service/transport/RustTransport;",
             &[])?.l()?;
 
         let transport = env.call_method(

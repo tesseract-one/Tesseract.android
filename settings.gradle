@@ -19,12 +19,12 @@ include ':examples:rust:wallet'
 
 include ':java:crabdroid'
 
-include ':java:tesseract-base'
-include ':java:tesseract-transport-service'
+include ':java:base'
+include ':java:service-transport'
 
-include ':java:tesseract-ipc'
-include ':java:tesseract-ipc-client'
-include ':java:tesseract-ipc-service'
+include ':java:common-transport-ipc'
+include ':java:client-transport-ipc'
+include ':java:service-transport-ipc'
 
-include ':java:tesseract'
-include ':java:tesseract-service'
+include ':java:common'
+include ':java:service'

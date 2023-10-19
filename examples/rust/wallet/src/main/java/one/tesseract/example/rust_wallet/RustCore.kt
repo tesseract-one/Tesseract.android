@@ -1,7 +1,7 @@
 package one.tesseract.example.rust_wallet
 
-import one.tesseract.ipc.activity.ActivityMonitor
-import one.tesseract.ipc.activity.free.Launcher
+import one.tesseract.transport.ipc.activity.ActivityMonitor
+import one.tesseract.transport.ipc.activity.free.Launcher
 import java.util.concurrent.CompletionStage
 
 //suppressing because of rust interop

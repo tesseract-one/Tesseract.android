@@ -66,10 +66,10 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
     implementation "androidx.navigation:navigation-fragment-ktx:$rootProject.ext.navVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$rootProject.ext.navVersion"
+    implementation project(':java:base')
+    implementation project(':java:common-transport-ipc')
+    implementation project(':java:client-transport-ipc')
 
-    implementation project(':java:tesseract-base')
-    implementation project(':java:tesseract-ipc')
-    implementation project(':java:tesseract-ipc-client')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

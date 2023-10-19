@@ -4,10 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
-import one.tesseract.example.rust_wallet.R
-import one.tesseract.ipc.activity.free.Launcher
+import one.tesseract.transport.ipc.activity.free.Launcher
 
-import one.tesseract.ipc.activity.free.finishFreeActivity
+import one.tesseract.transport.ipc.activity.free.finishFreeActivity
 import java.util.concurrent.CompletionStage
 
 class SignActivity : AppCompatActivity() {

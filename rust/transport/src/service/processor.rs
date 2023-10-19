@@ -45,7 +45,7 @@ impl<'a: 'b, 'b> JProcessor<'a, 'b> {
     }
 
     pub fn new(env: &'b JNIEnv<'a>, processor: Arc<dyn TransportProcessor + Send + Sync>) -> Result<Self> {
-        let clazz = env.find_class_android("one/tesseract/transport/service/Processor")?;
+        let clazz = env.find_class_android("one/tesseract/service/transport/Processor")?;
         let p: i64 = ArcPointer::new(processor).into();
 
         let obj = env.new_object(clazz, "(J)V", &[p.into()])?;
@@ -74,7 +74,7 @@ impl<'a: 'b, 'b> JProcessor<'a, 'b> {
     }
 }
 
-#[jni_fn("one.tesseract.transport.service.Processor")]
+#[jni_fn("one.tesseract.service.transport.Processor")]
 pub fn process<'a>(env: JNIEnv<'a>, jprocessor: JObject<'a>, data: jni::sys::jbyteArray) -> JObject<'a> { //returns CompletionStage<ByteArray>
     TesseractAndroidError::java_context(&env, || {
         let jprocessor = JProcessor::from_env(&env, jprocessor);
@@ -95,7 +95,7 @@ pub fn process<'a>(env: JNIEnv<'a>, jprocessor: JObject<'a>, data: jni::sys::jby
     })
 }
 
-#[jni_fn("one.tesseract.transport.service.Processor")]
+#[jni_fn("one.tesseract.service.transport.Processor")]
 pub fn finalize(env: JNIEnv, jprocessor: JObject) {
     TesseractAndroidError::java_context(&env, || {
         let jprocessor = JProcessor::from_env(&env, jprocessor);

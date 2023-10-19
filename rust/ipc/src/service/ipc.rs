@@ -3,7 +3,7 @@ use jni::{JNIEnv, objects::JObject, errors::Result};
 use tesseract::service::Transport;
 use tesseract_android_transport::service::JTransport;
 
-const TRANSPORT_CLASS: &str = "one/tesseract/ipc/service/IPCTransport";
+const TRANSPORT_CLASS: &str = "one/tesseract/service/transport/ipc/IPCTransport";
 
 pub struct IPCTransport {
     internal: JTransport
@@ -24,7 +24,7 @@ impl IPCTransport {
     }
 
     pub fn default(env: &JNIEnv) -> Result<Self> {
-        let transport = env.call_static_method(TRANSPORT_CLASS, "default", "()Lone/tesseract/ipc/service/IPCTransport;", &[])?.l()?;
+        let transport = env.call_static_method(TRANSPORT_CLASS, "default", "()Lone/tesseract/service/transport/ipc/IPCTransport;", &[])?.l()?;
         Self::from_transport(env, transport)
     }
 }

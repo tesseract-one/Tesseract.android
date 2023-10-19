@@ -14,7 +14,7 @@
             android:exported="false"
             android:label="Wallet" />
         <activity
-            android:name="one.tesseract.ipc.service.TesseractActivity"
+            android:name="one.tesseract.service.transport.ipc.TesseractActivity"
             android:exported="true"
             android:theme="@style/Theme.ClientApp.NoActionBar">
             <intent-filter>

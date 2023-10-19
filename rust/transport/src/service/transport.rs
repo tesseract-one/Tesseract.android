@@ -44,7 +44,7 @@ impl Transport for JTransport {
                 let bound = env.call_method(
                     transport,
                     "bind",
-                    "(Lone/tesseract/transport/service/Processor;)Lone/tesseract/transport/service/BoundTransport;",
+                    "(Lone/tesseract/service/transport/Processor;)Lone/tesseract/service/transport/BoundTransport;",
                     &[processor])?.l()?;
     
                 debug!("JProcessor bound successfully");
@@ -55,13 +55,13 @@ impl Transport for JTransport {
     }
 }
 
-#[jni_fn("one.tesseract.transport.service.JavaRustTransport")]
+#[jni_fn("one.tesseract.service.transport.JavaRustTransport")]
 pub fn createApplicator<'a>(env: JNIEnv<'a>, this: JObject<'a>) -> jlong {
     Error::java_context(&env, || {
         let transport = env.get_field(
             this,
             "transport",
-            "Lone/tesseract/transport/service/JavaTransport;")?.l()?;
+            "Lone/tesseract/service/transport/JavaTransport;")?.l()?;
         
         let transport = JTransport::from_local(&env, transport)?;
 

@@ -32,9 +32,9 @@ pub enum Response {
 impl Response {
     fn from_java_non_flat(env: &JNIEnv, jresponse: JObject) -> Result<Self> {
         //let clazz_error = env.find_class_android("one/tesseract/ipc/TransceiverResponseError")?;
-        let clazz_ok = env.find_class_android("one/tesseract/ipc/client/TransceiverResponseOk")?;
+        let clazz_ok = env.find_class_android("one/tesseract/client/transport/ipc/TransceiverResponseOk")?;
         let clazz_canceled =
-            env.find_class_android("one/tesseract/ipc/client/TransceiverResponseCanceled")?;
+            env.find_class_android("one/tesseract/client/transport/ipc/TransceiverResponseCanceled")?;
 
         if env.is_same_object(jresponse, JObject::null())? {
             Ok(Self::Exception("Response is java null".to_owned()))
@@ -53,7 +53,7 @@ impl Response {
                     .call_method(
                         jresponse,
                         "getException",
-                        "()Lone/tesseract/ipc/client/TransceiverException;",
+                        "()Lone/tesseract/client/transport/ipc/TransceiverException;",
                         &[],
                     )?
                     .l()?;

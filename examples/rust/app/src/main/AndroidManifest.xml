@@ -25,7 +25,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="one.tesseract.ipc.client.TesseractActivity"
+            android:name="one.tesseract.client.transport.ipc.TesseractActivity"
             android:exported="false"
             android:label="Tesseract">
         </activity>
