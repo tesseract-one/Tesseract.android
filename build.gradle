@@ -71,7 +71,6 @@ subprojects {
                     }
                     publications {
                         gpr(MavenPublication) {
-                            println components
                             from(components.release)
                         }
                     }
