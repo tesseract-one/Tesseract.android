@@ -1,9 +1,25 @@
 plugins {
-    id 'java-library'
     id 'org.jetbrains.kotlin.jvm'
+    id 'maven-publish'
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_7
-    targetCompatibility = JavaVersion.VERSION_17
+version = '0.1.0'
+group = 'one.tesseract'
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/tesseract-one/Tesseract.android")
+            credentials {
+                username = rootProject.ext.usr ?: System.getenv("USERNAME")
+                password = rootProject.ext.key ?: System.getenv("TOKEN")
+            }
+        }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
+    }
 }

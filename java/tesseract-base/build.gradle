@@ -1,10 +1,12 @@
 plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
+    id 'maven-publish'
 }
 
 android {
     namespace 'one.tesseract.base'
+    version "0.1.0"
 
     compileSdk rootProject.ext.compileSdkVersion
 
@@ -20,6 +22,13 @@ android {
     kotlinOptions {
         jvmTarget = rootProject.ext.javaTarget
     }
+    publishing {
+        singleVariant("release") {
+            // if you don't want sources/javadoc, remove these lines
+            //withSourcesJar()
+            //withJavadocJar()
+        }
+    }
 }
 
 dependencies {
@@ -28,4 +37,24 @@ dependencies {
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+}
+
+afterEvaluate {
+    publishing {
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = uri("https://maven.pkg.github.com/tesseract-one/Tesseract.android")
+                credentials {
+                    username = rootProject.ext.usr ?: System.getenv("USERNAME")
+                    password = rootProject.ext.key ?: System.getenv("TOKEN")
+                }
+            }
+        }
+        publications {
+            gpr(MavenPublication) {
+                from(components.release)
+            }
+        }
+    }
 }
