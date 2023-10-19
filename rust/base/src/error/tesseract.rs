@@ -1,4 +1,4 @@
-use jni::{JNIEnv, objects::JThrowable};
+use jni::{JNIEnv, objects::{JThrowable, JObject}};
 
 use crabdroid::{error::GlobalError, env::AndroidEnv};
 
@@ -19,9 +19,13 @@ pub fn exception_to_tesseract<'a: 'b, 'b>(env: &'b JNIEnv<'a>, exception: JThrow
     let is_cancelled = env.is_assignable_from(user_cancelled_clazz, this_clazz)?;
     //is_instance_of(exception, clazz)?;
     let message = env.call_method(exception, "getMessage", "()Ljava/lang/String;", &[])?.l()?;
-    let message: String = env.get_string(message.into())?.into();
+    let message: Option<String> = if message.is_null() {
+        None
+    } else {
+        Some(env.get_string(message.into())?.into())
+    };
 
-    debug!("PRINTME {}", &message);
+    debug!("PRINTME {:#?}", &message);
 
     let kind = if is_cancelled {
         debug!("ITISCANCELLED");
@@ -31,7 +35,11 @@ pub fn exception_to_tesseract<'a: 'b, 'b>(env: &'b JNIEnv<'a>, exception: JThrow
         tesseract::ErrorKind::Weird
     };
 
-    Ok(TError::described(kind, &message))
+    Ok(if let Some(message) = message {
+        TError::described(kind, &message)
+    } else {
+        TError::kinded(kind)
+    })
 }
 
 pub fn global_error_to_tesseract(error: GlobalError) -> tesseract::Error {
