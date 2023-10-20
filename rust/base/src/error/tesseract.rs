@@ -1,4 +1,4 @@
-use jni::{JNIEnv, objects::{JThrowable, JObject}};
+use jni::{JNIEnv, objects::JThrowable};
 
 use crabdroid::{error::GlobalError, env::AndroidEnv};
 
