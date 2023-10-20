@@ -53,9 +53,13 @@ def publishTesseract = tasks.register("tesseract-publish")
 
 subprojects {
     afterEvaluate { Project project ->
-        if(!project.path.contains("crabdroid") && !project.path.contains("examples") && project.name != "java") {
+        if(!project.path.contains("crabdroid") &&
+                !project.path.contains("examples") &&
+                project.name != "java") {
 
-            publishTesseract.get().dependsOn(project.tasks.named("publish"))
+            if(!project.path.contains("detached-activity")) {
+                publishTesseract.get().dependsOn(project.tasks.named("publish"))
+            }
 
             project.afterEvaluate {
                 publishing {

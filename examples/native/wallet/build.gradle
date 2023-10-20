@@ -56,13 +56,11 @@ dependencies {
     implementation 'androidx.compose.ui:ui-tooling-preview'
     implementation 'androidx.compose.material3:material3'
 
+    implementation project(':java:detached-activity')
+
     implementation project(':java:base')
-
     implementation project(':java:common')
-    implementation project(':java:common-transport-ipc')
-
     implementation project(':java:service')
-    implementation project(':java:service-transport-ipc')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

@@ -14,7 +14,7 @@
 //  limitations under the License.
 //===----------------------------------------------------------------------===//
 
-package one.tesseract.transport.ipc.activity
+package one.tesseract.activity
 
 import android.app.Activity
 import android.app.Application

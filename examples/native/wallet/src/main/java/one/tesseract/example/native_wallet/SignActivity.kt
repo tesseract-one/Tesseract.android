@@ -14,8 +14,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
-import one.tesseract.transport.ipc.activity.free.Launcher
-import one.tesseract.transport.ipc.activity.free.finishFreeActivity
+import one.tesseract.activity.free.Launcher
+import one.tesseract.activity.free.finishFreeActivity
 
 import one.tesseract.example.native_wallet.ui.theme.TesseractAndroidTheme
 

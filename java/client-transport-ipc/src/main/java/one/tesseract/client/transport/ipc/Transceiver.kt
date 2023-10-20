@@ -25,9 +25,10 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
+import one.tesseract.activity.ActivityMonitor
+
 import one.tesseract.transport.ipc.*
 import one.tesseract.transport.ipc.RequestBundle
-import one.tesseract.transport.ipc.activity.ActivityMonitor
 import one.tesseract.transport.ipc.rx
 
 sealed class TransceiverResponse

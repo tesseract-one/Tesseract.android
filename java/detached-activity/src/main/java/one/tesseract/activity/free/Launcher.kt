@@ -1,12 +1,12 @@
-package one.tesseract.transport.ipc.activity.free
+package one.tesseract.activity.free
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.future.asDeferred
-import one.tesseract.transport.ipc.activity.ActivityMonitor
-import one.tesseract.transport.ipc.activity.free.Launcher.Companion.LAUNCH_ID
+import one.tesseract.activity.ActivityMonitor
+import one.tesseract.activity.free.Launcher.Companion.LAUNCH_ID
 import java.util.concurrent.CompletionStage
 
 public class Launcher(private val monitor: ActivityMonitor) {

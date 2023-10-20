@@ -1,4 +1,4 @@
-package one.tesseract.transport.ipc.activity.free
+package one.tesseract.activity.free
 
 import android.os.Build
 import androidx.annotation.RequiresApi

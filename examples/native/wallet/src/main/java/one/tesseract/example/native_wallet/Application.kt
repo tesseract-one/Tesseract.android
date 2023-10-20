@@ -1,7 +1,7 @@
 package one.tesseract.example.native_wallet
 
-import one.tesseract.transport.ipc.activity.ActivityMonitor
-import one.tesseract.transport.ipc.activity.free.Launcher
+import one.tesseract.activity.ActivityMonitor
+import one.tesseract.activity.free.Launcher
 import one.tesseract.service.Tesseract
 
 class Application(@Suppress("unused") private var tesseract: Tesseract? = null): android.app.Application() {

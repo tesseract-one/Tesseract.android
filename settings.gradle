@@ -18,6 +18,7 @@ include ':examples:rust:app'
 include ':examples:rust:wallet'
 
 include ':java:crabdroid'
+include ':java:detached-activity'
 
 include ':java:base'
 include ':java:service-transport'

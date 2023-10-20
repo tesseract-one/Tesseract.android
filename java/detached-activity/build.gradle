@@ -5,8 +5,8 @@ plugins {
 }
 
 android {
-    namespace 'one.tesseract.client.transport.ipc'
-    version rootProject.ext.tesseractVersion
+    namespace 'one.tesseract.activity.detached'
+    version '0.1.0'
 
     compileSdk rootProject.ext.compileSdkVersion
 
@@ -29,12 +29,8 @@ android {
 }
 
 dependencies {
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$rootProject.ext.kotlinxVersion"
     implementation 'androidx.core:core-ktx:1.12.0'
-
-    implementation project(':java:detached-activity')
-
-    implementation project(':java:common-transport-ipc')
-
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

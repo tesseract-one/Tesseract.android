@@ -8,7 +8,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ClientApp">
+        android:theme="@style/Theme.WalletApp">
         <activity
             android:name="one.tesseract.example.rust_wallet.SignActivity"
             android:exported="false"
@@ -16,7 +16,7 @@
         <activity
             android:name="one.tesseract.service.transport.ipc.TesseractActivity"
             android:exported="true"
-            android:theme="@style/Theme.ClientApp.NoActionBar">
+            android:theme="@style/Theme.WalletApp.NoActionBar">
             <intent-filter>
                 <action android:name="one.tesseract.CALL" />
 
@@ -32,7 +32,7 @@
             android:name="one.tesseract.example.rust_wallet.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.ClientApp.NoActionBar">
+            android:theme="@style/Theme.WalletApp.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

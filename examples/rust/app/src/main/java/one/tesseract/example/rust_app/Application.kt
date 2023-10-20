@@ -17,7 +17,8 @@
 package one.tesseract.example.rust_app
 
 import android.app.AlertDialog
-import one.tesseract.transport.ipc.activity.ActivityMonitor
+
+import one.tesseract.activity.ActivityMonitor
 
 class Application: android.app.Application() {
     lateinit var rustCore: RustCore
