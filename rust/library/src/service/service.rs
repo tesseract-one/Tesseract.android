@@ -15,5 +15,12 @@ pub (crate) fn jservice_to_services<'a: 'b, 'b>(env: &'b JNIEnv<'a>, service: JO
         }))
     }
 
+    #[cfg(feature = "protocol-substrate")]
+    if let Some(substrate_service) = protocol::SubstrateService::maybe_new(env, service)? {
+        result.push(Box::new(|tesseract| {
+            tesseract.service(substrate_service)
+        }))
+    }
+
     Ok(result)
 }

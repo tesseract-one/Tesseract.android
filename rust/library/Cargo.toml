@@ -9,10 +9,13 @@ edition = "2021"
 
 [features]
 default = ["client", "service", "protocol-all"]
+
 client = ["tesseract/client", "tesseract-android-base/client", "tesseract-android-transport/client", "dep:async-trait"]
 service = ["tesseract/service", "tesseract-android-base/service", "tesseract-android-transport/service", "dep:async-trait"]
+
 protocol-test = ["dep:tesseract-protocol-test"]
-protocol-all = ["protocol-test"]
+protocol-substrate = ["dep:tesseract-protocol-substrate"]
+protocol-all = ["protocol-test", "protocol-substrate"]
 
 [dependencies]
 async-trait = {version="0.1", optional=true}
@@ -36,6 +39,7 @@ tesseract-android-transport = { path = "../transport" }
 
 #protocols
 tesseract-protocol-test = { path = "/Users/daniel/repo/Tesseract.rs/protocols/test", optional=true, features=["client", "service"]} #{git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client", "service"]}
+tesseract-protocol-substrate = { path = "/Users/daniel/repo/Tesseract.rs/protocols/substrate", optional=true, features=["client", "service"]} #{git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client", "service"]}
 
 [lib]
 name = "tesseract"
