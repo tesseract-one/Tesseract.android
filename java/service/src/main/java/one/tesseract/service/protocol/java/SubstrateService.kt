@@ -11,7 +11,7 @@ interface SubstrateService: Service {
     fun signTransaction(
         accountType: AccountType,
         accountPath: String,
-        extrinsicData: Array<UByte>,
-        extrinsicMetadata: Array<UByte>,
-        extrinsicTypes: Array<UByte>): CompletionStage<Array<UByte>> //UserCancelledException
+        extrinsicData: ByteArray,
+        extrinsicMetadata: ByteArray,
+        extrinsicTypes: ByteArray): CompletionStage<ByteArray> //UserCancelledException
 }

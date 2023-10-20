@@ -1,6 +1,6 @@
 package one.tesseract.service.protocol.common.substrate
 
-    data class GetAccountResponse(val publicKey: Array<UByte>, val path: String) {
+    data class GetAccountResponse(val publicKey: ByteArray, val path: String) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

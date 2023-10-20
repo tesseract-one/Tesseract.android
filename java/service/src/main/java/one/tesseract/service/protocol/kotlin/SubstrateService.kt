@@ -19,9 +19,9 @@ interface SubstrateService: KotlinService {
     suspend fun signTransaction(
         accountType: AccountType,
         accountPath: String,
-        extrinsicData: Array<UByte>,
-        extrinsicMetadata: Array<UByte>,
-        extrinsicTypes: Array<UByte>): Array<UByte>
+        extrinsicData: ByteArray,
+        extrinsicMetadata: ByteArray,
+        extrinsicTypes: ByteArray): ByteArray
 
     override fun toJava(scope: CoroutineScope): JavaService = SubstrateServiceAdapter(this, scope)
 }
@@ -36,10 +36,10 @@ class SubstrateServiceAdapter(private val internal: SubstrateService, private va
     override fun signTransaction(
         accountType: AccountType,
         accountPath: String,
-        extrinsicData: Array<UByte>,
-        extrinsicMetadata: Array<UByte>,
-        extrinsicTypes: Array<UByte>
-    ): CompletionStage<Array<UByte>> {
+        extrinsicData: ByteArray,
+        extrinsicMetadata: ByteArray,
+        extrinsicTypes: ByteArray
+    ): CompletionStage<ByteArray> {
         return scope.future {
             internal.signTransaction(accountType, accountPath, extrinsicData, extrinsicMetadata, extrinsicTypes)
         }
