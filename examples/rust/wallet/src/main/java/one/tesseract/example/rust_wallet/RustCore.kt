@@ -1,13 +1,12 @@
 package one.tesseract.example.rust_wallet
 
-import one.tesseract.activity.ActivityMonitor
-import one.tesseract.activity.free.Launcher
+import one.tesseract.activity.detached.Launcher
 import java.util.concurrent.CompletionStage
 
 //suppressing because of rust interop
 @Suppress("unused", "CanBeParameter")
 class RustCore(/*Keep as it's called in RustCore*/ private val application: Application) {
-    private val launcher: Launcher = Launcher(ActivityMonitor(application))
+    private val launcher: Launcher = Launcher(application)
 
     //Keep as it's called in RustCore
     var signatureProvider: Long = 0

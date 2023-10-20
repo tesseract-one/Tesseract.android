@@ -1,7 +1,5 @@
-package one.tesseract.activity.free
+package one.tesseract.activity.detached
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
@@ -10,7 +8,6 @@ object Registry {
     //<ID, <ACTIVITY_RESULT, DATA>>
     private val resolvers: HashMap<String, CompletableFuture<*>> = HashMap()
 
-    @RequiresApi(Build.VERSION_CODES.N)
     fun <T> new(): Pair<String, CompletionStage<Pair<Int, T>>> {
         val id = UUID.randomUUID().toString()
         val resultWithCode = CompletableFuture<Pair<Int, T>>()
@@ -24,7 +21,6 @@ object Registry {
         return Pair(id, resultWithCode)
     }
 
-    @RequiresApi(Build.VERSION_CODES.N)
     fun <T> resolve(id: String, reply: Pair<Int, T>) {
         @Suppress("UNCHECKED_CAST") //yes, it's how it should be
         val resolver = synchronized(resolvers) {

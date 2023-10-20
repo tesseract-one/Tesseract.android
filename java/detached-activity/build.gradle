@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace 'one.tesseract.activity.detached'
-    version '0.1.0'
+    version '0.2.0'
 
     compileSdk rootProject.ext.compileSdkVersion
 
     defaultConfig {
-        minSdk rootProject.ext.minSdkVersion
+        minSdk 24
         targetSdk rootProject.ext.targetSdkVersion
     }
 

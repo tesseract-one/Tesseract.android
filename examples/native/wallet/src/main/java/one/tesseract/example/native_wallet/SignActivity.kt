@@ -14,26 +14,26 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 
-import one.tesseract.activity.free.Launcher
-import one.tesseract.activity.free.finishFreeActivity
+import one.tesseract.activity.detached.Launcher
+import one.tesseract.activity.detached.finishDetachedActivity
 
 import one.tesseract.example.native_wallet.ui.theme.TesseractAndroidTheme
 
 class SignActivity : ComponentActivity() {
     companion object {
-        const val TRANSACTION = "transaction"
-
         suspend fun requestUserConfirmation(launcher: Launcher, transaction: String): Boolean {
-            val bundle = Bundle()
-            bundle.putString(TRANSACTION, transaction)
-            return launcher.startFreeActivityForResult<Boolean>(SignActivity::class.java, bundle).second
+            return launcher
+                .startDetachedActivityForResult<Boolean>(
+                    SignActivity::class.java,
+                    Bundle().withTransaction(transaction))
+                .second
         }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         val extras = intent.extras ?: throw RuntimeException("No Extras :(")
-        val transaction = extras.getString(TRANSACTION) ?: throw RuntimeException("No TX")
+        val transaction = extras.transaction
 
         setContent {
             TesseractAndroidTheme {
@@ -46,12 +46,12 @@ class SignActivity : ComponentActivity() {
                         Greeting2("Transaction: $transaction")
                         Row {
                             Button(onClick = {
-                                finishFreeActivity(RESULT_OK, true)
+                                finishDetachedActivity(RESULT_OK, true)
                             }) {
                                 Text(text = "OK")
                             }
                             Button(onClick = {
-                                finishFreeActivity(RESULT_CANCELED, false)
+                                finishDetachedActivity(RESULT_CANCELED, false)
                             }) {
                                 Text(text = "Cancel")
                             }

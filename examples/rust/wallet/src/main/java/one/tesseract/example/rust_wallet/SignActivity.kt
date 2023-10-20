@@ -7,17 +7,17 @@ import android.widget.TextView
 
 import java.util.concurrent.CompletionStage
 
-import one.tesseract.activity.free.Launcher
-import one.tesseract.activity.free.finishFreeActivity
+import one.tesseract.activity.detached.Launcher
+import one.tesseract.activity.detached.finishDetachedActivity
+import one.tesseract.activity.detached.getExtras
 
 class SignActivity : AppCompatActivity() {
     companion object {
-        const val TRANSACTION = "transaction"
-
         fun requestUserConfirmation(launcher: Launcher, transaction: String): CompletionStage<Boolean> {
-            val bundle = Bundle()
-            bundle.putString(TRANSACTION, transaction)
-            return launcher.startFreeActivityForResultFuture<Boolean>(SignActivity::class.java, bundle).thenApply {
+            return launcher.startDetachedActivityForResultFuture<Boolean>(
+                SignActivity::class.java,
+                Bundle().withTransaction(transaction)).
+            thenApply {
                 it.second
             }
         }
@@ -27,8 +27,8 @@ class SignActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_sign)
 
-        val extras = intent.extras ?: throw RuntimeException("No Extras :(")
-        val transaction = extras.getString(TRANSACTION) ?: throw RuntimeException("No TX")
+        val extras = getExtras() ?: throw RuntimeException("No Extras :(")
+        val transaction = extras.transaction
 
         val buttonSign = findViewById<Button>(R.id.buttonSign)
         val buttonCancel = findViewById<Button>(R.id.buttonCancel)
@@ -37,11 +37,11 @@ class SignActivity : AppCompatActivity() {
         textViewTransaction.text = transaction
 
         buttonSign.setOnClickListener {
-            this.finishFreeActivity(RESULT_OK, true)
+            this.finishDetachedActivity(RESULT_OK, true)
         }
 
         buttonCancel.setOnClickListener {
-            this.finishFreeActivity(RESULT_CANCELED, false)
+            this.finishDetachedActivity(RESULT_CANCELED, false)
         }
     }
 }

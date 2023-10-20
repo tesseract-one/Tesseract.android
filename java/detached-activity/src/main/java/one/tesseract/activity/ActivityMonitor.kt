@@ -18,12 +18,9 @@ package one.tesseract.activity
 
 import android.app.Activity
 import android.app.Application
-import android.os.Build
 import android.os.Bundle
-import androidx.annotation.RequiresApi
 
-@RequiresApi(Build.VERSION_CODES.ICE_CREAM_SANDWICH)
-class ActivityMonitor(private val application: Application) {
+class ActivityMonitor(application: Application) {
     private var _activity: Activity? = null
 
     init {
@@ -62,7 +59,7 @@ class ActivityMonitor(private val application: Application) {
             })
     }
 
-    public val activity
+    val activity
         get() = synchronized(this) {
             this._activity
                 ?: throw RuntimeException("at least one activity has to start before this call")
