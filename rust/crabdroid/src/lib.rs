@@ -22,13 +22,15 @@
 #[macro_use]
 extern crate log;
 
+#[cfg(feature = "thread-pool")]
+pub mod thread_pool;
+
 pub mod bi_consumer;
 mod contexted_global;
 pub mod env;
 pub mod error;
 mod exception;
 mod jfuture;
-pub mod thread_pool;
 pub mod pointer;
 pub mod future;
 pub mod object;

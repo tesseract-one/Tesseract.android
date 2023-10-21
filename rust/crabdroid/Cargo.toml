@@ -2,7 +2,7 @@
 
 [package]
 name = "crabdroid"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 license = "Apache-2.0"
 description = "Android easy(er) interop for Rust. Especially helpful with async operations, error handling, collections, etc."
@@ -15,9 +15,16 @@ keywords = ["android", "interop", "jni", "futures", "async"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[features]
+default = []
+thread-pool = ["futures/thread-pool"]
+
 [dependencies]
-thiserror = "1.0.31"
-jni = "0.20.0"
-jni_fn = "0.1.0"
-log = "0.3.9"
-futures = {version = "0.3.21", features = ["thread-pool"]}
+thiserror = "1.0"
+
+jni = "0.20"
+jni_fn = "0.1"
+
+log = "0.4"
+
+futures = "0.3"

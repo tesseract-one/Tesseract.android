@@ -19,7 +19,6 @@
 
 #[macro_use]
 extern crate log;
-extern crate android_log;
 
 mod ui;
 mod core;
@@ -49,8 +48,20 @@ use crate::signature_provider::SignatureProvider;
 #[jni_fn("one.tesseract.example.rust_wallet.RustCore")]
 pub fn rustInit(env: JNIEnv, core: JObject, data_dir: JString) {
     WalletError::java_context(&env, || {
-        android_log::init("RustWalletDemo")?;
-        log_panics::init();
+        let log_level = if cfg!(debug_assertions) {
+            log::LevelFilter::Debug
+        } else {
+            log::LevelFilter::Error
+        };
+        android_logger::init_once(
+            android_logger::Config::default()
+                .with_max_level(log_level)
+                .with_tag("RustWalletDemo"),
+        );
+        
+        log_panics::Config::new()
+            .backtrace_mode(log_panics::BacktraceMode::Resolved)
+            .install_panic_hook();
 
         let data_dir: String = env
             .get_string(data_dir)?

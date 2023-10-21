@@ -18,7 +18,6 @@
 
 #[macro_use]
 extern crate log;
-extern crate android_log;
 
 mod core;
 mod delegate;
@@ -54,8 +53,20 @@ use crate::delegate::TransportDelegate;
 #[jni_fn("one.tesseract.example.rust_app.RustCore")]
 pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) {
     TesseractAndroidError::java_context(&env, || {
-        android_log::init("RustDAppDemo")?;
-        log_panics::init();
+        let log_level = if cfg!(debug_assertions) {
+            log::LevelFilter::Debug
+        } else {
+            log::LevelFilter::Error
+        };
+        android_logger::init_once(
+            android_logger::Config::default()
+                .with_max_level(log_level)
+                .with_tag("RustDAppDemo"),
+        );
+        
+        log_panics::Config::new()
+            .backtrace_mode(log_panics::BacktraceMode::Resolved)
+            .install_panic_hook();
 
         let core = RustCore::from_env(&env, core);
 

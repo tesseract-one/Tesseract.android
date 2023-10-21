@@ -12,10 +12,10 @@ client = ["tesseract/client"]
 service = ["tesseract/service"]
 
 [dependencies]
-thiserror = "1.0.31"
-log = "0.3.9"
+thiserror = "1.0"
+log = "0.4"
 
-jni = "0.20.0"
+jni = "0.20"
 crabdroid = { path = "../crabdroid" }
 
 tesseract = { path = "../../../Tesseract.rs/tesseract"} #tesseract = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="master"}

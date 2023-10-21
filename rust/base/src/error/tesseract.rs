@@ -2,7 +2,6 @@ use jni::{JNIEnv, objects::JThrowable};
 
 use crabdroid::{error::GlobalError, env::AndroidEnv};
 
-use log::debug;
 use tesseract::Error as TError;
 use jni::errors::Error as JError;
 
