@@ -4,126 +4,163 @@
 	</a>
 </p>
 
-### **Tesseract Android** is an implementation of [Tesseract](https://github.com/tesseract-one/) protocol for Android OS. [Tesseract](https://github.com/tesseract-one/) seamlessly integrates dApps and wallets, regardless of the blockchain protocol.
+### **Tesseract Android** provides Java/Kotlin APIs for [Tesseract](https://github.com/tesseract-one/), a dApp-Wallet bridge designed to make dApp/wallet communication on mobile devices simple and natural without compromising decentralization and security
 
-#### **Tesseract** aims to improve the usability of the dApps without compromising security or decentralization.
+If you are looking for Tesseract docs for another language/OS, please, consider one of the following:
 
-This page is about specifics of running Tesseract on Android. If you need general info or Tesseract for another platform, please consider one of the following:
 * [General info](https://github.com/tesseract-one/)
 * [Tesseract for iOS (Swift)](https://github.com/tesseract-one/Tesseract.swift)
 * [Tesseract shared Core (Rust)](https://github.com/tesseract-one/Tesseract.rs)
 
+# Getting started
 
-## Getting started
+Tesseract provides two sents of APIs, one for a dApp that wants to connect to the wallets and one for the wallets that want to serve the dApps. Everything below will be split into sections for dApps and Wallets whenever appropriate.
 
-**Tesseract** is implemented in Rust and currently doesn't provide the Java/Kotlin wrappers, thus requiring some Rust coding. In the future, we aim to change it by offering wrappers, eliminating the need for any Rust code.
+If you'd like to see examples of Tesseract integration, please, check:
 
-### Set up Rust
+* [dev-wallet.kotlin](https://github.com/tesseract-one/dev-wallet.kotlin) - for wallets
+* polkachat.kotlin - for dApps, TBD
 
-To add Rust, to your dApp or Wallet, please consider going through our guide [Setting up Rust](./RUST.MD). It contains the steps required to add Rust support to an Android app + some useful interop utils description we've built.
+# Prerequisites
 
-### Initialize Tesseract Client
+Add the following repo to your `settings.gradle`:
 
-Once the Rust part is set up, you can proceed to setting up Tesseract:
-
-```rust
-use tesseract_client;
-
-let tesseract = tesseract_client::Tesseract::new(
-	tesseract_client::delegate::SingleTransportDelegate::arc(),
-).transport(TransportIPCAndroid::new(&env, application));
-```
-
-The initialization of Tesseract is essentially the same as it is described in the [Tesseract shared Core](tesseract-one/Tesseract.rs) except that to connect to a wallet via Tesseract, we need to specify the IPCTransport:
-
-```rust
-.transport(TransportIPCAndroid::new(&env, application))
-```
-
-where `env` is reference to the JNI environment and `application` is a reference to the Android Application.
-
-#### Passing references from Kotlin/Java:
-
-The easiest way to call Rust from Kotlin is to create a native JNI function:
-```kotlin
-private external fun rustInit(application: Application)
-```
-
-#### On the Rust side:
-
-```rust
-use jni_fn::jni_fn;
-
-#[jni_fn("one.tesseract.example.app.RustCore")] //has to point to your actuall class in Kotlin
-pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, application: JObject<'a>) {
-	//your initialization here
+```groovy
+maven {
+    url = uri("https://maven.tesseract.one/Tesseract.android")
 }
 ```
 
-The rest of Tesseract APIs stay exacly the same everywhere. Please, consider to go through the docs in our [Tesseract shared Core](https://github.com/tesseract-one/Tesseract.rs) repo.
+# For Wallets
 
-## Usage
+Through Tesseract, wallets serve the dApps by providing services accessible from the outside. A service implementation is responsible for understanding requests, providing the user with confirmation UI and replying back.
 
-* [Main Rust API documentation](https://github.com/tesseract-one/Tesseract.rs)
-* [Wallet developers documentation](./WALLET.MD)
+## Service example
 
-Once we publish the Kotlin wrappers, the doc will appear here.
+Here is an example of a service implementing support for Substrate protocol from [dev-wallet.kotlin](https://github.com/tesseract-one/dev-wallet.kotlin).
 
-## Examples
+Implementing the service a single time will make it available to all the transport protocols Tesseract covers. Currently we provide only the IPC protocol designed to connect native dApps and Wallets, but more will come soon.
 
-You can find the examples (**Demo Wallet** and a **Demo dApp**) in this repo [HERE](./examples).
+```kotlin
+class WalletSubstrateService(private val application: Application, private val settings: KeySettingsProvider): SubstrateService {
+    override suspend fun getAccount(type: AccountType): GetAccountResponse {
+        val kp = KeyPair.fromMnemonic(settings.load().mnemonic)
+        val address = kp.address()
 
-## Installation
+        val accountRequest = SubstrateAccount(type.name, "", address)
+        val allow = application.requestUserConfirmation(accountRequest)
 
-### Prerequisites
-* Install your Rust environment: https://www.rust-lang.org/tools/install
-* Download Android Studio: https://developer.android.com/studio
-* For Rust we suggest VS Code: https://code.visualstudio.com/
-* Android NDK (no need for CMAKE): https://developer.android.com/studio/projects/install-ndk#default-version
+        return if(allow) {
+            GetAccountResponse(kp.publicKey.toByteArray(), "")
+        } else {
+            throw UserCancelledException()
+        }
+    }
 
-Following rust targets must be innstalled:
-```bash
-rustup +nightly target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
+    override suspend fun signTransaction(
+        accountType: AccountType,
+        accountPath: String,
+        extrinsicData: ByteArray,
+        extrinsicMetadata: ByteArray,
+        extrinsicTypes: ByteArray
+    ): ByteArray {
+        // Parse and show transaction is ommited for the sake of saving space as it's not relevant for Tesseract APIs demonstration
+
+        return if(application.requestUserConfirmation(signRequest)) {
+            transaction.sign(kp.secretKey).toByteArray()
+        } else {
+            throw UserCancelledException()
+        }
+    }
+}
 ```
 
-On Mac you might want to point to a python you have installed by specifying
-```properties
-rust.pythonCommand=python3
-```
-in `local.properties`.
+## Launching Tesseract instance
 
-### On the Rust side you might need:
+```kotlin
+val testService = WalletTestService(this, testSettingsProvider())
 
-```toml
-interop_android = { path = "../../rust/interop" } //useful interops we've created to easier interact with java
+val substrateService = WalletSubstrateService(this, keySettingsProvider())
 
-tesseract_ipc_android = { path = "../../rust/ipc", features=["client"]}
-tesseract = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client"]}
+tesseract = Tesseract
+    .default()
+    .service(testService)
+    .service(substrateService)
 ```
 
-### On the side of Kotlin:
+It's simple as that. Tesseract will be serving the dApp requests to the services you implemented as long as you keep its reference alive.
 
-```gradle
-implementation project(':java:tesseract-ipc')
-implementation project(':java:tesseract-ipc-client')
-implementation project(':java::interop-rust')
+## Dependencies
+
+Add the following dependencies:
+
+```groovy
+implementation 'one.tesseract:base:0.5.4'
+implementation 'one.tesseract:common:0.5.4'
+implementation 'one.tesseract:service:0.5.4'
 ```
 
-### Setting up Rust interop:
+## Manifest
 
-Please, consider the guide [HERE](./RUST.MD).
+To enable the IPC communication, also add the following activity to your `AndroidManifest.xml`. List the mime types for all blockchain prorocols you intend to support.
 
-## Roadmap
+```xml
+<activity
+    android:name="one.tesseract.service.transport.ipc.TesseractActivity" android:exported="true">
+    <intent-filter>
+        <action android:name="one.tesseract.CALL" />
 
-- [x] v0.1 - IPC transport for Android - connect dApp/Wallet on the same device
-- [x] v0.2 - demo dApp and Wallet
-- [ ] v1.0 - Kotlin wrapper for Rust
+        <category android:name="android.intent.category.DEFAULT" />
 
-## Changelog
+        <data android:mimeType="tesseract/test" />
+        <data android:mimeType="tesseract/substrate-v1" />
+    </intent-filter>
+</activity>
+```
 
-* v0.2 - Created demo dApp and Wallet
-* v0.1 - Created transport to connect dApp and Wallet
+## Transports
 
-## License
+By default Tesseract starts with all the transports enabled. However if you'd like to have a finegrained control over the transports you want to enable, here is how you can do it:
+
+```kotlin
+Tesseract()
+    .transport(IPCTransport()) //add any transports like this - can be called multiple times
+    .service(testService)
+    .service(substrateService)
+```
+
+To get Tesseract working in a wallet one does not need more: just implement the service and launch the Tesseract instance. However for there also are Kotlin APIs to implement Transports (more ways to communicate with the dApps).
+
+Full documentation on Transports development can be found here: [Transports How To](./TRANSPORTS.MD)
+
+## More
+
+Just in case, you'd like to use Tesseract on android via Rust APIs. It's also possible. Consider checking one of the following:
+
+* [RUST INTEGRATION](./RUST.MD)
+* [Developer Wallet in Rust](https://github.com/tesseract-one/dev-wallet)
+
+Also, we have a small library that might help showing the UIs to the user from the service without being aware of the current activity (which is quite a pain without it). Here is where you can check how to use it (sorry, not docs yet, but good examples ;\) ):
+
+* [Source code](./java/detached-activity/)
+* [Test wallet example](./examples/native/wallet/)
+* [dev-wallet.kotlin](https://github.com/tesseract-one/dev-wallet.kotlin)
+
+See how we request the user confirmation there.
+
+# dApps
+
+We are currently working on this. Soon be here.
+
+# Roadmap
+
+* [x] v0.1 - IPC transport for Android - connect dApp/Wallet on the same device
+* [x] v0.2 - demo dApp and Wallet
+* [x] v0.3 - Susbtrate protocol support
+* [x] v0.4 - [dev-wallet.kotlin](https://github.com/tesseract-one/dev-wallet.kotlin) test implementation
+* [x] v0.5 - first Kotlin libraries release version
+* [ ] v1.0 - support of everything mobile dApps need
+
+# License
 
 Tesseract.android can be used, distributed and modified under [the Apache 2.0 license](LICENSE).

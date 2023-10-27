@@ -65,3 +65,91 @@ companion object {
 ```
 
 Now you can create your JNI functions, initializa Tesseract and start calling the Wallet.
+
+### Initialize Tesseract Client
+
+Once the Rust part is set up, you can proceed to setting up Tesseract:
+
+```rust
+use tesseract_client;
+
+let tesseract = tesseract_client::Tesseract::new(
+	tesseract_client::delegate::SingleTransportDelegate::arc(),
+).transport(TransportIPCAndroid::new(&env, application));
+```
+
+The initialization of Tesseract is essentially the same as it is described in the [Tesseract shared Core](tesseract-one/Tesseract.rs) except that to connect to a wallet via Tesseract, we need to specify the IPCTransport:
+
+```rust
+.transport(TransportIPCAndroid::new(&env, application))
+```
+
+where `env` is reference to the JNI environment and `application` is a reference to the Android Application.
+
+#### Passing references from Kotlin/Java:
+
+The easiest way to call Rust from Kotlin is to create a native JNI function:
+```kotlin
+private external fun rustInit(application: Application)
+```
+
+#### On the Rust side:
+
+```rust
+use jni_fn::jni_fn;
+
+#[jni_fn("one.tesseract.example.app.RustCore")] //has to point to your actuall class in Kotlin
+pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, application: JObject<'a>) {
+	//your initialization here
+}
+```
+
+The rest of Tesseract APIs stay exacly the same everywhere. Please, consider to go through the docs in our [Tesseract shared Core](https://github.com/tesseract-one/Tesseract.rs) repo.
+
+## Usage
+
+* [Main Rust API documentation](https://github.com/tesseract-one/Tesseract.rs)
+* [Wallet developers documentation](./WALLET.MD)
+
+Once we publish the Kotlin wrappers, the doc will appear here.
+
+## Examples
+
+You can find the examples (**Demo Wallet** and a **Demo dApp**) in this repo [HERE](./examples).
+
+## Installation
+
+### Prerequisites
+* Install your Rust environment: https://www.rust-lang.org/tools/install
+* Download Android Studio: https://developer.android.com/studio
+* For Rust we suggest VS Code: https://code.visualstudio.com/
+* Android NDK (no need for CMAKE): https://developer.android.com/studio/projects/install-ndk#default-version
+
+Following rust targets must be innstalled:
+```bash
+rustup +nightly target add aarch64-linux-android armv7-linux-androideabi i686-linux-android x86_64-linux-android
+```
+
+On Mac you might want to point to a python you have installed by specifying
+```properties
+rust.pythonCommand=python3
+```
+in `local.properties`.
+
+### On the Rust side you might need:
+
+```toml
+interop_android = { path = "../../rust/interop" } //useful interops we've created to easier interact with java
+
+tesseract_ipc_android = { path = "../../rust/ipc", features=["client"]}
+tesseract = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client"]}
+```
+
+### On the side of Kotlin:
+
+```gradle
+implementation project(':java:tesseract-ipc')
+implementation project(':java:tesseract-ipc-client')
+implementation project(':java::interop-rust')
+```
+
