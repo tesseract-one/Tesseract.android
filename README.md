@@ -35,7 +35,10 @@ val tesseract = Tesseract.default()
 //indicate what blockchain are we gonna use
 val substrateService = tesseract.service(SubstrateService.class)
 
-//at this point Tesseract connects to the wallet and the wallet presents the user with its screen, asking if the user wants to share their public key to a dApp
+//at this point Tesseract connects to the
+//wallet and the wallet presents the user
+//with its screen, asking if the user
+//wants to share their public key to a dApp
 val account = substrateService.getAccount(AccountType.Sr25519)
 ```
 
@@ -43,11 +46,14 @@ val account = substrateService.getAccount(AccountType.Sr25519)
 <td>
 
 ```kotlin
-//Inside the Wallet Tesseract serves requests from the dApps as long as the reference is kept alive
+//Inside the Wallet Tesseract serves requests
+//from the dApps as long as the reference is kept alive
 //save it somewhere in the Application instance
 val tesseract = Tesseract
     .default() //start with default configuration
-    .service(MySubstrateService()) //MySubstrateService instance methoods will be called when a dApp asks for something
+    .service(MySubstrateService())
+//MySubstrateService instance methods
+//will be called when a dApp asks for something
 ```
 
 </td>
