@@ -117,6 +117,8 @@ The above code demonstrates that the wallet needs to know how to react to two sc
 
 In both methods the wallet is responsible to present the user with the relevant UI and reply with a response in case the user agrees to proced. Otherwise just through a `UserCancelledException`. Or any other exception if, in example, the request data is malformed.
 
+### Service flavors
+
 Pay attention that the methods in the example above are of `suspend` type, which means that they are asynchronous by nature and you can use the **Kotlin Coroutines** without any hastle. `suspend` services are not the only option though. In case you don't want to use coroutines for some reason, Tesseract also provides equivalent interfaces that work with plain java `Futures`. All the services interfaces are located in `one.tesseract.service.protocol` package, and are split into two groups:
 
 * `java` - java futures based interfaces
