@@ -33,13 +33,16 @@ jni_fn = "0.1"
 crabdroid = { path = "../crabdroid" }
 
 #tesseract
-tesseract = { path = "../../../Tesseract.rs/tesseract", features=["client", "service"]} #{git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client", "service"]}
+#tesseract = { path = "../../../Tesseract.rs/tesseract", features=["client", "service"]} 
+tesseract = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client", "service"]}
 tesseract-android-base = { path = "../base" }
 tesseract-android-transport = { path = "../transport" }
 
 #protocols
-tesseract-protocol-test = { path = "../../../Tesseract.rs/protocols/test", optional=true, features=["client", "service"]} #{git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client", "service"]}
-tesseract-protocol-substrate = { path = "../../../Tesseract.rs/protocols/substrate", optional=true, features=["client", "service"]} #{git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client", "service"]}
+#tesseract-protocol-test = { path = "../../../Tesseract.rs/protocols/test", optional=true, features=["client", "service"]}
+#tesseract-protocol-substrate = { path = "../../../Tesseract.rs/protocols/substrate", optional=true, features=["client", "service"]}
+tesseract-protocol-test = {git = "https://github.com/tesseract-one/Tesseract.rs", optional=true, branch="master", features=["client", "service"]}
+tesseract-protocol-substrate = {git = "https://github.com/tesseract-one/Tesseract.rs", optional=true, branch="master", features=["client", "service"]}
 
 [lib]
 name = "tesseract"
