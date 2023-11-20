@@ -25,7 +25,7 @@ pub fn create<'a>(env: JNIEnv<'a>, this: JObject<'a>, delegate: JObject<'a>) {
     })
 }
 
-#[jni_fn("one.tesseract.service.Tesseract")]
+#[jni_fn("one.tesseract.client.Tesseract")]
 pub fn finalize(env: JNIEnv, this: JObject) {
     Error::java_context(&env, || {
         let tesseract: Tesseract<Del> = unsafe {env.take_rust_field(this, PTR_FIELD)}?;
