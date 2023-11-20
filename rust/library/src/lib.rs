@@ -3,8 +3,8 @@
 mod init;
 mod utils;
 
-// #[cfg(feature = "client")]
-// pub mod client;
+#[cfg(feature = "client")]
+pub mod client;
 
 #[cfg(feature = "service")]
 pub mod service;
