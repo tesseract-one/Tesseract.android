@@ -29,3 +29,4 @@ include ':java:service-transport-ipc'
 
 include ':java:common'
 include ':java:service'
+include ':java:client'
