@@ -1,5 +1,7 @@
 package one.tesseract.client
 
+import one.tesseract.client.transport.Status
+
 interface Delegate {
-    fun selectTransport(transports: Map<String, String>) //second is status
+    fun selectTransport(transports: Map<String, Status>): String?
 }
