@@ -1,8 +1,27 @@
 package one.tesseract.client
 
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import one.tesseract.TesseractCommon
+import one.tesseract.client.kotlin.DelegateAdapter
+import one.tesseract.client.java.Delegate as JDelegate
+import one.tesseract.client.kotlin.Delegate as KDelegate
 
-class Tesseract(private val ptr: Long = 0, delegate: Delegate): TesseractCommon() {
+class Tesseract
+    @OptIn(DelicateCoroutinesApi::class) private constructor(
+        @Suppress("unused") private val ptr: Long,
+        private val scope: CoroutineScope = GlobalScope,
+        delegate: JDelegate): TesseractCommon() {
+
+    @OptIn(DelicateCoroutinesApi::class)
+    constructor(scope: CoroutineScope = GlobalScope, delegate: JDelegate):
+            this(ptr = 0, scope = scope, delegate = delegate)
+
+    @OptIn(DelicateCoroutinesApi::class)
+    constructor(scope: CoroutineScope = GlobalScope, delegate: KDelegate):
+            this(scope = scope, delegate = DelegateAdapter(delegate, scope))
+
     init {
         create(delegate)
     }
@@ -11,6 +30,6 @@ class Tesseract(private val ptr: Long = 0, delegate: Delegate): TesseractCommon(
         fun default(): Tesseract = Tesseract(delegate = DefaultDelegate())
     }
 
-    private external fun create(delegate: Delegate)
+    private external fun create(delegate: JDelegate)
     protected external fun finalize()
 }
