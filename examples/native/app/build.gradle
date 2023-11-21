@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace 'one.tesseract.examples.native_app'
-    compileSdk 33
+    compileSdk rootProject.ext.compileSdkVersion
 
     defaultConfig {
         applicationId "one.tesseract.examples.native_app"
-        minSdk 24
-        targetSdk 33
+        minSdk rootProject.ext.minSdkVersion
+        targetSdk rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
 
@@ -37,7 +37,7 @@ android {
         compose true
     }
     composeOptions {
-        kotlinCompilerExtensionVersion '1.4.3'
+        kotlinCompilerExtensionVersion rootProject.ext.composeVersion
     }
     packaging {
         resources {
