@@ -34,7 +34,7 @@ struct WrappableHandle {
 }
 
 impl WrappableHandle {
-    fn from_arc<T: JavaWrappable>(arc: Arc<T>) -> Self {
+    fn from_arc<T>(arc: Arc<T>) -> Self where T: ?Sized {
         let long_p: i64 = ArcPointer::new(arc).into();
 
         Self { pointer: long_p, dropper: Some(Box::new(|pointer| {
@@ -52,7 +52,7 @@ impl WrappableHandle {
         Ok(unsafe { Box::from_raw(handle_p) })
     }
 
-    fn arc<T: JavaWrappable>(&self) -> Arc<T> {
+    fn arc<T>(&self) -> Arc<T> where T: ?Sized {
         ArcPointer::of(self.pointer).arc()
     }
 }
@@ -64,6 +64,28 @@ impl Drop for WrappableHandle {
         if let Some(dropper) = dropper {
             dropper(self.pointer)
         }
+    }
+}
+
+pub struct JavaWrapper {
+}
+
+impl JavaWrapper {
+    pub fn java_ref<'a: 'b, 'b, 'c, T>(arc: Arc<T>, clazz: &str, env: &'b JNIEnv<'a>) -> Result<JObject<'a>> where T: ?Sized {
+        let clazz = env
+            .find_class_android(clazz)?;
+
+        let handle = WrappableHandle::from_arc(arc);
+        let handle_p = Box::into_raw(Box::new(handle)) as *const () as i64;
+
+        let obj = env.new_object(clazz, "(J)V", &[JValue::from(handle_p)])?;
+
+        Ok(obj)
+    }
+
+    pub fn from_java_ref<T>(object: JObject, env: &JNIEnv) -> Result<Arc<T>> where T: ?Sized {
+        let handle= Box::leak(WrappableHandle::from_java_ref(object, env)?);
+        Ok(handle.arc())
     }
 }
 
@@ -82,20 +104,11 @@ impl<T> JavaWrappable for T where T: JavaWrappableDesc {
             None => self.java_class(),
         };
 
-        let clazz = env
-            .find_class_android(clazz)?;
-
-        let handle = WrappableHandle::from_arc(self);
-        let handle_p = Box::into_raw(Box::new(handle)) as *const () as i64;
-
-        let obj = env.new_object(clazz, "(J)V", &[JValue::from(handle_p)])?;
-
-        Ok(obj)
+        JavaWrapper::java_ref(Arc::clone(&self), clazz, env)
     }
 
     fn from_java_ref(object: JObject, env: &JNIEnv) -> Result<Arc<Self>> {
-        let handle= Box::leak(WrappableHandle::from_java_ref(object, env)?);
-        Ok(handle.arc())
+        JavaWrapper::from_java_ref(object, env)
     }
 }
 

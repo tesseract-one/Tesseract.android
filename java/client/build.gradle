@@ -30,11 +30,13 @@ android {
 
 dependencies {
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:$rootProject.ext.kotlinxVersion"
+
+    implementation project(':java:crabdroid')
+
     implementation project(':java:base')
+    implementation project(':java:common')
     implementation project(':java:client-transport')
     implementation project(':java:client-transport-ipc')
-
-    implementation project(':java:common')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

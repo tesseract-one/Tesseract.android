@@ -2,7 +2,7 @@ package one.tesseract.example.native_wallet
 
 import one.tesseract.exception.UserCancelledException
 import one.tesseract.activity.detached.Launcher
-import one.tesseract.service.protocol.kotlin.TestService
+import one.tesseract.protocol.kotlin.TestService
 
 class WalletTestService(private val launcher: Launcher): TestService {
     override suspend fun signTransaction(transaction: String): String {

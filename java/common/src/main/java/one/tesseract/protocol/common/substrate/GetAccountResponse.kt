@@ -1,4 +1,4 @@
-package one.tesseract.service.protocol.common.substrate
+package one.tesseract.protocol.common.substrate
 
     data class GetAccountResponse(val publicKey: ByteArray, val path: String) {
     override fun equals(other: Any?): Boolean {

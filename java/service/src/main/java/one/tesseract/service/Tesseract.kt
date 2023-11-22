@@ -8,8 +8,8 @@ import one.tesseract.service.transport.ipc.IPCTransport
 
 import one.tesseract.service.transport.Transport
 
-import one.tesseract.service.service.java.Service as JavaService
-import one.tesseract.service.service.kotlin.Service as KotlinService
+import one.tesseract.service.java.Service as JavaService
+import one.tesseract.service.kotlin.Service as KotlinService
 
 open class Tesseract
     @OptIn(DelicateCoroutinesApi::class) constructor(

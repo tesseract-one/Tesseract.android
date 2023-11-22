@@ -1,15 +1,15 @@
-package one.tesseract.service.protocol.kotlin
+package one.tesseract.protocol.kotlin
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.future.future
 import one.tesseract.exception.UserCancelledException
-import one.tesseract.service.protocol.common.substrate.AccountType
-import one.tesseract.service.protocol.common.substrate.GetAccountResponse
+import one.tesseract.protocol.common.substrate.AccountType
+import one.tesseract.protocol.common.substrate.GetAccountResponse
 import java.util.concurrent.CompletionStage
 import kotlin.jvm.Throws
-import one.tesseract.service.service.kotlin.Service as KotlinService
-import one.tesseract.service.service.java.Service as JavaService
-import one.tesseract.service.protocol.java.SubstrateService as JavaSubstrateService
+import one.tesseract.service.kotlin.Service as KotlinService
+import one.tesseract.service.java.Service as JavaService
+import one.tesseract.protocol.java.SubstrateService as JavaSubstrateService
 
 interface SubstrateService: KotlinService {
     @Throws(UserCancelledException::class)

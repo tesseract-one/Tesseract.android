@@ -1,12 +1,12 @@
-package one.tesseract.service.protocol.kotlin
+package one.tesseract.protocol.kotlin
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.future.future
 import one.tesseract.exception.UserCancelledException
 import java.util.concurrent.CompletionStage
-import one.tesseract.service.service.kotlin.Service as KotlinService
-import one.tesseract.service.service.java.Service as JavaService
-import one.tesseract.service.protocol.java.TestService as JavaTestService
+import one.tesseract.service.kotlin.Service as KotlinService
+import one.tesseract.service.java.Service as JavaService
+import one.tesseract.protocol.java.TestService as JavaTestService
 
 import kotlin.jvm.Throws
 

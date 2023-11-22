@@ -10,7 +10,7 @@ edition = "2021"
 [features]
 default = ["client", "service", "protocol-all"]
 
-client = ["tesseract/client", "tesseract-android-base/client", "tesseract-android-transport/client", "dep:async-trait"]
+client = ["tesseract/client", "tesseract-android-base/client", "tesseract-android-transport/client", "dep:async-trait", "tesseract-android-ipc/client"]
 service = ["tesseract/service", "tesseract-android-base/service", "tesseract-android-transport/service", "dep:async-trait"]
 
 protocol-test = ["dep:tesseract-protocol-test"]
@@ -37,6 +37,7 @@ crabdroid = { path = "../crabdroid" }
 tesseract = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client", "service"]}
 tesseract-android-base = { path = "../base" }
 tesseract-android-transport = { path = "../transport" }
+tesseract-android-ipc = { path = "../ipc" }
 
 #protocols
 #tesseract-protocol-test = { path = "../../../Tesseract.rs/protocols/test", optional=true, features=["client", "service"]}

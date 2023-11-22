@@ -1,4 +1,4 @@
-package one.tesseract.service.protocol.common.substrate
+package one.tesseract.protocol.common.substrate
 
 enum class AccountType {
     Ed25519,
