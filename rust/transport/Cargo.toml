@@ -19,6 +19,5 @@ jni = "0.20"
 jni_fn = "0.1"
 crabdroid = { path = "../crabdroid" }
 
-#tesseract = { path = "../../../Tesseract.rs/tesseract"} 
-tesseract = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="master"}
+tesseract = { workspace = true }
 tesseract-android-base = { path = "../base" }

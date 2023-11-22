@@ -18,3 +18,14 @@ members = [
 ]
 
 resolver = "1"
+
+[workspace.dependencies]  
+#tesseract
+tesseract = { path = "../Tesseract.rs/tesseract" }
+#tesseract = { git = "https://github.com/tesseract-one/Tesseract.rs", branch="master" }
+
+#protocols
+tesseract-protocol-test = { path = "../Tesseract.rs/protocols/test" }
+tesseract-protocol-substrate = { path = "../Tesseract.rs/protocols/substrate" }
+#tesseract-protocol-test = { git = "https://github.com/tesseract-one/Tesseract.rs", optional = true, branch = "master", features=["client", "service"] }
+#tesseract-protocol-substrate = { git = "https://github.com/tesseract-one/Tesseract.rs", optional = true, branch = "master", features=["client", "service"] }
