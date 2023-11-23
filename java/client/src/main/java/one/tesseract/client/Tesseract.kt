@@ -4,9 +4,10 @@ import android.app.Application
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
+import kotlin.reflect.KClass
+
 import one.tesseract.TesseractCommon
 import one.tesseract.client.kotlin.DelegateAdapter
-import kotlin.reflect.KClass
 
 import one.tesseract.client.java.Delegate as JDelegate
 import one.tesseract.client.kotlin.Delegate as KDelegate
@@ -34,7 +35,8 @@ class Tesseract
     }
 
     companion object {
-        fun default(application: Application): Tesseract = Tesseract(application = application)
+        fun default(delegate: KDelegate? = null, application: Application): Tesseract = Tesseract(delegate = delegate, application = application)
+        fun default(delegate: JDelegate, application: Application): Tesseract = Tesseract(delegate = delegate, application = application)
     }
 
     fun <T: JService> service(service: Class<T>): T {

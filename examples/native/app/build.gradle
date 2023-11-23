@@ -59,6 +59,7 @@ dependencies {
     implementation project(':java:base')
     implementation project(':java:common')
     implementation project(':java:client')
+    implementation project(':java:client-transport')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'
