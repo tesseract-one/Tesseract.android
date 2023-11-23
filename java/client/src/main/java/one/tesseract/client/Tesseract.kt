@@ -15,25 +15,26 @@ import one.tesseract.service.java.Service as JService
 import one.tesseract.service.kotlin.Service as KService
 
 class Tesseract
-    @OptIn(DelicateCoroutinesApi::class) private constructor(
+    private constructor(
         @Suppress("unused") private val ptr: Long,
-        private val scope: CoroutineScope = GlobalScope,
-        delegate: JDelegate, val application: Application): TesseractCommon() {
+        private val scope: CoroutineScope,
+        delegate: JDelegate?,
+        val application: Application): TesseractCommon() {
 
     @OptIn(DelicateCoroutinesApi::class)
-    constructor(scope: CoroutineScope = GlobalScope, delegate: JDelegate, application: Application):
+    constructor(scope: CoroutineScope = GlobalScope, delegate: JDelegate?, application: Application):
             this(ptr = 0, scope = scope, delegate = delegate, application)
 
     @OptIn(DelicateCoroutinesApi::class)
-    constructor(scope: CoroutineScope = GlobalScope, delegate: KDelegate, application: Application):
-            this(scope = scope, delegate = DelegateAdapter(delegate, scope), application)
+    constructor(scope: CoroutineScope = GlobalScope, delegate: KDelegate? = null, application: Application):
+            this(scope = scope, delegate = delegate?.let { DelegateAdapter(it, scope) }, application)
 
     init {
         create(delegate)
     }
 
     companion object {
-        fun default(application: Application): Tesseract = Tesseract(delegate = DefaultDelegate(), application = application)
+        fun default(application: Application): Tesseract = Tesseract(application = application)
     }
 
     fun <T: JService> service(service: Class<T>): T {
@@ -54,6 +55,6 @@ class Tesseract
 
     private external fun <T: JService> service(name: String): T
 
-    private external fun create(delegate: JDelegate)
+    private external fun create(delegate: JDelegate?)
     protected external fun finalize()
 }

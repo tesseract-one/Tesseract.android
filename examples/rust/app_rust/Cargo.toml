@@ -23,11 +23,9 @@ jni_fn = "0.1"
 crabdroid = { path = "../../../rust/crabdroid", features = ["thread-pool"]}
 
 #tesseract
-#tesseract = { path = "../../../../Tesseract.rs/tesseract", features=["client"]} 
-#tesseract-protocol-test = { path = "../../../../Tesseract.rs/protocols/test", features=["client"]} 
-tesseract = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client"]}
-tesseract-protocol-test = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["client"]}
-tesseract-android = { path = "../../../rust/sdk", features=["client"]}
+tesseract = { workspace = true, features=["client"] }
+tesseract-protocol-test = { workspace = true, features=["client"] }
+tesseract-android = { path = "../../../rust/sdk", features=["client"] }
 
 [lib]
 crate_type = ["cdylib"]

@@ -23,10 +23,8 @@ jni_fn = "0.1"
 crabdroid = { path = "../../../rust/crabdroid", features = ["thread-pool"]}
 
 #tesseract
-#tesseract = { path = "../../../../Tesseract.rs/tesseract", features=["service"]} 
-#tesseract-protocol-test = { path = "../../../../Tesseract.rs/protocols/test", features=["service"]}
-tesseract = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["service"]}
-tesseract-protocol-test = {git = "https://github.com/tesseract-one/Tesseract.rs", branch="master", features=["service"]}
+tesseract = { workspace = true, features=["service"] }
+tesseract-protocol-test = { workspace = true, features=["service"] }
 
 tesseract-android = { path = "../../../rust/sdk", features=["service"]}
 
