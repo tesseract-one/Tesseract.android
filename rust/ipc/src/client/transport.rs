@@ -27,6 +27,7 @@ use tesseract::client::transport::Status;
 use tesseract::client::{Connection, Transport};
 
 use crabdroid::ContextedGlobal;
+use tesseract_android_base::TesseractAndroidError;
 
 use super::connection::TransportIPCAndroidConnection;
 use super::transceiver::Transceiver;
@@ -57,7 +58,7 @@ impl Transport for IPCTransport {
     async fn status(self: Arc<Self>, protocol: Box<dyn Protocol>) -> Status {
         match &self.transceiver {
             Ok(transceiver) => {
-                let result = transceiver.do_in_context_rret(10, |env, transceiver| {
+                let result = transceiver.with_safe_context_rret(10, |env, transceiver| {
                     let transceiver = Transceiver::from_env(&env, transceiver);
                     let available = transceiver.ping(&protocol.id())?;
                     Ok(available)
@@ -72,7 +73,7 @@ impl Transport for IPCTransport {
                         }
                     },
                     Err(error) => {
-                        Status::Error(Box::new(error))
+                        Status::Error(TesseractAndroidError::Gllobal(error).into())
                     }
                 }
             },

@@ -19,8 +19,8 @@
 #[macro_use]
 extern crate log;
 
-// #[cfg(feature = "client")]
-// pub mod client;
+#[cfg(feature = "client")]
+pub mod client;
 
 #[cfg(feature = "service")]
 pub mod service;

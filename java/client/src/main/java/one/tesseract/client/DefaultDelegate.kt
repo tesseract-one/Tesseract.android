@@ -1,5 +1,6 @@
 package one.tesseract.client
 
+import android.util.Log
 import one.tesseract.client.kotlin.Delegate
 import one.tesseract.client.transport.Status
 

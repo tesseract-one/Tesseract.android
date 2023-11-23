@@ -1,9 +1,9 @@
 package one.tesseract.client.transport
 
 sealed interface Status {
-    object Ready
+    data object Ready: Status
 
-    data class Unavailable(val reason: String)
-    data class Error(val error: Exception)
+    data class Unavailable(val reason: String): Status
+    data class Error(val error: Exception): Status
 }
 
