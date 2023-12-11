@@ -8,10 +8,12 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-client = ["tesseract/client", "tesseract-android-base/client"]
+client = ["tesseract/client", "tesseract-android-base/client", "dep:async-trait"]
 service = ["tesseract/service", "tesseract-android-base/service"]
 
 [dependencies]
+async-trait = { version="0.1", optional = true }
+
 log = "0.4"
 errorcon = "0.1"
 

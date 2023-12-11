@@ -14,6 +14,7 @@ use tesseract::client::{
     delegate::SingleTransportDelegate,
 };
 use tesseract_android_base::TesseractAndroidError;
+use tesseract_android_base::client::Applicator;
 
 use super::delegate::RJDelegate;
 use super::service;
@@ -32,13 +33,42 @@ pub fn create<'a>(env: JNIEnv<'a>, this: JObject<'a>, delegate: JObject<'a>) {
 
         //let application = env.get_field(this, "application", "Landroid.app.Application;")?.l()?;
 
-        let application = env.call_method(this, "getApplication", "()Landroid/app/Application;", &[])?.l()?;
+        //let application = env.call_method(this, "getApplication", "()Landroid/app/Application;", &[])?.l()?;
 
-        let ipc = tesseract_android_ipc::client::IPCTransport::new(&env, application);
+        //let ipc = tesseract_android_ipc::client::IPCTransport::new(&env, application);
 
-        let tesseract = Tesseract::new(delegate).transport(ipc);
+        let tesseract = Tesseract::new(delegate);//.transport(ipc);
         unsafe {env.set_rust_field(this, PTR_FIELD, tesseract)?};
         Ok(())
+    })
+}
+
+#[jni_fn("one.tesseract.client.Tesseract")]
+pub fn transport<'a>(env: JNIEnv<'a>, this: JObject<'a>, transport: JObject<'a>) -> JObject<'a> {
+    Error::java_context(&env, || {
+        let transport = env.call_method(
+            transport,
+            "rustTransport",
+            "()Lone/tesseract/common/transport/RustTransport;",
+            &[])?.l()?;
+
+        let transport = env.call_method(
+            transport,
+            "createApplicator",
+            "()J",
+            &[])?.j()?;
+
+        let applicator = *unsafe {
+            Box::from_raw(transport as *mut Box<dyn Applicator>)
+        };
+
+        let tesseract: Tesseract = unsafe {env.take_rust_field(this, PTR_FIELD)}?;
+
+        let tesseract = applicator(tesseract);
+
+        unsafe {env.set_rust_field(this, PTR_FIELD, tesseract)?};
+
+        Ok(this)
     })
 }
 

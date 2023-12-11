@@ -41,7 +41,7 @@ impl<'a: 'b, 'b> JSubstrateService<'a, 'b> {
     pub (super) fn is_substrate_service(env: &'b JNIEnv<'a>, obj: JObject<'a>) -> Result<bool> {
         Ok(
             !(env.is_same_object(obj, JObject::null())?) &&
-                env.is_instance_of(obj, "one/tesseract/service/protocol/java/SubstrateService")?
+                env.is_instance_of(obj, "one/tesseract/protocol/java/SubstrateService")?
         )
     }
 

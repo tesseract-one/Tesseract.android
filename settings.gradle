@@ -22,6 +22,7 @@ include ':java:crabdroid'
 include ':java:detached-activity'
 
 include ':java:base'
+include ':java:common-transport'
 include ':java:client-transport'
 include ':java:service-transport'
 

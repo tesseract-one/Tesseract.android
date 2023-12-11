@@ -1,6 +1,8 @@
 package one.tesseract.service.transport
 
-interface JavaTransport: Transport {
+import one.tesseract.common.transport.RustTransport
+
+interface JavaTransport: ServiceTransport {
     fun bind(processor: Processor): BoundTransport
 
     override fun rustTransport(): RustTransport = JavaRustTransport(this)

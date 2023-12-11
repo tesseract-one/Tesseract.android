@@ -8,7 +8,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-client = ["tesseract/client", "tesseract-android-transport/client", "dep:async-trait"]
+client = ["tesseract/client", "tesseract-android-transport/client", "dep:async-trait", "dep:jni_fn"]
 service = ["tesseract/service", "tesseract-android-transport/service"]
 
 [dependencies]
@@ -17,7 +17,9 @@ futures = "0.3"
 
 log = "0.4"
 
-jni = "0.20"
+#android interop
+jni = { workspace = true }
+jni_fn = { workspace = true, optional = true }
 crabdroid = { path = "../crabdroid" }
 
 tesseract = { workspace = true }

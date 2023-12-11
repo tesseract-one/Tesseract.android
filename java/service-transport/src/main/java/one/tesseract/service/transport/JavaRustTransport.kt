@@ -1,5 +1,7 @@
 package one.tesseract.service.transport
 
-class JavaRustTransport(private val transport: JavaTransport): RustTransport {
+import one.tesseract.common.transport.RustTransport
+
+class JavaRustTransport(private val transport: JavaTransport): RustTransport, ServiceTransport {
     external override fun createApplicator(): Long
 }

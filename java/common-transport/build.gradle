@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace 'one.tesseract.service.transport.ipc'
+    namespace 'one.tesseract.common.transport'
     version rootProject.ext.tesseractVersion
 
     compileSdk rootProject.ext.compileSdkVersion
@@ -29,9 +29,7 @@ android {
 }
 
 dependencies {
-    implementation project(':java:common-transport')
-    implementation project(':java:service-transport')
-    implementation project(':java:common-transport-ipc')
+    implementation project(path: ':java:crabdroid')//don't delete
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

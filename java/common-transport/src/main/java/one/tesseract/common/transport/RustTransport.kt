@@ -1,4 +1,4 @@
-package one.tesseract.service.transport
+package one.tesseract.common.transport
 
 interface RustTransport: Transport {
     fun createApplicator(): Long

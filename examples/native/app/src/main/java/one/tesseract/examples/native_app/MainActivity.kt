@@ -39,7 +39,7 @@ import java.lang.RuntimeException
 class MainActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-        val tesseract = Tesseract.default(delegate = AppDelegate(), application = this.application)
+        val tesseract = Tesseract.default(this.application)
         val testService = tesseract.service(TestService::class)
 
         super.onCreate(savedInstanceState)

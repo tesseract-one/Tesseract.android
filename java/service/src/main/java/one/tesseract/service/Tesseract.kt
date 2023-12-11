@@ -6,7 +6,7 @@ import kotlinx.coroutines.GlobalScope
 import one.tesseract.TesseractCommon
 import one.tesseract.service.transport.ipc.IPCTransport
 
-import one.tesseract.service.transport.Transport
+import one.tesseract.service.transport.ServiceTransport
 
 import one.tesseract.service.java.Service as JavaService
 import one.tesseract.service.kotlin.Service as KotlinService
@@ -34,7 +34,7 @@ open class Tesseract
     fun service(service: KotlinService): Tesseract = service(service.toJava(scope))
 
     @Synchronized
-    external fun transport(transport: Transport): Tesseract
+    external fun transport(transport: ServiceTransport): Tesseract
 
     protected external fun finalize()
 }

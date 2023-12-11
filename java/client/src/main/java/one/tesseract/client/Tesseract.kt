@@ -8,6 +8,9 @@ import kotlin.reflect.KClass
 
 import one.tesseract.TesseractCommon
 import one.tesseract.client.kotlin.DelegateAdapter
+import one.tesseract.client.transport.ClientTransport
+import one.tesseract.client.transport.JavaTransport
+import one.tesseract.client.transport.ipc.IPCTransport
 
 import one.tesseract.client.java.Delegate as JDelegate
 import one.tesseract.client.kotlin.Delegate as KDelegate
@@ -19,24 +22,25 @@ class Tesseract
     private constructor(
         @Suppress("unused") private val ptr: Long,
         private val scope: CoroutineScope,
-        delegate: JDelegate?,
-        val application: Application): TesseractCommon() {
+        delegate: JDelegate?): TesseractCommon() {
 
     @OptIn(DelicateCoroutinesApi::class)
-    constructor(scope: CoroutineScope = GlobalScope, delegate: JDelegate?, application: Application):
-            this(ptr = 0, scope = scope, delegate = delegate, application)
+    constructor(scope: CoroutineScope = GlobalScope, delegate: JDelegate?):
+            this(ptr = 0, scope = scope, delegate = delegate)
 
     @OptIn(DelicateCoroutinesApi::class)
-    constructor(scope: CoroutineScope = GlobalScope, delegate: KDelegate? = null, application: Application):
-            this(scope = scope, delegate = delegate?.let { DelegateAdapter(it, scope) }, application)
+    constructor(scope: CoroutineScope = GlobalScope, delegate: KDelegate? = null):
+            this(scope = scope, delegate = delegate?.let { DelegateAdapter(it, scope) })
 
     init {
         create(delegate)
     }
 
     companion object {
-        fun default(delegate: KDelegate? = null, application: Application): Tesseract = Tesseract(delegate = delegate, application = application)
-        fun default(delegate: JDelegate, application: Application): Tesseract = Tesseract(delegate = delegate, application = application)
+        fun default(application: Application, delegate: KDelegate? = null): Tesseract =
+            Tesseract(delegate = delegate).transport(IPCTransport(application))
+        fun default(application: Application, delegate: JDelegate): Tesseract =
+            Tesseract(delegate = delegate).transport(IPCTransport(application))
     }
 
     fun <T: JService> service(service: Class<T>): T {
@@ -54,6 +58,9 @@ class Tesseract
         @Suppress("UNCHECKED_CAST")
         return instance.toKotlin() as T
     }
+
+    @Synchronized
+    external fun transport(transport: ClientTransport): Tesseract
 
     private external fun <T: JService> service(name: String): T
 

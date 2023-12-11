@@ -33,8 +33,11 @@ dependencies {
 
     implementation project(':java:detached-activity')
 
-    implementation project(':java:common-transport-ipc')
+    implementation project(':java:base')
+    implementation project(':java:common-transport')
+    implementation project(':java:client-transport')
 
+    implementation project(':java:common-transport-ipc')
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.5'

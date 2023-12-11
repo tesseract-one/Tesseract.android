@@ -35,6 +35,7 @@ dependencies {
 
     implementation project(':java:base')
     implementation project(':java:common')
+    implementation project(':java:common-transport')
     implementation project(':java:client-transport')
     implementation project(':java:client-transport-ipc')
 
