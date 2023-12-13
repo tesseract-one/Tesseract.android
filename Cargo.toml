@@ -1,5 +1,15 @@
 # Licensed under the Apache License, Version 2.0.
 
+[workspace.package]
+authors = ["Daniel Leping", "Tesseract Systems, Inc."]
+edition = "2021"
+version = "0.5.5"
+license = "Apache-2.0"
+readme = "README.MD"
+repository = "https://github.com/tesseract-one/Tesseract.android"
+documentation = "https://github.com/tesseract-one/Tesseract.android"
+homepage = "https://github.com/tesseract-one/"
+
 [workspace]
 
 members = [
@@ -17,7 +27,7 @@ members = [
     "examples/rust/wallet_rust", #example of how to use Tesseract in a Wallet in Rust
 ]
 
-resolver = "1"
+resolver = "2"
 
 [workspace.dependencies]
 async-trait = "0.1"
