@@ -20,6 +20,7 @@ pub (crate) struct RJConnection {
 
 impl RJConnection {
     pub fn from_jobject<'a: 'b, 'b>(env: &'b JNIEnv<'a>, jdelegate: JObject<'a>) -> JResult<Self> {
+        debug!("Creating connection");
         let global = ContextedGlobal::from_local(env, jdelegate)?;
         Ok(Self {
             jconnection: global
