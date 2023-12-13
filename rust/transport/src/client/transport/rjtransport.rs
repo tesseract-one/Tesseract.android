@@ -10,7 +10,7 @@ use tesseract_android_base::TesseractAndroidError;
 use super::super::{connection::RJConnection, status::JStatusConvertible};
 use super::jtransport::JTransport;
 
-pub (crate) struct RJTransport {
+pub struct RJTransport {
     jtransport: ContextedGlobal
 }
 

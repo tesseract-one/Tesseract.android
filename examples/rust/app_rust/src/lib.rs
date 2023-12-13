@@ -75,7 +75,7 @@ pub fn rustInit<'a>(env: JNIEnv<'a>, core: JObject<'a>, loader: JObject<'a>) {
         let tesseract = Tesseract::new(
                 TransportDelegate::arc(
                     Application::from_env(&env, application)?))
-            .transport(IPCTransport::new(&env, application));
+            .transport(IPCTransport::new(&env, application)?);
 
         let service = tesseract.service(Test::Protocol);
 

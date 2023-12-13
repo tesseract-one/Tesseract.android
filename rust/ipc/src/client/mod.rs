@@ -1,7 +1,3 @@
-mod connection;
-mod response;
-mod transceiver;
-mod transport;
-pub mod applicator;
+mod ipc;
 
-pub use transport::IPCTransport;
+pub use ipc::IPCTransport;
