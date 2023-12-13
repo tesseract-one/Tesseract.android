@@ -20,16 +20,26 @@ members = [
 resolver = "1"
 
 [workspace.dependencies]
+async-trait = "0.1"
+errorcon = "0.1"
+futures = "0.3"
+thiserror = "1.0"
+
 #android interop
 jni = "0.20"
 jni_fn = "0.1"
 
+#logger
+log = "0.4"
+log-panics = "2"
+android_logger = "0.13"
+
 #tesseract
-tesseract = { path = "../Tesseract.rs/tesseract" }
-#tesseract = { git = "https://github.com/tesseract-one/Tesseract.rs", branch="master" }
+#tesseract = { path = "../Tesseract.rs/tesseract" }
+tesseract = { git = "https://github.com/tesseract-one/Tesseract.rs", branch="master" }
 
 #protocols
-tesseract-protocol-test = { path = "../Tesseract.rs/protocols/test" }
-tesseract-protocol-substrate = { path = "../Tesseract.rs/protocols/substrate" }
-#tesseract-protocol-test = { git = "https://github.com/tesseract-one/Tesseract.rs", optional = true, branch = "master", features=["client", "service"] }
-#tesseract-protocol-substrate = { git = "https://github.com/tesseract-one/Tesseract.rs", optional = true, branch = "master", features=["client", "service"] }
+#tesseract-protocol-test = { path = "../Tesseract.rs/protocols/test" }
+#tesseract-protocol-substrate = { path = "../Tesseract.rs/protocols/substrate" }
+tesseract-protocol-test = { git = "https://github.com/tesseract-one/Tesseract.rs", branch = "master" }
+tesseract-protocol-substrate = { git = "https://github.com/tesseract-one/Tesseract.rs", branch = "master" }

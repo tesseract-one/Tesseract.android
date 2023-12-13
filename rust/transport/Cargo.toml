@@ -12,13 +12,13 @@ client = ["tesseract/client", "tesseract-android-base/client", "dep:async-trait"
 service = ["tesseract/service", "tesseract-android-base/service"]
 
 [dependencies]
-async-trait = { version="0.1", optional = true }
+async-trait = { workspace = true, optional = true }
 
-log = "0.4"
-errorcon = "0.1"
+log = { workspace = true }
+errorcon = { workspace = true }
 
-jni = "0.20"
-jni_fn = "0.1"
+jni = { workspace = true }
+jni_fn = { workspace = true }
 crabdroid = { path = "../crabdroid" }
 
 tesseract = { workspace = true }

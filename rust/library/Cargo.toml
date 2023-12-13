@@ -18,14 +18,14 @@ protocol-substrate = ["dep:tesseract-protocol-substrate"]
 protocol-all = ["protocol-test", "protocol-substrate"]
 
 [dependencies]
-async-trait = { version="0.1", optional = true }
+async-trait = { workspace = true, optional = true }
 
-errorcon = "0.1"
+errorcon = { workspace = true }
 
 #logger
-log = "0.4"
-log-panics = { version = "2", features = ["with-backtrace"] }
-android_logger = "0.13"
+log = { workspace = true }
+log-panics = { workspace = true, features = ["with-backtrace"] }
+android_logger = { workspace = true }
 
 #android interop
 jni = { workspace = true }

@@ -12,10 +12,10 @@ client = ["tesseract/client"]
 service = ["tesseract/service"]
 
 [dependencies]
-thiserror = "1.0"
-log = "0.4"
+thiserror = { workspace = true }
+log = { workspace = true }
 
-jni = "0.20"
+jni = { workspace = true }
 crabdroid = { path = "../crabdroid" }
 
 tesseract = { workspace = true }
