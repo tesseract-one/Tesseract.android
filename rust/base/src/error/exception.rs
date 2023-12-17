@@ -5,6 +5,7 @@ use crabdroid::{error::{GlobalError, ExceptionConvertible}, env::AndroidEnv};
 use log::SetLoggerError;
 
 pub fn logger_error_to_exception<'a: 'b, 'b>(error: &SetLoggerError, env: &'b JNIEnv<'a>) -> Result<JObject<'a>> {
+    debug!("logger_error_to_exception: started");
     let description = format!("Can't set android logger for Tesseract: {}", error);
     let description = env.new_string(description)?;
 
@@ -15,6 +16,7 @@ pub fn logger_error_to_exception<'a: 'b, 'b>(error: &SetLoggerError, env: &'b JN
 }
 
 pub fn tesseract_error_to_exception<'a: 'b, 'b>(error: &tesseract::Error, env: &'b JNIEnv<'a>) -> Result<JObject<'a>> {
+    debug!("tesseract_error_to_exception: started");
     match &error.kind {
         tesseract::ErrorKind::Cancelled => {
             let clazz = env.find_class_android("one/tesseract/exception/UserCancelledException")?;
@@ -51,12 +53,14 @@ pub fn tesseract_error_to_exception<'a: 'b, 'b>(error: &tesseract::Error, env: &
 }
 
 pub fn global_error_to_exception<'a: 'b, 'b>(error: &GlobalError, env: &'b JNIEnv<'a>) -> Result<JObject<'a>> {
+    debug!("global_error_to_exception: started");
     match error {
-        GlobalError::Exception(error) =>
-            error.do_in_context_rret(64, |_, exception| {
-                env.new_local_ref(exception)
-            }),
+        GlobalError::Exception(error) => {
+            debug!("global_error_to_exception: bind locally");
+            error.bind_locally(env)
+        },
         GlobalError::JniError(error) => {
+            debug!("global_error_to_exception: JniError");
             error.to_exception(&env)
         },
     }

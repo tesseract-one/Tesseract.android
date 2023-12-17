@@ -56,6 +56,10 @@ impl ContextedGlobal {
         Self::from_local(&env, local)
     }
 
+    pub fn bind_locally<'a: 'b, 'b>(&self, env: &'b JNIEnv<'a>) -> Result<JObject<'a>> {
+        env.new_local_ref(self.guard.1.as_obj())
+    }
+
     pub fn do_in_context_rret<F, R>(&self, capacity: i32, f: F) -> Result<R>
         where F: FnOnce(JNIEnv, JObject) -> Result<R>
     {
