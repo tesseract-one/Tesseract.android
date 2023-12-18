@@ -22,7 +22,7 @@ service = ["tesseract-one/service"]
 
 [dependencies]
 thiserror.workspace = true
-log.workspace = true
+log = { workspace = true, features = ["std"] }
 
 jni.workspace = true
 crabdroid.workspace = true
