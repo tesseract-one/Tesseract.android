@@ -8,8 +8,8 @@ use jni_fn::jni_fn;
 
 use crabdroid::error::JavaErrorContext;
 
-use tesseract::client::Delegate;
-use tesseract::client::{
+use tesseract_one::client::Delegate;
+use tesseract_one::client::{
     Tesseract,
     delegate::SingleTransportDelegate,
 };

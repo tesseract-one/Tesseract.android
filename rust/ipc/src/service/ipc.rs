@@ -1,6 +1,6 @@
 use jni::{JNIEnv, objects::JObject, errors::Result};
 
-use tesseract::service::Transport;
+use tesseract_one::service::Transport;
 use tesseract_android_transport::service::JTransport;
 
 const TRANSPORT_CLASS: &str = "one/tesseract/service/transport/ipc/IPCTransport";
@@ -33,7 +33,7 @@ impl IPCTransport {
 }
 
 impl Transport for IPCTransport {
-    fn bind(self, processor: std::sync::Arc<dyn tesseract::service::TransportProcessor + Send + Sync>) -> Box<dyn tesseract::service::BoundTransport + Send> {
+    fn bind(self, processor: std::sync::Arc<dyn tesseract_one::service::TransportProcessor + Send + Sync>) -> Box<dyn tesseract_one::service::BoundTransport + Send> {
         trace!("About to bind the IPCTransport");
         self.internal.bind(processor)
     }

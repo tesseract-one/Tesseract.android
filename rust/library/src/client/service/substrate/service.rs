@@ -9,7 +9,7 @@ use crabdroid::object::JavaWrapper;
 use crabdroid::error::JavaErrorContext;
 
 use log::debug;
-use tesseract::client::Service;
+use tesseract_one::client::Service;
 use tesseract_android_base::TesseractAndroidError;
 
 use tesseract_protocol_substrate::{Substrate, SubstrateService, AccountType};

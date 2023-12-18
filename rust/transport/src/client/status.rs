@@ -1,7 +1,7 @@
 use crabdroid::{env::AndroidEnv, error::{ExceptionConvertible, GlobalError}, Exception, ContextedGlobal};
 use jni::{JNIEnv, errors::{Result, Error}, objects::JObject};
 
-use tesseract::client::transport::Status;
+use tesseract_one::client::transport::Status;
 use tesseract_android_base::TesseractAndroidError;
 
 pub trait JStatusConvertible: Sized {

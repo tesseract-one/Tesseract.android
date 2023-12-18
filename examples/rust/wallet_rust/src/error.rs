@@ -32,13 +32,13 @@ where
     }
 }
 
-impl Into<tesseract::Error> for WalletError {
-    fn into(self) -> tesseract::Error {
+impl Into<tesseract_one::Error> for WalletError {
+    fn into(self) -> tesseract_one::Error {
         match self {
             WalletError::TesseractAndroid(e) => e.into(),
             WalletError::IO(e) => {
                 let description = format!("IOError: {}", e);
-                tesseract::Error::described(tesseract::ErrorKind::Weird, &description)
+                tesseract_one::Error::described(tesseract_one::ErrorKind::Weird, &description)
             }
         }
     }

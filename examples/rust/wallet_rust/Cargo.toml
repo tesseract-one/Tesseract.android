@@ -26,13 +26,12 @@ android_logger = { workspace = true }
 #android interop
 jni = { workspace = true }
 jni_fn = { workspace = true }
-crabdroid = { path = "../../../rust/crabdroid", features = ["thread-pool"]}
+crabdroid = { workspace = true, features = ["thread-pool"]}
 
 #tesseract
-tesseract = { workspace = true, features=["service"] }
+tesseract-one = { workspace = true, features=["service"] }
 tesseract-protocol-test = { workspace = true, features=["service"] }
-
-tesseract-android = { path = "../../../rust/sdk", features=["service"]}
+tesseract-android = { workspace = true, features=["service"]}
 
 [lib]
 crate_type = ["cdylib"]

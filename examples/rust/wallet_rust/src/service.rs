@@ -20,7 +20,7 @@ use async_trait::async_trait;
 
 use errorcon::convertible::ErrorContext;
 
-use tesseract::{Error, ErrorKind};
+use tesseract_one::{Error, ErrorKind};
 use tesseract_protocol_test::Test;
 
 use crate::error::WalletError;
@@ -38,14 +38,14 @@ impl TestService {
     }
 }
 
-impl tesseract::service::Service for TestService {
+impl tesseract_one::service::Service for TestService {
     type Protocol = Test;
 
     fn protocol(&self) -> &Test {
         &Test::Protocol
     }
 
-    fn to_executor(self) -> Box<dyn tesseract::service::Executor + Send + Sync> {
+    fn to_executor(self) -> Box<dyn tesseract_one::service::Executor + Send + Sync> {
         Box::new(tesseract_protocol_test::service::TestExecutor::from_service(
             self,
         ))
@@ -54,7 +54,7 @@ impl tesseract::service::Service for TestService {
 
 #[async_trait]
 impl tesseract_protocol_test::TestService for TestService {
-    async fn sign_transaction(self: Arc<Self>, req: &str) -> tesseract::Result<String> {
+    async fn sign_transaction(self: Arc<Self>, req: &str) -> tesseract_one::Result<String> {
         WalletError::context_async(async || {
             let allow = self.ui.request_user_confirmation(req).await?;
 
@@ -69,7 +69,7 @@ impl tesseract_protocol_test::TestService for TestService {
                     Ok(format!("{}{}", req, signature))
                 }
             } else {
-                Err(tesseract::Error::kinded(tesseract::ErrorKind::Cancelled))
+                Err(tesseract_one::Error::kinded(tesseract_one::ErrorKind::Cancelled))
             }?)
         }).await
     }

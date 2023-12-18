@@ -35,7 +35,7 @@ use jni_fn::jni_fn;
 
 use crabdroid::error::JavaErrorContext;
 
-use tesseract::service::Tesseract;
+use tesseract_one::service::Tesseract;
 
 use tesseract_android::service::transport::IPCTransport;
 

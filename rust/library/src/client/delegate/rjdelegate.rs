@@ -3,7 +3,7 @@ use async_trait::async_trait;
 
 use crabdroid::ContextedGlobal;
 use jni::{JNIEnv, objects::JObject, errors::Result};
-use tesseract::client::{transport::Status, Delegate};
+use tesseract_one::client::{transport::Status, Delegate};
 
 use super::jdelegate::JDelegate;
 

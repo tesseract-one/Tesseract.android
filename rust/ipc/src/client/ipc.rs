@@ -4,7 +4,7 @@ use async_trait::async_trait;
 
 use jni::{JNIEnv, objects::JObject, errors::Result};
 
-use tesseract::{client::{Transport, transport::Status, Connection}, Protocol};
+use tesseract_one::{client::{Transport, transport::Status, Connection}, Protocol};
 use tesseract_android_transport::client::RJTransport;
 
 const TRANSPORT_CLASS: &str = "one/tesseract/client/transport/ipc/IPCTransport";

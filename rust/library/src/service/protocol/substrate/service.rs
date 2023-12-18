@@ -30,14 +30,14 @@ impl SubstrateService {
     }
 }
 
-impl tesseract::service::Service for SubstrateService {
+impl tesseract_one::service::Service for SubstrateService {
     type Protocol = Substrate;
 
     fn protocol(&self) -> &Substrate {
         &Substrate::Protocol
     }
 
-    fn to_executor(self) -> Box<dyn tesseract::service::Executor + Send + Sync> {
+    fn to_executor(self) -> Box<dyn tesseract_one::service::Executor + Send + Sync> {
         Box::new(SubstrateExecutor::from_service(
             self,
         ))
@@ -48,7 +48,7 @@ use crabdroid::JavaConvertible;
 
 #[async_trait]
 impl tesseract_protocol_substrate::SubstrateService for SubstrateService {
-    async fn get_account(self: Arc<Self>, account_type: AccountType) -> tesseract::Result<GetAccountResponse> {
+    async fn get_account(self: Arc<Self>, account_type: AccountType) -> tesseract_one::Result<GetAccountResponse> {
         TesseractAndroidError::context_async( async || {
             let response = self.jservice.with_async_context(32, |env, jservice| {
                 let jservice = JSubstrateService::from_env(&env, jservice);
@@ -72,7 +72,7 @@ impl tesseract_protocol_substrate::SubstrateService for SubstrateService {
         extrinsic_data: &[u8],
         extrinsic_metadata: &[u8],
         extrinsic_types: &[u8],
-    ) -> tesseract::Result<Vec<u8>> {
+    ) -> tesseract_one::Result<Vec<u8>> {
         TesseractAndroidError::context_async( async || {
             let response = self.jservice.with_async_context(32, |env, jservice| {
                 let jservice = JSubstrateService::from_env(&env, jservice);

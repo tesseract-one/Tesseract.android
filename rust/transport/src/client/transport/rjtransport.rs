@@ -4,7 +4,7 @@ use async_trait::async_trait;
 use jni::{JNIEnv, objects::JObject, errors::Result};
 use crabdroid::ContextedGlobal;
 
-use tesseract::{client::{transport::Status, Transport, Connection}, Protocol};
+use tesseract_one::{client::{transport::Status, Transport, Connection}, Protocol};
 use tesseract_android_base::TesseractAndroidError;
 
 use super::super::{connection::RJConnection, status::JStatusConvertible};

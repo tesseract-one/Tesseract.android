@@ -13,7 +13,7 @@ use super::exception::*;
 #[derive(Debug, Error)]
 pub enum TesseractAndroidError {
     #[error(transparent)]
-    Tesseract(#[from] tesseract::Error),
+    Tesseract(#[from] tesseract_one::Error),
 
     #[error(transparent)]
     Logger(#[from] SetLoggerError),
@@ -22,12 +22,12 @@ pub enum TesseractAndroidError {
     Gllobal(#[from] GlobalError)
 }
 
-impl Into<tesseract::Error> for TesseractAndroidError {
-    fn into(self) -> tesseract::Error {
+impl Into<tesseract_one::Error> for TesseractAndroidError {
+    fn into(self) -> tesseract_one::Error {
         match self {
             TesseractAndroidError::Tesseract(e) => e,
-            TesseractAndroidError::Logger(e) => tesseract::Error::described(
-                tesseract::ErrorKind::Weird,
+            TesseractAndroidError::Logger(e) => tesseract_one::Error::described(
+                tesseract_one::ErrorKind::Weird,
                 &e.to_string()),
             TesseractAndroidError::Gllobal(e) => global_error_to_tesseract(e),
         }

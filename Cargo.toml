@@ -3,7 +3,7 @@
 [workspace.package]
 authors = ["Daniel Leping", "Yehor Popovych", "Tesseract Systems, Inc."]
 edition = "2021"
-version = "0.5.5"
+version = "0.5.6"
 license = "Apache-2.0"
 readme = "README.MD"
 repository = "https://github.com/tesseract-one/Tesseract.android"
@@ -45,11 +45,16 @@ log-panics = "2"
 android_logger = "0.13"
 
 #tesseract
-#tesseract = { path = "../Tesseract.rs/tesseract" }
-tesseract = { git = "https://github.com/tesseract-one/Tesseract.rs", branch="master" }
+tesseract-one = "0.5"
 
 #protocols
-#tesseract-protocol-test = { path = "../Tesseract.rs/protocols/test" }
-#tesseract-protocol-substrate = { path = "../Tesseract.rs/protocols/substrate" }
-tesseract-protocol-test = { git = "https://github.com/tesseract-one/Tesseract.rs", branch = "master" }
-tesseract-protocol-substrate = { git = "https://github.com/tesseract-one/Tesseract.rs", branch = "master" }
+tesseract-protocol-test = "0.5"
+tesseract-protocol-substrate = "0.5"
+
+#local
+crabdroid = { path = "rust/crabdroid", version = "0.3.0"}
+tesseract-android-base = { path = "rust/base", version = "0.5.6"}
+tesseract-android-transport = { path = "rust/transport", version = "0.5.6"}
+tesseract-android-library = { path = "rust/library", version = "0.5.6"}
+tesseract-android-ipc = { path = "rust/ipc", version = "0.5.6"}
+tesseract-android = { path = "rust/sdk", version = "0.5.6"}

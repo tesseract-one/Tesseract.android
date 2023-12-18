@@ -11,7 +11,7 @@ use jni_fn::jni_fn;
 
 use crabdroid::{JavaErrorContext, ContextedGlobal};
 
-use tesseract::service::{TransportProcessor, Transport, BoundTransport};
+use tesseract_one::service::{TransportProcessor, Transport, BoundTransport};
 
 use tesseract_android_base::TesseractAndroidError;
 use tesseract_android_base::service::Applicator;

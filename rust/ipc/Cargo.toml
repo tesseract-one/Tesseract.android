@@ -14,19 +14,19 @@ authors.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-client = ["tesseract/client", "tesseract-android-transport/client", "dep:async-trait", "dep:jni_fn"]
-service = ["tesseract/service", "tesseract-android-transport/service"]
+client = ["tesseract-one/client", "tesseract-android-transport/client", "dep:async-trait", "dep:jni_fn"]
+service = ["tesseract-one/service", "tesseract-android-transport/service"]
 
 [dependencies]
 async-trait = { workspace = true, optional = true }
 
-log = { workspace = true }
+log.workspace = true
 
 #android interop
-jni = { workspace = true }
+jni.workspace = true
 jni_fn = { workspace = true, optional = true }
-crabdroid = { path = "../crabdroid" }
+crabdroid.workspace = true
 
-tesseract = { workspace = true }
-tesseract-android-base = { path = "../base" }
-tesseract-android-transport = { path = "../transport" }
+tesseract-one.workspace = true
+tesseract-android-base.workspace = true
+tesseract-android-transport.workspace = true

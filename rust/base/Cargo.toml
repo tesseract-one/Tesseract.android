@@ -14,14 +14,14 @@ authors.workspace = true
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
-client = ["tesseract/client"]
-service = ["tesseract/service"]
+client = ["tesseract-one/client"]
+service = ["tesseract-one/service"]
 
 [dependencies]
-thiserror = { workspace = true }
-log = { workspace = true }
+thiserror.workspace = true
+log.workspace = true
 
-jni = { workspace = true }
-crabdroid = { path = "../crabdroid" }
+jni.workspace = true
+crabdroid.workspace = true
 
-tesseract = { workspace = true }
+tesseract-one.workspace = true

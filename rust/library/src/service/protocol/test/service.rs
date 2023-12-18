@@ -28,14 +28,14 @@ impl TestService {
     }
 }
 
-impl tesseract::service::Service for TestService {
+impl tesseract_one::service::Service for TestService {
     type Protocol = Test;
 
     fn protocol(&self) -> &Test {
         &Test::Protocol
     }
 
-    fn to_executor(self) -> Box<dyn tesseract::service::Executor + Send + Sync> {
+    fn to_executor(self) -> Box<dyn tesseract_one::service::Executor + Send + Sync> {
         Box::new(TestExecutor::from_service(
             self,
         ))
@@ -44,7 +44,7 @@ impl tesseract::service::Service for TestService {
 
 #[async_trait]
 impl tesseract_protocol_test::TestService for TestService {
-    async fn sign_transaction(self: Arc<Self>, req: &str) -> tesseract::Result<String> {
+    async fn sign_transaction(self: Arc<Self>, req: &str) -> tesseract_one::Result<String> {
         TesseractAndroidError::context_async( async || {
             let response = self.jservice.with_async_context(32, |env, jservice| {
                 let jservice = JTestService::from_env(&env, jservice);

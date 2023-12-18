@@ -16,8 +16,8 @@ authors.workspace = true
 [features]
 default = ["client", "service", "protocol-all"]
 
-client = ["tesseract/client", "tesseract-android-base/client", "tesseract-android-transport/client", "dep:async-trait", "tesseract-android-ipc/client"]
-service = ["tesseract/service", "tesseract-android-base/service", "tesseract-android-transport/service", "dep:async-trait"]
+client = ["tesseract-one/client", "tesseract-android-base/client", "tesseract-android-transport/client", "dep:async-trait", "tesseract-android-ipc/client"]
+service = ["tesseract-one/service", "tesseract-android-base/service", "tesseract-android-transport/service", "dep:async-trait"]
 
 protocol-test = ["dep:tesseract-protocol-test"]
 protocol-substrate = ["dep:tesseract-protocol-substrate"]
@@ -26,25 +26,25 @@ protocol-all = ["protocol-test", "protocol-substrate"]
 [dependencies]
 async-trait = { workspace = true, optional = true }
 
-errorcon = { workspace = true }
+errorcon.workspace = true
 
 #logger
-log = { workspace = true }
+log.workspace = true
 log-panics = { workspace = true, features = ["with-backtrace"] }
-android_logger = { workspace = true }
+android_logger.workspace = true
 
 #android interop
-jni = { workspace = true }
-jni_fn = { workspace = true }
-crabdroid = { path = "../crabdroid" }
+jni.workspace = true
+jni_fn.workspace = true
+crabdroid.workspace = true
 
 #tesseract
-tesseract = { workspace = true, features = ["client", "service"] } 
+tesseract-one = { workspace = true, features = ["client", "service"] } 
 
 #tesseract.android
-tesseract-android-base = { path = "../base" }
-tesseract-android-transport = { path = "../transport" }
-tesseract-android-ipc = { path = "../ipc" }
+tesseract-android-base.workspace = true
+tesseract-android-transport.workspace = true
+tesseract-android-ipc.workspace = true
 
 #protocols
 tesseract-protocol-test = { workspace = true, optional = true, features = ["client", "service"]}

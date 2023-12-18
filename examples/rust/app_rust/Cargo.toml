@@ -26,12 +26,12 @@ futures = { workspace = true } #for thread pool
 #android interop
 jni = { workspace = true }
 jni_fn = { workspace = true }
-crabdroid = { path = "../../../rust/crabdroid", features = ["thread-pool"]}
+crabdroid = { workspace = true, features = ["thread-pool"]}
 
 #tesseract
-tesseract = { workspace = true, features=["client"] }
+tesseract-one = { workspace = true, features=["client"] }
 tesseract-protocol-test = { workspace = true, features=["client"] }
-tesseract-android = { path = "../../../rust/sdk", features=["client"] }
+tesseract-android = { workspace = true, features=["client"] }
 
 [lib]
 crate_type = ["cdylib"]

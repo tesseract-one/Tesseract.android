@@ -15,10 +15,10 @@ pub fn logger_error_to_exception<'a: 'b, 'b>(error: &SetLoggerError, env: &'b JN
         &[description.into()])
 }
 
-pub fn tesseract_error_to_exception<'a: 'b, 'b>(error: &tesseract::Error, env: &'b JNIEnv<'a>) -> Result<JObject<'a>> {
+pub fn tesseract_error_to_exception<'a: 'b, 'b>(error: &tesseract_one::Error, env: &'b JNIEnv<'a>) -> Result<JObject<'a>> {
     debug!("tesseract_error_to_exception: started");
     match &error.kind {
-        tesseract::ErrorKind::Cancelled => {
+        tesseract_one::ErrorKind::Cancelled => {
             let clazz = env.find_class_android("one/tesseract/exception/UserCancelledException")?;
             if let Some(description) = &error.description {
                 let description = env.new_string(description)?;

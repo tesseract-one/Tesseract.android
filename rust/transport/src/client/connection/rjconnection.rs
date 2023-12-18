@@ -6,11 +6,11 @@ use errorcon::convertible::ErrorContext;
 use jni::{JNIEnv, objects::JObject};
 use crabdroid::ContextedGlobal;
 
-use tesseract::client::Connection;
+use tesseract_one::client::Connection;
 use tesseract_android_base::TesseractAndroidError;
 
 use jni::errors::Result as JResult;
-use tesseract::Result as TResult;
+use tesseract_one::Result as TResult;
 
 use super::jconnection::JConnection;
 

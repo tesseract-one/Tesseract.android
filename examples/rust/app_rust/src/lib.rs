@@ -40,7 +40,7 @@ use crabdroid::{
     JFuture
 };
 
-use tesseract::client::Tesseract;
+use tesseract_one::client::Tesseract;
 use tesseract_protocol_test::{Test, TestService};
 
 use tesseract_android::error::TesseractAndroidError;

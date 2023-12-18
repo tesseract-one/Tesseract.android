@@ -2,7 +2,7 @@ use std::collections::HashMap;
 
 use jni::{JNIEnv, objects::{JObject, JValue, JMap}, errors::Result};
 use crabdroid::future::JCompletionStage;
-use tesseract::client::transport::Status;
+use tesseract_one::client::transport::Status;
 use tesseract_android_transport::client::JStatusConvertible;
 
 /// Lifetime'd representation of a `Delegate`. Just a `JObject` wrapped in a

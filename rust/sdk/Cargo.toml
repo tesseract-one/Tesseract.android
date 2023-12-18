@@ -28,6 +28,6 @@ transport-ipc = ["transport-sdk", "dep:tesseract-android-ipc"]
 transport-all = ["transport-sdk", "transport-ipc"]
 
 [dependencies]
-tesseract-android-base = { path = "../base" }
-tesseract-android-transport = { path = "../transport", optional = true}
-tesseract-android-ipc = { path = "../ipc", optional = true}
+tesseract-android-base.workspace = true
+tesseract-android-transport = { workspace = true, optional = true}
+tesseract-android-ipc = { workspace = true, optional = true}

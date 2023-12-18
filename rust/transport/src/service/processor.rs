@@ -13,7 +13,7 @@ use crabdroid:: {
     future::JCompletionStage
 };
 
-use tesseract::service::TransportProcessor;
+use tesseract_one::service::TransportProcessor;
 use tesseract_android_base::TesseractAndroidError;
 
 #[derive(Clone, Copy)]

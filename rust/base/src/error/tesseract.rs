@@ -2,17 +2,17 @@ use jni::{JNIEnv, objects::JThrowable};
 
 use crabdroid::{error::GlobalError, env::AndroidEnv};
 
-use tesseract::Error as TError;
+use tesseract_one::Error as TError;
 use jni::errors::Error as JError;
 
 pub fn jni_error_to_tesseract(error: JError) -> TError {
     TError::new(
-        tesseract::error::ErrorKind::Weird,
+        tesseract_one::error::ErrorKind::Weird,
         &format!("JNI Error: {}", error.to_string()),
         error)
 }
 
-pub fn exception_to_tesseract<'a: 'b, 'b>(env: &'b JNIEnv<'a>, exception: JThrowable<'a>) -> jni::errors::Result<tesseract::Error> {
+pub fn exception_to_tesseract<'a: 'b, 'b>(env: &'b JNIEnv<'a>, exception: JThrowable<'a>) -> jni::errors::Result<tesseract_one::Error> {
     let user_cancelled_clazz = env.find_class_android("one/tesseract/exception/UserCancelledException")?;
     let this_clazz = env.get_object_class(exception)?;
     let is_cancelled = env.is_assignable_from(user_cancelled_clazz, this_clazz)?;
@@ -28,10 +28,10 @@ pub fn exception_to_tesseract<'a: 'b, 'b>(env: &'b JNIEnv<'a>, exception: JThrow
 
     let kind = if is_cancelled {
         debug!("ITISCANCELLED");
-        tesseract::ErrorKind::Cancelled
+        tesseract_one::ErrorKind::Cancelled
     } else {
         debug!("ITISWEIRD");
-        tesseract::ErrorKind::Weird
+        tesseract_one::ErrorKind::Weird
     };
 
     Ok(if let Some(message) = message {
@@ -41,7 +41,7 @@ pub fn exception_to_tesseract<'a: 'b, 'b>(env: &'b JNIEnv<'a>, exception: JThrow
     })
 }
 
-pub fn global_error_to_tesseract(error: GlobalError) -> tesseract::Error {
+pub fn global_error_to_tesseract(error: GlobalError) -> tesseract_one::Error {
     match error {
         GlobalError::Exception(e) => {
             let result = e.do_in_context_rret(64, |env, exception| {

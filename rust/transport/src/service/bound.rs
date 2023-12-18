@@ -4,7 +4,7 @@ use jni::errors::Result;
 
 use crabdroid::ContextedGlobal;
 
-use tesseract::service::BoundTransport;
+use tesseract_one::service::BoundTransport;
 
 pub (super) struct JBoundTransport {
     _bound: ContextedGlobal

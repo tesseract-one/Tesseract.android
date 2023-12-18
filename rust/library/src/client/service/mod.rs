@@ -6,7 +6,7 @@ use std::sync::Arc;
 use crabdroid::object::JavaWrapper;
 use jni::{objects::JObject, errors::Result, JNIEnv};
 
-use tesseract::{
+use tesseract_one::{
     client::{Tesseract, Service},
     Protocol
 };
