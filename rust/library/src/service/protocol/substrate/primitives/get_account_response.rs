@@ -4,6 +4,8 @@ use jni::{
     errors::Result
 };
 
+use log::debug;
+
 use crabdroid::JavaConvertibleDesc;
 
 use tesseract_protocol_substrate::GetAccountResponse;
@@ -12,7 +14,7 @@ use crate::utils::Wrapper;
 
 impl JavaConvertibleDesc for Wrapper<GetAccountResponse> {
     fn java_class<'a>(&'a self) -> &'a str {
-        "one/tesseract/service/protocol/common/substrate/GetAccountResponse"
+        "one/tesseract/protocol/common/substrate/GetAccountResponse"
     }
 
     fn fields() -> Vec<(&'static str, &'static str)> {
@@ -23,11 +25,14 @@ impl JavaConvertibleDesc for Wrapper<GetAccountResponse> {
     }
 
     fn into_values<'a: 'b, 'b>(self, env: &'b JNIEnv<'a>) -> Result<Vec<jni::objects::JValue<'a>>> {
+        debug!("converting GetAccountResponse to java");
         let key = env.byte_array_from_slice(&self.inner.public_key)?;
         let path = env.new_string(&self.inner.path)?;
 
-        let key = JValue::from(unsafe { JObject::from_raw(key) });
-        let path = JValue::from(path);
+        let key: JValue = unsafe {JObject::from_raw(key)}.into();
+        let path: JValue = path.into();
+
+        debug!("all values of GetAccountResponse are good");
 
         Ok(vec![key, path])
     }

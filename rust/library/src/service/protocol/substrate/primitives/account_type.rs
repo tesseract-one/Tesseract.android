@@ -7,7 +7,7 @@ use jni::{JNIEnv,
 
 use crate::utils::IntoJava;
 
-pub (crate) const ACCOUNT_TYPE_CLASS_NAME: &str = "one/tesseract/service/protocol/common/substrate/AccountType";
+pub (crate) const ACCOUNT_TYPE_CLASS_NAME: &str = "one/tesseract/protocol/common/substrate/AccountType";
 
 impl IntoJava for tesseract_protocol_substrate::AccountType {
     fn into_java<'a: 'b, 'b>(self, env: &'b JNIEnv<'a>) -> Result<JObject<'a>> {
