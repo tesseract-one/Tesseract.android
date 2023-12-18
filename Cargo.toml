@@ -9,7 +9,7 @@ readme = "README.md"
 repository = "https://github.com/tesseract-one/Tesseract.android"
 documentation = "https://github.com/tesseract-one/Tesseract.android"
 homepage = "https://github.com/tesseract-one/"
-categories = ["API-bindings", "authentication", "network-programming"]
+categories = ["api-bindings", "authentication", "network-programming"]
 keywords = ["blockchain", "dApp", "wallet", "mobile", "bridge"]
 
 [workspace]
