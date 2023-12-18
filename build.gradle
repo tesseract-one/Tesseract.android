@@ -32,7 +32,7 @@ buildscript {
         navVersion = '2.7.4'
         composeVersion = '1.5.3'
         kotlinxVersion = '1.6.4'
-        tesseractVersion = '0.5.4'
+        tesseractVersion = '0.5.6'
     }
 }
 
