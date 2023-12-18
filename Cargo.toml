@@ -9,19 +9,13 @@ readme = "README.MD"
 repository = "https://github.com/tesseract-one/Tesseract.android"
 documentation = "https://github.com/tesseract-one/Tesseract.android"
 homepage = "https://github.com/tesseract-one/"
+categories = ["API-bindings", "authentication", "network-programming"]
+keywords = ["blockchain", "dApp", "wallet", "mobile", "bridge"]
 
 [workspace]
 
 members = [
-    "rust/crabdroid", #primitives for easier Java/Rust interop
-
-    "rust/base", #basic primitives of Tesseract on Android
-    "rust/transport", #transport runtime bindings for Java/Kotlin transports
-
-    "rust/ipc", #IPC transport
-
-    "rust/sdk", #aggregate crate for android dApp/Wallet integration in Rust
-    "rust/library", #dylib that has everything java/kotlin only (nu rust) apps need in runtime
+    "rust/*",
 
     "examples/rust/app_rust", #example of how to use Tesseract in a dApp in Rust
     "examples/rust/wallet_rust", #example of how to use Tesseract in a Wallet in Rust

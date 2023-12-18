@@ -4,7 +4,7 @@
 name = "crabdroid"
 version = "0.3.0"
 description = "Android easy(er) interop for Rust. Especially helpful with async operations, error handling, collections, etc."
-categories = ["development-tools::ffi", "external-ffi-bindings", "os"]
+categories = ["development-tools::ffi", "external-ffi-bindings", "os", "API-bindings"]
 keywords = ["android", "interop", "jni", "futures", "async"]
 readme = "README.MD"
 

@@ -2,6 +2,7 @@
 
 [package]
 name = "tesseract-android-transport"
+description = "Crate with transport related Tesseract APIs for Android"
 version.workspace = true
 edition.workspace = true
 license.workspace = true
@@ -10,6 +11,8 @@ repository.workspace = true
 documentation.workspace = true
 readme.workspace = true
 authors.workspace = true
+categories.workspace = true
+keywords.workspace = true
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
