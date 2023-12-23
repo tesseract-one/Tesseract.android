@@ -30,15 +30,16 @@ Here is how a typical Tesseract workflow looks like:
 
 ```kotlin
 //initialize Tesseract
-val tesseract = Tesseract.default()
+val tesseract = Tesseract.default(this.application)
 
 //indicate what blockchain are we gonna use
-val substrateService = tesseract.service(SubstrateService.class)
+val testService = tesseract.service(SubstrateService::class)
 
 //at this point Tesseract connects to the
 //wallet and the wallet presents the user
 //with its screen, asking if the user
 //wants to share their public key to a dApp
+//all such calls are asynchronous
 val account = substrateService.getAccount(AccountType.Sr25519)
 ```
 
@@ -62,7 +63,7 @@ val tesseract = Tesseract
 
 ## Details
 
-Because using Tesseract in Tesseract in a dApp and in a wallet is very different by nature (essentially communicating as a client and a service), the detailed documentation is split into two documents:
+Because using Tesseract in a dApp and in a wallet is very different by nature (essentially communicating as a client and a service), the detailed documentation is split into two documents:
 
 * [Tesseract for dApp developers](./DAPP.MD)
 * [Tesseract for Wallet developers](./WALLET.MD)
@@ -72,7 +73,7 @@ Because using Tesseract in Tesseract in a dApp and in a wallet is very different
 If you'd like to see examples of Tesseract integration, please, check:
 
 * [dev-wallet.kotlin](https://github.com/tesseract-one/dev-wallet.kotlin) - for wallets
-* polkachat.kotlin - for dApps, TBD
+* [polkachat.kotlin](https://github.com/tesseract-one/polkachat.kotlin) - for dApps
 
 ## More
 
@@ -80,6 +81,7 @@ Just in case, you'd like to use Tesseract on android via Rust APIs. It's also po
 
 * [Using Tesseract on Android in Rust](./RUST.MD)
 * [Developer Wallet in Rust](https://github.com/tesseract-one/dev-wallet)
+* [Polkachat dApp in Rust](https://github.com/tesseract-one/polkachat.rs)
 
 ## Roadmap
 
